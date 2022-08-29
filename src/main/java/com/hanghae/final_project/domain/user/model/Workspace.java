@@ -22,5 +22,5 @@ public class Workspace extends Timestamped{
     private String title;
 
     @Column(nullable = false)
-    private String content;
+    private String desc;
 }

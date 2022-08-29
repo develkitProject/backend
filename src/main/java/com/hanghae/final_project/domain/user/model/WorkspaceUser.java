@@ -12,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Workspace_Users {
+public class WorkspaceUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

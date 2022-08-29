@@ -20,7 +20,7 @@ public class Alarm {
 
     @JoinColumn(name = "workspace_users_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Workspace_Users workspace_users;
+    private WorkspaceUser workspace_user;
 
     @JoinColumn(name = "workspace_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
