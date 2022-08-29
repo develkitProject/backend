@@ -37,7 +37,9 @@ public class WorkspaceService {
         WorkSpace workSpace = WorkSpace.of(requestDto);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
-        return ResponseDto.success(workSpaceUser);
+        WorkSpaceUser save = workspaceUserRepository.save(workSpaceUser);
+
+        return ResponseDto.success(save);
     }
 
     // 참여한 모든 workspace 조회

@@ -16,14 +16,14 @@ public class WorkspaceController {
     private final WorkspaceService workspaceService;
 
     // 워크 스페이스 생성
-    @PostMapping()
+    @PostMapping
     public ResponseDto<?> createWorkspace(@RequestBody WorkspaceRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.createWorkspace(requestDto, userDetails);
     }
 
     // 참여한 모든 workspace 조회
-    @GetMapping()
+    @GetMapping
     public ResponseDto<?> getWorkspaces(@AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.getWorkspaces(userDetails);
     }
@@ -44,7 +44,7 @@ public class WorkspaceController {
     }*/
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
-    @PostMapping("/{workspaceId}/join")
+    @PostMapping("/join/{workspaceId}")
     public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
