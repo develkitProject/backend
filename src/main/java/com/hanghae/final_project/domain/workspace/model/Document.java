@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.sql.Clob;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,7 +24,8 @@ public class Document extends Timestamped{
     private String title;
 
     //DATATYPE = TEXT, MIDTEXT 이런것들이 있는지 확인하고 다른 표현 방식이 있으면 수정..
-    @Column(nullable = false, length =50000)
+    @Lob
+    @Column(nullable = false)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
