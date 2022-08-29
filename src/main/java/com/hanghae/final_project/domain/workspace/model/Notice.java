@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
+import com.hanghae.final_project.domain.workspace.notice.dto.NoticeRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,4 +34,9 @@ public class Notice extends Timestamped{
 
     private String imageUrl = null;
 
+    public Notice(NoticeRequestDto requestDto, Long id) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+        this.imageUrl = requestDto.getImageUrl();
+    }
 }
