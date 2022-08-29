@@ -23,6 +23,6 @@ public class WorkSpace extends Timestamped {
     private String title;
 
     @Column(nullable = false)
-    private String desc;
+    private String content;
 
 }

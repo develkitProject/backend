@@ -23,4 +23,8 @@ public class Schedule extends Timestamped {
 
     @Column(nullable = false)
     private String date;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = false)
+    private WorkSpace workSpace;
 }
