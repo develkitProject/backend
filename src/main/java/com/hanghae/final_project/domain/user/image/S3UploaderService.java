@@ -4,9 +4,12 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.hanghae.final_project.global.error.errorcode.CustomErrorCode;
+import com.hanghae.final_project.global.error.exception.RestApiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
@@ -43,6 +46,14 @@ public class S3UploaderService {
         return uploadImageUrl;
     }
     public void deleteImage(String fileName) {
+
+
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    }
+    public void deleteImage(String fileName , String dir){
+        //filename이 존재하는지 확인
+        if(fileName==null || !fileName.contains("amazonaws.com")) return;
+        fileName=fileName.substring(fileName.indexOf(dir));
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
