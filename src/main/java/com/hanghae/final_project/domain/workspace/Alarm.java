@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.workspace.model;
+package com.hanghae.final_project.domain.workspace;
 
 import com.hanghae.final_project.domain.user.model.User;
 import lombok.AllArgsConstructor;
