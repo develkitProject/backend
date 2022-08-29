@@ -98,7 +98,9 @@ public class WorkspaceService {
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);
 
-        return ResponseDto.success(true);
+        
+
+        return ResponseDto.success(workSpaceUser);
     }
 
     //워크스페이스 내 회원 조회
