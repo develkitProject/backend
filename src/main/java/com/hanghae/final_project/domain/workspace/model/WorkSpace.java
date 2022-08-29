@@ -1,6 +1,7 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
+import com.hanghae.final_project.domain.user.dto.request.WorkspaceRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,6 @@ public class WorkSpace extends Timestamped {
     private String title;
 
     @Column(nullable = false)
-    private String desc;
+    private String content;
 
 }

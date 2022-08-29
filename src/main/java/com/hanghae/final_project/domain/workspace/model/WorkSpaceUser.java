@@ -28,4 +28,5 @@ public class WorkSpaceUser {
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
+
 }
