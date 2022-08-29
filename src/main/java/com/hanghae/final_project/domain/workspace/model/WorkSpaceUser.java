@@ -28,5 +28,15 @@ public class WorkSpaceUser {
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
+    public WorkSpaceUser(User user, WorkSpace workSpace) {
+        this.user = user;
+        this.workSpace = workSpace;
+    }
 
+    public static WorkSpaceUser of(User user, WorkSpace workSpace) {
+        return WorkSpaceUser.builder()
+                .user(user)
+                .workSpace(workSpace)
+                .build();
+    }
 }

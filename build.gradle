@@ -42,13 +42,17 @@ dependencies {
 
 
 	// junit4
-	testImplementation group: 'junit', name: 'junit', version: '4.5'
+	testImplementation group: 'junit', name: 'junit', version: '4.12'
 
 	// validation
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
 	// aws
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
+
+	// slf4j for test
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 
 }
 

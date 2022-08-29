@@ -39,3 +39,10 @@ out/
 .vscode/
 
 src/main/resources/*
+src/test/**
+
+caches/**
+wrapper/**
+daemon/**
+native/**
+.tmp/**

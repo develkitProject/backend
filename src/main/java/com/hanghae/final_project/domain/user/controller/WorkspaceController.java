@@ -1,32 +1,29 @@
 package com.hanghae.final_project.domain.user.controller;
 
 import com.hanghae.final_project.domain.user.dto.request.WorkspaceRequestDto;
-import com.hanghae.final_project.domain.user.service.UserService;
 import com.hanghae.final_project.domain.user.service.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/workspaces")
+@RequestMapping(value = "/api/workspaces")
 public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
 
     // 워크 스페이스 생성
-    @GetMapping
+    @PostMapping()
     public ResponseDto<?> createWorkspace(@RequestBody WorkspaceRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.createWorkspace(requestDto, userDetails);
     }
 
     // 참여한 모든 workspace 조회
-    @PostMapping
+    @GetMapping()
     public ResponseDto<?> getWorkspaces(@AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.getWorkspaces(userDetails);
     }
@@ -39,12 +36,12 @@ public class WorkspaceController {
         return workspaceService.updateWorkspace(workspaceId, requestDto, userDetails);
     }
 
-    // 워크스페이스 나가기
+    /*// 워크스페이스 나가기
     @DeleteMapping("/{workspaceId}")
     public ResponseDto<?> deleteWorkspace(@PathVariable Long workspaceId,
                                           @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.deleteWorkspace(workspaceId, userDetails);
-    }
+    }*/
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @PostMapping("/join")
