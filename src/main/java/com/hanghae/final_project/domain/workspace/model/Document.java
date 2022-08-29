@@ -26,7 +26,10 @@ public class Document extends Timestamped{
     @Column(nullable = false, length =50000)
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY )
-    @JoinColumn(name = "workspace_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
+
+    private String imageUrl = null;
 }
+

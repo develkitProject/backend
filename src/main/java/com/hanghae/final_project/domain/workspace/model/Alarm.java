@@ -1,5 +1,6 @@
-package com.hanghae.final_project.domain.user.model;
+package com.hanghae.final_project.domain.workspace.model;
 
+import com.hanghae.final_project.domain.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,11 +21,11 @@ public class Alarm {
 
     @JoinColumn(name = "workspace_users_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private WorkspaceUser workspace_user;
+    private WorkSpaceUser workspace_user;
 
     @JoinColumn(name = "workspace_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Workspace workspace;
+    private WorkSpace workspace;
 
     @JoinColumn(name = "user_id", nullable = true)
     @ManyToOne(fetch = FetchType.LAZY)

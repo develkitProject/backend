@@ -25,7 +25,4 @@ public class WorkSpace extends Timestamped {
     @Column(nullable = false)
     private String desc;
 
-
-
-
 }
