@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.user.image;
+package com.hanghae.final_project.domain.workspace.image;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.DeleteMapping;

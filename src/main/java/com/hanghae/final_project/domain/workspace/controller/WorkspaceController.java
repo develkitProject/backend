@@ -1,7 +1,7 @@
-package com.hanghae.final_project.domain.user.controller;
+package com.hanghae.final_project.domain.workspace.controller;
 
-import com.hanghae.final_project.domain.user.dto.request.WorkspaceRequestDto;
-import com.hanghae.final_project.domain.user.service.WorkspaceService;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
+import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -44,20 +44,23 @@ public class WorkspaceController {
     }*/
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
-    @PostMapping("/join")
-    public ResponseDto<?> joinMemberInWorkspace(@AuthenticationPrincipal UserDetails userDetails) {
-        return workspaceService.joinMemberInWorkspace(userDetails);
+    @PostMapping("/{workspaceId}/join")
+    public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
+                                                @AuthenticationPrincipal UserDetails userDetails) {
+        return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
     }
 
     //워크스페이스 내 회원 조회
     @GetMapping("/{workspaceId}")
-    public ResponseDto<?> getMembersInWorkspace(@AuthenticationPrincipal UserDetails userDetails) {
-        return workspaceService.getMembersInWorkspace(userDetails);
+    public ResponseDto<?> getMembersInWorkspace(@PathVariable Long workspaceId) {
+        return workspaceService.getMembersInWorkspace(workspaceId);
     }
 
     //워크스페이스 나가기
     @DeleteMapping("/{workspaceId}")
-    public ResponseDto<?> quitWorkspace(@AuthenticationPrincipal UserDetails userDetails) {
-        return workspaceService.quitWorkspace(userDetails);
+    public ResponseDto<?> quitWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
+        return workspaceService.quitWorkspace(workspaceId, userDetails);
     }
+
+    // 초대코드가 동일한지 확인하는 controller
 }

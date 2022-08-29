@@ -7,30 +7,21 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
+public class Invitation {
 
-public class Notice extends Timestamped{
-
-
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String invite;
 
-    @Column(nullable = false)
-    private String content;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
-
-    private String imageUrl;
-
 }

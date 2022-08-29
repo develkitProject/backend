@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.user.dto.response;
+package com.hanghae.final_project.domain.workspace.dto.response;
 
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor
-public class WorkspaceResponseDto {
+public class WorkspaceResponseDto<T> {
 
-    private List<WorkSpace> workSpaces = new ArrayList<>();
+    private List<T> workSpaces = new ArrayList<>();
 }
