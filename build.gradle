@@ -40,8 +40,22 @@ dependencies {
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
 	compileOnly 'com.auth0:java-jwt:3.19.2'
 
+
+	// junit4
+	testImplementation group: 'junit', name: 'junit', version: '4.5'
+
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// aws
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
+
 }
 
 tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test {
 	useJUnitPlatform()
 }
