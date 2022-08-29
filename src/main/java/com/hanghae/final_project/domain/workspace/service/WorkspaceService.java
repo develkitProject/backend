@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,22 +35,27 @@ public class WorkspaceService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         // 워크 스페이스를 생성하고, 자신의 정보를 넣어줌
-        WorkSpace workSpace = WorkSpace.of(requestDto);
+//        WorkSpace workSpace = WorkSpace.of(requestDto);
+        WorkSpace workSpace = new WorkSpace(requestDto);
+        WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
 
-        WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
-        WorkSpaceUser save = workspaceUserRepository.save(workSpaceUser);
+        WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
+        WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
-        return ResponseDto.success(save);
+        return ResponseDto.success(savedWorkspaceUser);
     }
 
     // 참여한 모든 workspace 조회
+    @Transactional
     public ResponseDto<?> getWorkspaces(UserDetails userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         List<WorkSpaceUser> allWorkSpaceUserByUser = workspaceUserRepository.findAllByUser(user);
 
-        WorkspaceResponseDto responseDto = new WorkspaceResponseDto(allWorkSpaceUserByUser.stream().map(list -> list.getWorkSpace()).collect(Collectors.toList()));
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.builder()
+                .workSpaces(allWorkSpaceUserByUser.stream().map(list -> list.getWorkSpace()).collect(Collectors.toList()))
+                .build();
 
         return ResponseDto.success(responseDto);
     }
@@ -60,16 +66,21 @@ public class WorkspaceService {
         // 1. 유저 가지고오기
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
+        WorkSpace workspace = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workspace == null) {
+            return ResponseDto.fail("WORKSPACE_NOT_FOUND", "workspace가 존재하지 않습니다.");
+        }
+
         // 2. 유저와 관련된 workspaceId인지 확인할 것 => 아니라면, else Throw
         WorkSpaceUser workspaceUser = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId).orElse(null);
         if (workspaceUser == null) {
-            throw new IllegalArgumentException("workspace에 존재하는 데이터가 아닙니다");
+            return ResponseDto.fail("USER_NOT_FOUND", "workspace에 존재하는 사용자가 아닙니다");
         }
 
         // 3. 데이터 수정하기
-        workspaceUser.getWorkSpace().update(requestDto);
+        workspace.update(requestDto);
 
-        return ResponseDto.success(true);
+        return ResponseDto.success(workspace);
     }
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
@@ -77,6 +88,12 @@ public class WorkspaceService {
     public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).get();
+
+        Optional<WorkSpaceUser> byUserAndWorkSpaceId = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId);
+        // 중복해서 들어오는 경우 예외처리
+        if (byUserAndWorkSpaceId.isPresent()) {
+            throw new IllegalArgumentException("데이터 중복 => 이미 들어와있음");
+        }
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);

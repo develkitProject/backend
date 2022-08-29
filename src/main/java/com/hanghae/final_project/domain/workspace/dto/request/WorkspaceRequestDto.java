@@ -1,18 +1,13 @@
 package com.hanghae.final_project.domain.workspace.dto.request;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
+@Setter @NoArgsConstructor
 public class WorkspaceRequestDto {
 
     private String title;
     private String content;
-
-    // test용
-    public WorkspaceRequestDto(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
 }

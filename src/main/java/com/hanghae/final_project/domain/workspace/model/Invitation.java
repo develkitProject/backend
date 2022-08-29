@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

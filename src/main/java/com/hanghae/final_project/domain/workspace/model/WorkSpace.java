@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,9 +29,9 @@ public class WorkSpace extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @JsonIgnore
+    /*@JsonIgnore
     @OneToOne(mappedBy = "workSpace", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
-    private Invitation invitation;
+    private Invitation invitation;*/
 
     /*@JsonIgnore
     @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
@@ -42,8 +44,13 @@ public class WorkSpace extends Timestamped {
                 .build();
     }
 
+    public WorkSpace(WorkspaceRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
+    }
+
     public void update(WorkspaceRequestDto requestDto) {
-        this.title = title;
-        this.content = content;
+        this.title = requestDto.getTitle();
+        this.content = requestDto.getContent();
     }
 }
