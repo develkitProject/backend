@@ -19,6 +19,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -51,7 +52,6 @@ public class WebSecurityConfig {
     private final AuthorizationFailureHandler authorizationFailureHandler;
 
 
-
     @Bean
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
@@ -67,12 +67,15 @@ public class WebSecurityConfig {
                         "/webjars/**",
                         "/swagger-resources/**",
                         "/swagger/**",
-                        "/h2-console/**");
+                        "/h2-console/**",
+                        "/ws/**",
+                        "/chat/**");
 
     }
 
     @Bean
-    public SecurityFilterChain filterChain( HttpSecurity http, AuthenticationManagerBuilder auth) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManagerBuilder auth) throws Exception {
+
         //인증 (Authentication)**: 사용자 신원을 확인하는 행위
         //인가 (Authorization)**: 사용자 권한을 확인하는 행위
         auth
@@ -81,6 +84,7 @@ public class WebSecurityConfig {
 
         http.csrf().disable();
         http.cors().configurationSource(corsConfigurationSource());
+
 
         http
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -97,6 +101,7 @@ public class WebSecurityConfig {
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
+
 
         return http.build();
     }
