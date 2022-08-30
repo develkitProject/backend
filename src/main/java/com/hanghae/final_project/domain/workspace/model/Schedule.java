@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
+import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,4 +28,17 @@ public class Schedule extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
+
+    public static Schedule of(ScheduleDto scheduleDto,WorkSpace workSpace){
+        return Schedule.builder()
+                .content(scheduleDto.getContent())
+                .date(scheduleDto.getEventDate())
+                .workSpace(workSpace)
+                .build();
+    }
+
+    public void updateSchedule(ScheduleDto scheduleDto){
+        this.content=scheduleDto.getContent();
+        this.date=scheduleDto.getEventDate();
+    }
 }
