@@ -74,6 +74,13 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// redis
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// spring-data-redis
+	//embedded-redis
+	implementation ('it.ozimov:embedded-redis:0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
+
 }
 
 tasks.named('test') {
