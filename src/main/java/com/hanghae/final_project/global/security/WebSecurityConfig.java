@@ -127,6 +127,7 @@ public class WebSecurityConfig {
 
         // 회원 관리 API SKIP 적용
         skipPathList.add("POST,/api/members/signup");
+        skipPathList.add("POST,/api/members/email");
 
         skipPathList.add("GET,/api/v1/kakao/signup");
         skipPathList.add("GET,/user/kakao/callback/**");

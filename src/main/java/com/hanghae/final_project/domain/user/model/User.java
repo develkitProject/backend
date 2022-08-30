@@ -35,9 +35,14 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String nickname;
 
+    @Column
+    private String profileImage;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserSocialEnum social;
+
+
 
     public static User of(SignupDto signupDto, BCryptPasswordEncoder passwordEncoder){
         return User.builder()
@@ -48,4 +53,10 @@ public class User extends Timestamped {
                 .build();
     }
 
+    public void updateNickname(String nickname) {
+        this.nickname=nickname;
+    }
+    public void updateProfileImage(String profileImage){
+        this.profileImage=profileImage;
+    }
 }
