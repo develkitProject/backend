@@ -12,6 +12,7 @@ import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.security.provider.JwtAuthenticationProvider;
 import com.hanghae.final_project.global.security.provider.JwtAuthorizationProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -69,7 +70,12 @@ public class WebSecurityConfig {
                         "/swagger/**",
                         "/h2-console/**",
                         "/ws/**",
-                        "/chat/**");
+                        "/chat/**",
+                        "/resources/**",
+                        "/ws-stomp/**",
+                        "/pub/**",
+                        "/sub/**")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 
     }
 
@@ -84,6 +90,7 @@ public class WebSecurityConfig {
 
         http.csrf().disable();
         http.cors().configurationSource(corsConfigurationSource());
+
 
 
         http
