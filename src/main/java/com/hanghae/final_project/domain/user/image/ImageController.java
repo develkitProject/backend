@@ -1,6 +1,8 @@
 package com.hanghae.final_project.domain.user.image;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,7 +18,7 @@ public class ImageController {
 
     @PostMapping("/api/images")
     public String upload(@RequestParam("images") String images) throws IOException {
-        s3UploaderService.upload(images, "static");
+        s3UploaderService.upload(images, "upload");
         return "test";
     }
 

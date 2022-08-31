@@ -3,7 +3,7 @@ package com.hanghae.final_project.domain.user.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
-import com.hanghae.final_project.domain.workspace.Timestamped;
+import com.hanghae.final_project.domain.workspace.model.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

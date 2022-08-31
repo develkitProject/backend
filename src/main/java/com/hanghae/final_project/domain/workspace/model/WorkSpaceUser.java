@@ -1,6 +1,7 @@
-package com.hanghae.final_project.domain.workspace;
+package com.hanghae.final_project.domain.workspace.model;
 
 import com.hanghae.final_project.domain.user.model.User;
+import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

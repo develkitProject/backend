@@ -1,5 +1,7 @@
-package com.hanghae.final_project.domain.workspace;
+package com.hanghae.final_project.domain.workspace.model;
 
+
+import com.hanghae.final_project.domain.workspace.model.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,19 +14,16 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-public class Schedule extends Timestamped {
+public class WorkSpace extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
     @Column(nullable = false)
-    private String content;
+    private String title;
 
     @Column(nullable = false)
-    private String date;
+    private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id", nullable = false)
-    private WorkSpace workSpace;
 }

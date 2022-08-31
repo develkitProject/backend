@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.workspace;
+package com.hanghae.final_project.domain.workspace.model;
 
 
 import lombok.Getter;

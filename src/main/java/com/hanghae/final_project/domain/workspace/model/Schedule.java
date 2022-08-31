@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.workspace;
+package com.hanghae.final_project.domain.workspace.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,30 +7,24 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
-
-public class Notice extends Timestamped{
-
+public class Schedule extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
     @Column(nullable = false)
-    private String title;
+    private String content;
 
     @Column(nullable = false)
-    private String content;
+    private String date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
-
-    private String imageUrl = null;
-
 }

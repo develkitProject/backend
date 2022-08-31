@@ -1,16 +1,12 @@
-package com.hanghae.final_project.domain.workspace.document.model;
+package com.hanghae.final_project.domain.workspace.model;
 
 
-import com.hanghae.final_project.domain.workspace.WorkSpace;
-import com.hanghae.final_project.domain.workspace.Timestamped;
-import com.hanghae.final_project.domain.workspace.document.dto.request.DocumentRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
+import lombok.*;
 
 import javax.persistence.*;
 
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -41,6 +37,13 @@ public class Document extends Timestamped {
         this.content = documentRequestDto.getContent();
         this.imageUrl = documentRequestDto.getImageUrl();
 
+    }
+
+
+    public void update(DocumentRequestDto documentRequestDto) {
+        this.title = documentRequestDto.getTitle();
+        this.content = documentRequestDto.getContent();
+        this.imageUrl = documentRequestDto.getImageUrl();
     }
 }
 
