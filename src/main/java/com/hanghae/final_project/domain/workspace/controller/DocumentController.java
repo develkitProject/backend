@@ -17,9 +17,8 @@ public class DocumentController {
     // 문서 생성
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<?> createDocument(@PathVariable Long workspaceId,
-                                         @RequestParam(value = "data") DocumentRequestDto documentRequestDto,
-                                         @RequestPart(value = "file") MultipartFile multipartFile) {
-        return documentService.createDocument(workspaceId, documentRequestDto, multipartFile);
+                                         @RequestParam(value = "data") DocumentRequestDto documentRequestDto) {
+        return documentService.createDocument(workspaceId, documentRequestDto);
     }
 
     // 문서 전체조회

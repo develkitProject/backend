@@ -70,8 +70,8 @@ public class DocumentService {
         Document document = documentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
-        document.setWorkSpace(workSpace);
-         return new ResponseDto<>(true, document, null);
+//        document.setWorkSpace(workSpace); // 할팔요 없을 듯
+        return new ResponseDto<>(true, document, null);
 
     }
 
@@ -89,9 +89,12 @@ public class DocumentService {
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
 
+        // 바뀌기 전의 사진파일을 s3에서 삭제
+        s3UploaderService.deleteImage(document.getImageUrl());
+
         document.setTitle(documentRequestDto.getTitle());
         document.setContent(documentRequestDto.getContent());
-        document.setImageUrl(documentRequestDto.getImageUrl());
+        document.setImageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl())));
         document.setWorkSpace(workSpace);
 
         documentRepository.save(document);
