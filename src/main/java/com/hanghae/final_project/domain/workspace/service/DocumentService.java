@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -29,14 +30,14 @@ public class DocumentService {
     @Transactional
     public ResponseDto<Document> createDocument(Long id,
                                                 DocumentRequestDto documentRequestDto) {
-        WorkSpace workSpace = workSpaceRepository.findById(id).orElseThrow(
+        WorkSpace findWorkSpace = workSpaceRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
         );
         Document document = Document.builder()
                         .title(documentRequestDto.getTitle())
                         .content(documentRequestDto.getContent())
-                        .imageUrl(documentRequestDto.getImageUrl())
-                        .workSpace(workSpace)
+                        .imageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl()))) // 리턴 타입이 byte[]
+                        .workSpace(findWorkSpace)
                         .build();
 
         documentRepository.save(document);
@@ -120,3 +121,6 @@ public class DocumentService {
 // 사진을 어떻게?
 // 1. MultipartFile -> 멀티파트파일을 매개변수에 넣어준다.
 // 2. URL 스트링으로 -> 인코딩한걸 디코딩 해줘야함 imageService에 있긴함
+
+// 파일을 직접 올릴수도있고 -> multipartFile
+// url을 받을 수도 있음 -> 인코딩한거 받아서 디코딩한다.
