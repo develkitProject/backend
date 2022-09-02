@@ -7,8 +7,8 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.ScheduleRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.error.errorcode.CustomErrorCode;
-import com.hanghae.final_project.global.error.exception.RestApiException;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,15 +76,11 @@ public class ScheduleService {
 
     private WorkSpace isWorkspaceExist(Long workspaceId) {
         return workSpaceRepository.findById(workspaceId)
-                .orElseThrow(() -> new RestApiException(CustomErrorCode.INVALID_ID));
+                .orElseThrow(() -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404));
 
     }
     private Schedule isScheduleExist(Long schedulesId){
         return scheduleRepository.findById(schedulesId)
-                .orElseThrow(()->new RestApiException(CustomErrorCode.INVALID_ID));
-
+                .orElseThrow(()->new RequestException(ErrorCode.SCHEDULE_ID_NOT_FOUND));
     }
-
-
-
 }

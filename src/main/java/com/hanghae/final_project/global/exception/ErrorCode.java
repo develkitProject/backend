@@ -51,7 +51,13 @@ public enum ErrorCode {
     // Workspace 관련
     WORKSPACE_NOT_FOUND_404(HttpStatus.NOT_FOUND, "해당 WORKSPACE가 존재하지 않습니다"),
     WORKSPACE_IN_USER_NOT_FOUND_404(HttpStatus.NOT_FOUND, "해당 WORKSPACE에 존재하는 사용자가 아닙니다"),
-    WORKSPACE_DUPLICATION_409(HttpStatus.CONFLICT, "해당 사용자가 WORKSPACE에 존재합니다");
+    WORKSPACE_DUPLICATION_409(HttpStatus.CONFLICT, "해당 사용자가 WORKSPACE에 존재합니다"),
+
+    // Schedule 관련
+    SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다")
+
+    ;
+
 
     private HttpStatus httpStatus;
     private String message;

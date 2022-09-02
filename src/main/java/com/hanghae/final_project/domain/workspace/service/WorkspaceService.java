@@ -1,13 +1,13 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
-import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkspaceRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserRepository;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class WorkspaceService {
     private final WorkspaceUserRepository workspaceUserRepository;
-    private final WorkspaceRepository workspaceRepository;
+    private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
 
     @Transactional
