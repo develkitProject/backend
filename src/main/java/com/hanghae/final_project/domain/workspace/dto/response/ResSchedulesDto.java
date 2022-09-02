@@ -6,15 +6,15 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class GetSchedulesDto {
+public class ResSchedulesDto {
 
     private Long id;
     private String content;
     private String eventDate;
     private Long workspaceId;
 
-    public static GetSchedulesDto of(Schedule schedule) {
-        return GetSchedulesDto.builder()
+    public static ResSchedulesDto of(Schedule schedule) {
+        return ResSchedulesDto.builder()
                 .id(schedule.getId())
                 .workspaceId(schedule.getWorkSpace().getId())
                 .content(schedule.getContent())

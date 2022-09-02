@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
-import com.hanghae.final_project.domain.workspace.dto.response.GetSchedulesDto;
+import com.hanghae.final_project.domain.workspace.dto.response.ResSchedulesDto;
 import com.hanghae.final_project.domain.workspace.model.Schedule;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.ScheduleRepository;
@@ -34,7 +34,7 @@ public class ScheduleService {
 
         scheduleRepository.save(schedule);
 
-        return new  ResponseEntity<>(ResponseDto.success(GetSchedulesDto.of(schedule)), HttpStatus.OK);
+        return new  ResponseEntity<>(ResponseDto.success(ResSchedulesDto.of(schedule)), HttpStatus.OK);
 
     }
 
@@ -44,9 +44,9 @@ public class ScheduleService {
         isWorkspaceExist(workspaceId);
 
         List<Schedule> scheduleList =scheduleRepository.findAllByWorkSpace_IdOrderByDateDesc(workspaceId);
-        List<GetSchedulesDto> schedulesDtoList =
+        List<ResSchedulesDto> schedulesDtoList =
                 scheduleList.stream()
-                        .map(GetSchedulesDto::of)
+                        .map(ResSchedulesDto::of)
                         .collect(Collectors.toList());
 
         return new ResponseEntity<>(ResponseDto.success(schedulesDtoList),HttpStatus.OK);
@@ -56,7 +56,7 @@ public class ScheduleService {
 
         Schedule schedule= isScheduleExist(schedulesId);
        return new ResponseEntity<>(
-               ResponseDto.success( GetSchedulesDto.of(schedule)),
+               ResponseDto.success( ResSchedulesDto.of(schedule)),
                HttpStatus.OK
        );
     }
@@ -64,7 +64,7 @@ public class ScheduleService {
     public ResponseEntity<?> updateSchedule(Long schedulesId, ScheduleDto scheduleDto) {
         Schedule schedule= isScheduleExist(schedulesId);
         schedule.updateSchedule(scheduleDto);
-        return new ResponseEntity<>(ResponseDto.success(GetSchedulesDto.of(schedule)),HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(ResSchedulesDto.of(schedule)),HttpStatus.OK);
     }
 
     public ResponseEntity<?> deleteSchedules(Long schedulesId) {

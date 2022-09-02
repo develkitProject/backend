@@ -7,6 +7,7 @@ import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +28,12 @@ public class userController {
     @PostMapping("/api/members/email")
     public ResponseEntity<?>  checkEmailDuplicate(@RequestBody SignupDto signupDto){
         return userService.checkEmail(signupDto);
+    }
+
+    @GetMapping("/api/members/profile")
+    public ResponseEntity<?> getUserProfile( @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+       return userService.getProfile(userDetails.getUser());
     }
 
     @PostMapping("/api/members/profile")

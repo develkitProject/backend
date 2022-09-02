@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.user.service;
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
+import com.hanghae.final_project.domain.user.dto.response.ResProfileDto;
 import com.hanghae.final_project.domain.user.image.S3UploaderService;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
@@ -55,6 +56,14 @@ public class UserService {
     }
 
 
+    //유저 개인정보 조회
+    public ResponseEntity<?> getProfile(User user) {
+
+        checkUsername(user.getUsername());
+        return new ResponseEntity<>(ResponseDto.success(ResProfileDto.of(user)),HttpStatus.OK);
+
+    }
+
     //유저 프로필 정보 변경
     /*
     *    유저 정보 값이 모두 있을 경우                ->    profileImage & 닉네임 변경
@@ -65,8 +74,7 @@ public class UserService {
     public ResponseEntity<?> changeProfile(User user, UserProfileDto userProfileDto) throws IOException {
 
         //유저정보 있는지 DB확인
-        User userInfo=userRepository.findByUsername(user.getUsername())
-                .orElseThrow(()->new RestApiException(CustomErrorCode.USER_NOT_EXIST));
+        User userInfo =checkUsername(user.getUsername());
 
         //nickname 변경할 경우
         if(userProfileDto.getNickname()!=null){
@@ -94,5 +102,12 @@ public class UserService {
             throw new RestApiException(CustomErrorCode.INVALID_PARAMETER,"중복된 아이디입니다.");
         }
     }
+
+    private User checkUsername(String username){
+        return userRepository.findByUsername(username)
+                .orElseThrow(()->new RestApiException(CustomErrorCode.USER_NOT_EXIST));
+
+    }
+
 
 }
