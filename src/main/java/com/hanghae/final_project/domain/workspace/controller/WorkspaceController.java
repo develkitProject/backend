@@ -4,10 +4,12 @@ import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDt
 import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/workspaces")
@@ -19,12 +21,14 @@ public class WorkspaceController {
     @PostMapping
     public ResponseDto<?> createWorkspace(@RequestBody WorkspaceRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("요청 메소드 [POST] /api/workspaces");
         return workspaceService.createWorkspace(requestDto, userDetails);
     }
 
     // 참여한 모든 workspace 조회
     @GetMapping
     public ResponseDto<?> getWorkspaces(@AuthenticationPrincipal UserDetails userDetails) {
+        log.info("요청 메소드 [GET] /api/workspaces");
         return workspaceService.getWorkspaces(userDetails);
     }
 
@@ -33,6 +37,7 @@ public class WorkspaceController {
     public ResponseDto<?> updateWorkspace(@PathVariable Long workspaceId,
                                           @RequestBody WorkspaceRequestDto requestDto,
                                           @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("요청 메소드 [PUT] /api/workspaces/" + workspaceId);
         return workspaceService.updateWorkspace(workspaceId, requestDto, userDetails);
     }
 
@@ -47,18 +52,21 @@ public class WorkspaceController {
     @PostMapping("/join/{workspaceId}")
     public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("요청 메소드 [POST] /api/workspaces/join/" + workspaceId);
         return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
     }
 
     //워크스페이스 내 회원 조회
     @GetMapping("/{workspaceId}")
     public ResponseDto<?> getMembersInWorkspace(@PathVariable Long workspaceId) {
+        log.info("요청 메소드 [GET] /api/workspaces/" + workspaceId);
         return workspaceService.getMembersInWorkspace(workspaceId);
     }
 
     //워크스페이스 나가기
     @DeleteMapping("/{workspaceId}")
     public ResponseDto<?> quitWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
+        log.info("요청 메소드 [DELETE] /api/workspaces/" + workspaceId);
         return workspaceService.quitWorkspace(workspaceId, userDetails);
     }
 
