@@ -1,16 +1,19 @@
 package com.hanghae.final_project.global.exception;
 
-import com.hanghae.final_project.global.error.errorcode.Errorcode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
 @Getter
 public class RequestException extends RuntimeException{
 
+    private String errorCode;
     private final HttpStatus httpStatus;
+    private String message;
 
     public RequestException(ErrorCode errorcode) {
         super(errorcode.getMessage());
+        this.errorCode = errorcode.toString();
+        this.message = errorcode.getMessage();
         this.httpStatus = errorcode.getHttpStatus();
     }
 
