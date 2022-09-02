@@ -19,6 +19,7 @@ public enum ErrorCode {
     JWT_NOT_ALLOWED_405(HttpStatus.METHOD_NOT_ALLOWED, "지원되지 않는 JWT 토큰입니다."),
 
     // USER 관련
+    USER_INFO_NOT_FORMATTED(HttpStatus.NOT_ACCEPTABLE, ""),
     USER_LOGINID_NOT_FOUND_404(HttpStatus.NOT_FOUND, "회원 정보를 찾을 수 없습니다."),
     USER_LOGINID_DUPLICATION_409(HttpStatus.CONFLICT, "이미 가입된 이메일입니다."),
     USER_EMAIL_NOT_FORMATTED(HttpStatus.NOT_ACCEPTABLE, "Email 형식이 일치하지 않습니다"),

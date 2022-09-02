@@ -1,5 +1,6 @@
 package com.hanghae.final_project.global.exception;
 
+import com.hanghae.final_project.global.error.errorcode.Errorcode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
@@ -14,6 +15,13 @@ public class RequestException extends RuntimeException{
         super(errorcode.getMessage());
         this.errorCode = errorcode.toString();
         this.message = errorcode.getMessage();
+        this.httpStatus = errorcode.getHttpStatus();
+    }
+
+    public RequestException(ErrorCode errorcode, String message) {
+        super(message);
+        this.errorCode = errorcode.toString();
+        this.message = message;
         this.httpStatus = errorcode.getHttpStatus();
     }
 
