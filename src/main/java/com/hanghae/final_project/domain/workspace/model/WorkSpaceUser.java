@@ -13,19 +13,31 @@ import javax.persistence.*;
 @Builder
 @Getter
 @Entity
-@Table(name="workspace_users")
+//@Table(name="workspace_users")
 public class WorkSpaceUser {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY )
+//    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
+
+    public static WorkSpaceUser of(User user, WorkSpace workSpace) {
+        return WorkSpaceUser.builder()
+                .user(user)
+                .workSpace(workSpace)
+                .build();
+    }
+
+    public void update(WorkSpace workSpace) {
+        this.workSpace = workSpace;
+    }
 }

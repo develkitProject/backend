@@ -4,13 +4,12 @@ import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.dto.response.ResProfileDto;
-import com.hanghae.final_project.domain.user.image.S3UploaderService;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.domain.user.validation.SignupValidator;
+import com.hanghae.final_project.domain.workspace.image.S3UploaderService;
 import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.error.errorcode.CustomErrorCode;
-import com.hanghae.final_project.global.error.exception.RestApiException;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +26,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final SignupValidator signupValidator;
+//    private final SignupValidator signupValidator;
 
     private final S3UploaderService uploaderService;
 
@@ -36,7 +35,8 @@ public class UserService {
     //일반회원 (not social) 회원가입
     public ResponseEntity<?> standardSignup(SignupDto signupDto) {
 
-        signupValidator.checkUserInfoValidation(signupDto);
+
+//        signupValidator.checkUserInfoValidation(signupDto);
 
         checkDuplicate(signupDto.getUsername());
 
@@ -99,15 +99,12 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(username);
 
         if (found.isPresent()) {
-            throw new RestApiException(CustomErrorCode.INVALID_PARAMETER,"중복된 아이디입니다.");
+            throw new RequestException(ErrorCode.USER_DUPLICATED);
         }
     }
 
     private User checkUsername(String username){
         return userRepository.findByUsername(username)
-                .orElseThrow(()->new RestApiException(CustomErrorCode.USER_NOT_EXIST));
-
+                .orElseThrow(()->new RequestException(ErrorCode.USER_NOT_EXIST));
     }
-
-
 }

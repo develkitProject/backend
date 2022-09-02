@@ -45,4 +45,14 @@ out/
 .vscode/
 
 src/main/resources/*
+<<<<<<< HEAD
 src/test/**
+=======
+src/test/**
+
+caches/**
+wrapper/**
+daemon/**
+native/**
+.tmp/**
+>>>>>>> ingwon
