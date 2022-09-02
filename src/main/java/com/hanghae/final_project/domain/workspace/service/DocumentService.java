@@ -1,6 +1,5 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.user.image.S3UploaderService;
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Document;
@@ -11,10 +10,8 @@ import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -24,7 +21,7 @@ public class DocumentService {
 
     private final WorkSpaceRepository workSpaceRepository;
     private final DocumentRepository documentRepository;
-    private final S3UploaderService s3UploaderService;
+//    private final S3UploaderService s3UploaderService;
 
     // 문서 생성
     @Transactional
@@ -33,10 +30,17 @@ public class DocumentService {
         WorkSpace findWorkSpace = workSpaceRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
         );
+
+//        try {
+//            s3UploaderService.upload(documentRequestDto.getImageUrl(), "User");
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+
         Document document = Document.builder()
                         .title(documentRequestDto.getTitle())
                         .content(documentRequestDto.getContent())
-                        .imageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl()))) // 리턴 타입이 byte[]
+//                        .imageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl()))) // 리턴 타입이 byte[]
                         .workSpace(findWorkSpace)
                         .build();
 
@@ -64,13 +68,13 @@ public class DocumentService {
     // 문서 상세조회
     @Transactional
     public ResponseDto<Document> getDocument(Long workSpaceId, Long id) {
-        WorkSpace workSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+        WorkSpace findworkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
         );
         Document document = documentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
-//        document.setWorkSpace(workSpace); // 할팔요 없을 듯
+//        document.setWorkSpace(findworkSpace); // 할 팔요 없을 듯
         return new ResponseDto<>(true, document, null);
 
     }
@@ -79,8 +83,7 @@ public class DocumentService {
     @Transactional
     public ResponseDto<Document> updateDocument(Long workSpaceId,
                                                 Long id,
-                                                DocumentRequestDto documentRequestDto,
-                                                MultipartFile multipartFile) {
+                                                DocumentRequestDto documentRequestDto) {
 
         WorkSpace workSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
@@ -90,12 +93,13 @@ public class DocumentService {
         );
 
         // 바뀌기 전의 사진파일을 s3에서 삭제
-        s3UploaderService.deleteImage(document.getImageUrl());
+//        s3UploaderService.deleteImage(document.getImageUrl());
 
         document.setTitle(documentRequestDto.getTitle());
         document.setContent(documentRequestDto.getContent());
-        document.setImageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl())));
-        document.setWorkSpace(workSpace);
+//        document.setImageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl())));
+        // 할 필요 없을듯
+//        document.setWorkSpace(workSpace);
 
         documentRepository.save(document);
 
@@ -127,3 +131,8 @@ public class DocumentService {
 
 // 파일을 직접 올릴수도있고 -> multipartFile
 // url을 받을 수도 있음 -> 인코딩한거 받아서 디코딩한다.
+
+
+// s3는 파일 업로드, 삭제, 디코딩 등이있음
+// url 디코딩하고 s3에 넣으면 url이 생성이 됨 그걸 리스폰스에 담아서 주면 끝
+// 업로드하면 s3 url을 주는거임

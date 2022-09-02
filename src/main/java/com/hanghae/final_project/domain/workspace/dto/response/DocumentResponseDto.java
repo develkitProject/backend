@@ -15,6 +15,6 @@ public class DocumentResponseDto extends Timestamped {
     private Long id;
     private String title;
     private String content;
-    private String imageUrl;
+//    private String imageUrl;
 
 }

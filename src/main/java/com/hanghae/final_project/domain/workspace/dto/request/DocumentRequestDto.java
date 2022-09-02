@@ -9,7 +9,7 @@ public class DocumentRequestDto {
 
     private String title;
     private String content;
-    private String imageUrl;
+//    private String imageUrl;
 
 }
 

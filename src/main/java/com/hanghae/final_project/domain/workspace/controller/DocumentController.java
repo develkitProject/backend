@@ -5,7 +5,6 @@ import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 
 @RequiredArgsConstructor
@@ -17,7 +16,7 @@ public class DocumentController {
     // 문서 생성
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<?> createDocument(@PathVariable Long workspaceId,
-                                         @RequestParam(value = "data") DocumentRequestDto documentRequestDto) {
+                                         @RequestBody DocumentRequestDto documentRequestDto) {
         return documentService.createDocument(workspaceId, documentRequestDto);
     }
 
@@ -38,9 +37,8 @@ public class DocumentController {
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<?> updateDocument(@PathVariable Long workspaceId,
                                          @PathVariable Long docId,
-                                         @RequestParam(value = "data") DocumentRequestDto documentRequestDto,
-                                         @RequestPart(value = "file")MultipartFile multipartFile) {
-        return documentService.updateDocument(workspaceId, docId, documentRequestDto, multipartFile);
+                                         @RequestBody DocumentRequestDto documentRequestDto) {
+        return documentService.updateDocument(workspaceId, docId, documentRequestDto);
     }
 
 
