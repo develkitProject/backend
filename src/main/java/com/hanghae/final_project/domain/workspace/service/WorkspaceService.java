@@ -9,6 +9,8 @@ import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserReposi
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -68,13 +70,13 @@ public class WorkspaceService {
 
         WorkSpace workspace = workspaceRepository.findById(workspaceId).orElse(null);
         if (workspace == null) {
-            return ResponseDto.fail("WORKSPACE_NOT_FOUND", "workspace가 존재하지 않습니다.");
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
         }
 
         // 2. 유저와 관련된 workspaceId인지 확인할 것 => 아니라면, else Throw
         WorkSpaceUser workspaceUser = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId).orElse(null);
         if (workspaceUser == null) {
-            return ResponseDto.fail("USER_NOT_FOUND", "workspace에 존재하는 사용자가 아닙니다");
+            throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
         }
 
         // 3. 데이터 수정하기
@@ -87,18 +89,19 @@ public class WorkspaceService {
     @Transactional
     public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
-        WorkSpace workSpace = workspaceRepository.findById(workspaceId).get();
+        WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
 
         Optional<WorkSpaceUser> byUserAndWorkSpaceId = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId);
         // 중복해서 들어오는 경우 예외처리
         if (byUserAndWorkSpaceId.isPresent()) {
-            throw new IllegalArgumentException("데이터 중복 => 이미 들어와있음");
+            throw new RequestException(ErrorCode.WORKSPACE_DUPLICATION_409);
         }
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);
-
-        
 
         return ResponseDto.success(workSpaceUser);
     }
@@ -119,9 +122,13 @@ public class WorkspaceService {
     public ResponseDto<?> quitWorkspace(Long workspaceId, UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
+        WorkSpace workspaceById = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workspaceById == null)
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+
         WorkSpaceUser workSpaceUser = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId).orElse(null);
         if (workSpaceUser == null) {
-            throw new IllegalArgumentException("workspace에 존재하는 데이터가 아닙니다");
+            throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
         }
 
         workspaceUserRepository.delete(workSpaceUser);
