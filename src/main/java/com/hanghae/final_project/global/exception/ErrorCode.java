@@ -9,6 +9,11 @@ import org.springframework.http.HttpStatus;
 public enum ErrorCode {
 
     // 공통
+    UNAUTHORIZED_TOKEN(HttpStatus.UNAUTHORIZED,"권한이 없습니다"),
+
+    USER_DUPLICATED(HttpStatus.CONFLICT, "중복된 아이디입니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST,"잘못된 요청입니다."),
+
     COMMON_BAD_REQUEST_400(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
     COMMON_INTERNAL_ERROR_500(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생하였습니다."),
 

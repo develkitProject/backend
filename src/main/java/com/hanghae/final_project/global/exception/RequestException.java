@@ -1,6 +1,5 @@
 package com.hanghae.final_project.global.exception;
 
-import com.hanghae.final_project.global.error.errorcode.Errorcode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

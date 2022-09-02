@@ -4,10 +4,9 @@ import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.domain.user.validation.SignupValidator;
 import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.error.errorcode.CustomErrorCode;
-import com.hanghae.final_project.global.error.exception.RestApiException;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +33,7 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(signupDto.getUsername());
 
         if (found.isPresent()) {
-            throw new RestApiException(CustomErrorCode.INVALID_PARAMETER,"중복된 아이디입니다.");
+            throw new RequestException(ErrorCode.USER_DUPLICATED);
         }
         User userInfo = User.of(signupDto,passwordEncoder);
 
