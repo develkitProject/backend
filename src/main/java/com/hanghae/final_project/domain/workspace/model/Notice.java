@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.catalina.User;
 
 import javax.persistence.*;
 
@@ -20,7 +21,7 @@ public class Notice extends Timestamped{
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
-    private Long id;
+    private Long id; //pk 유일한값.
 
     @Column(nullable = false)
     private String title;
@@ -29,14 +30,19 @@ public class Notice extends Timestamped{
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id", nullable = false)
-    private WorkSpace workSpace;
+    @JoinColumn(name = "workspace_id", nullable = false) //fk
+    private Notice workSpace;
 
-    private String imageUrl = null;
 
-    public Notice(NoticeRequestDto requestDto, Long id) {
+    public Notice(NoticeRequestDto requestDto, User user,WorkSpace  workSpace) {
+        this.title = requestDto.getTitle();
+        this.user = user;
+        this.workSpace = workSpace;
+    }
+
+    public void update(NoticeRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.imageUrl = requestDto.getImageUrl();
+
     }
 }
