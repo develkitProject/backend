@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
+import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,6 +48,7 @@ public class User extends Timestamped {
 
     public static User of(SignupDto signupDto, BCryptPasswordEncoder passwordEncoder){
         return User.builder()
+                .profileImage(STANDARD_IMAGE_ROUTE)
                 .username(signupDto.getUsername())
                 .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
