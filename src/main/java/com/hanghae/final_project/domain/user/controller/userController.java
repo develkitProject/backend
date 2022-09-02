@@ -25,8 +25,8 @@ public class userController {
     @PostMapping("/api/members/signup")
     public ResponseEntity<?> registerStandardUser(@Valid @RequestBody SignupDto signupDto, Errors errors){
         if (errors.hasErrors()) {
-            log.info("error : {}", errors.getFieldError().getDefaultMessage());
-            throw new RequestException(ErrorCode.USER_INFO_NOT_FORMATTED, errors.getFieldError().getDefaultMessage());
+            log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
+            throw new RequestException(ErrorCode.USER_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
         }
         log.info("요청 메소드 [POST] /api/members/signup");
         return userService.standardSignup(signupDto);

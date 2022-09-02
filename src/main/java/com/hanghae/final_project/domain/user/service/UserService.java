@@ -23,13 +23,13 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final SignupValidator signupValidator;
+//    private final SignupValidator signupValidator;
 
     private final BCryptPasswordEncoder passwordEncoder;
     public ResponseEntity<?> standardSignup(SignupDto signupDto) {
 
 
-        signupValidator.checkUserInfoValidation(signupDto);
+//        signupValidator.checkUserInfoValidation(signupDto);
 
         Optional<User> found = userRepository.findByUsername(signupDto.getUsername());
 
