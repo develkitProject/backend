@@ -2,22 +2,21 @@ package com.hanghae.final_project.domain.workspace.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hanghae.final_project.domain.websocket.chat.ChatRoom;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
-public class WorkSpace extends Timestamped {
+public class WorkSpace extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
