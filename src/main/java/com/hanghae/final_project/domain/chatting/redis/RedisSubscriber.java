@@ -1,7 +1,7 @@
-package com.hanghae.final_project.domain.websocket.redis;
+package com.hanghae.final_project.domain.chatting.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.hanghae.final_project.domain.websocket.chat.ChatMessage;
+import com.hanghae.final_project.domain.chatting.dto.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.connection.Message;
@@ -17,21 +17,25 @@ public class RedisSubscriber implements MessageListener {
 
     private final ObjectMapper objectMapper;
     private final RedisTemplate redisTemplate;
+
     private final SimpMessageSendingOperations messagingTemplate;
 
-    /**
-     * Redis에서 메시지가 발행(publish)되면 대기하고 있던 onMessage가 해당 메시지를 받아 처리한다.
-     */
+
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        try {
-            // redis에서 발행된 데이터를 받아 deserialize
+        log.info("Subscribe on message()");
+        try{
+            //redis에서 발행된 데이터를 받아 deserialize
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            // ChatMessage 객채로 맵핑
-            ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
-            // Websocket 구독자에게 채팅 메시지 Send
-            messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getRoomId(), roomMessage);
-        } catch (Exception e) {
+
+            //ChatMessage 객체로 맵핑
+            ChatMessageDto roomMessage = objectMapper.readValue(publishMessage,ChatMessageDto.class);
+
+            log.info("writer"+roomMessage.getWriter());
+            log.info("roomID"+roomMessage.getRoomId());
+            //WebSocket 구독자에게 채팅 메시지 Send
+            messagingTemplate.convertAndSend("/sub/chat/room/"+roomMessage.getRoomId(),roomMessage);
+        }catch (Exception e){
             log.error(e.getMessage());
         }
     }

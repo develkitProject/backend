@@ -18,7 +18,6 @@ public class Schedule extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
-
     @Column(nullable = false)
     private String content;
 

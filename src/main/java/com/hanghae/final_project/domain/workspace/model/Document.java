@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.sql.Clob;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,8 +29,8 @@ public class Document extends Timestamped{
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "workspace_id", nullable = false)
-    private WorkSpace workSpace;
+    @JoinColumn(name = "workspace_user_id", nullable = false)
+    private WorkSpaceUser workSpaceUser;
 
     private String imageUrl = null;
 }

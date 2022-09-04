@@ -1,6 +1,5 @@
 package com.hanghae.final_project.domain.workspace.dto.response;
 
-import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
