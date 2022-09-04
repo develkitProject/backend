@@ -45,7 +45,7 @@ public class WorkspaceService {
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
-        chatRoomService.createChatRoom(savedWorkspace, user);
+        chatRoomService.createChatRoom(workSpace.getTitle());
 
         return ResponseDto.success(savedWorkspaceUser);
     }

@@ -1,15 +1,11 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hanghae.final_project.domain.websocket.chat.ChatRoom;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
