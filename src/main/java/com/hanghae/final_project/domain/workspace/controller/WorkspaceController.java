@@ -64,11 +64,21 @@ public class WorkspaceController {
     }
 
     //워크스페이스 나가기
-    @DeleteMapping("/{workspaceId}")
+    @DeleteMapping("/quit/{workspaceId}")
     public ResponseDto<?> quitWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
         log.info("요청 메소드 [DELETE] /api/workspaces/" + workspaceId);
         return workspaceService.quitWorkspace(workspaceId, userDetails);
     }
 
     // 초대코드가 동일한지 확인하는 controller
+    @DeleteMapping("/{workspaceId}")
+    public ResponseDto<?> deleteWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
+        return workspaceService.deleteWorkspace(workspaceId, userDetails);
+    }
+
+    //모든 workspace 조회
+    @GetMapping("/temp")
+    public ResponseDto<?> getAllWorkspaces() {
+        return workspaceService.getAllWorkspaces();
+    }
 }

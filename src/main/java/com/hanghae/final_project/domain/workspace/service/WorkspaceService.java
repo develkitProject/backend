@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.websocket.chat.ChatRoomService;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -29,6 +30,7 @@ public class WorkspaceService {
     private final WorkspaceUserRepository workspaceUserRepository;
     private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final ChatRoomService chatRoomService;
 
     @Transactional
     public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) {
@@ -42,6 +44,9 @@ public class WorkspaceService {
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
+
+        // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
+        chatRoomService.createChatRoom(workSpace.getTitle());
 
         return ResponseDto.success(savedWorkspaceUser);
     }
@@ -132,5 +137,31 @@ public class WorkspaceService {
 
         workspaceUserRepository.delete(workSpaceUser);
         return ResponseDto.success(true);
+    }
+
+    @Transactional
+    public ResponseDto<?> deleteWorkspace(Long workspaceId, UserDetails userDetails) {
+        //
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+
+        WorkSpace workspaceById = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workspaceById == null)
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+
+        WorkSpaceUser workSpaceUser = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId).orElse(null);
+        if (workSpaceUser == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
+        }
+
+        workspaceRepository.delete(workspaceById);
+        workspaceUserRepository.delete(workSpaceUser);
+
+        return ResponseDto.success(true);
+    }
+
+    public ResponseDto<?> getAllWorkspaces() {
+
+        List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
+        return ResponseDto.success(allWorkspaces);
     }
 }

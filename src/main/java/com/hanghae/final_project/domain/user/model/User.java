@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
+
 import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
 
 
@@ -21,7 +23,7 @@ import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDA
 @Getter
 @Entity
 @Table(name="users")
-public class User extends Timestamped {
+public class User extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
