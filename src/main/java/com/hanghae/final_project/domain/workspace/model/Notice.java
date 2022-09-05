@@ -1,6 +1,9 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 import com.hanghae.final_project.domain.user.model.User;
+
+import com.hanghae.final_project.domain.workspace.dto.NoticeRequestDto;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,12 +33,18 @@ public class Notice extends Timestamped {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
-    private WorkSpaceUser workSpaceUser;
+    private WorkSpace workSpace;
 
 
-    private String imageUrl;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
+    private String imageUrl =null;
+
+    public void updateNotice(NoticeRequestDto noticeRequestDto) {
+        this.title = noticeRequestDto.getTitle();
+        this.content = noticeRequestDto.getContent();
+    }
 }
 
-// 전체조회 -> 워크스페이스 번호에따라서 있는 리스트들을 다 가져와야함
-// 우리가 레포지토리에서 찾을 수 있는건 WorkSpaceUser로만 찾을 수 있기 때문에 전체조회를 못함
