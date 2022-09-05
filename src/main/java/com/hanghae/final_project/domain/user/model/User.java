@@ -12,6 +12,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
+
+import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +23,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Table(name="users")
-public class User extends Timestamped {
+public class User extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -35,12 +39,18 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String nickname;
 
+    @Column
+    private String profileImage;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserSocialEnum social;
 
+
+
     public static User of(SignupDto signupDto, BCryptPasswordEncoder passwordEncoder){
         return User.builder()
+                .profileImage(STANDARD_IMAGE_ROUTE)
                 .username(signupDto.getUsername())
                 .password(passwordEncoder.encode(signupDto.getPassword()))
                 .nickname(signupDto.getNickname())
@@ -48,4 +58,10 @@ public class User extends Timestamped {
                 .build();
     }
 
+    public void updateNickname(String nickname) {
+        this.nickname=nickname;
+    }
+    public void updateProfileImage(String profileImage){
+        this.profileImage=profileImage;
+    }
 }

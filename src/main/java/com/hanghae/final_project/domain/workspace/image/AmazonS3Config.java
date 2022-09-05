@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.user.image;
+package com.hanghae.final_project.domain.workspace.image;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;

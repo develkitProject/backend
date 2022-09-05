@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.user.image;
+package com.hanghae.final_project.domain.workspace.image;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -41,6 +41,14 @@ public class S3UploaderService {
         return uploadImageUrl;
     }
     public void deleteImage(String fileName) {
+
+
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    }
+    public void deleteImage(String fileName , String dir){
+        //filename이 존재하는지 확인
+        if(fileName==null || !fileName.contains("amazonaws.com")) return;
+        fileName=fileName.substring(fileName.indexOf(dir));
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 

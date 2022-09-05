@@ -33,7 +33,7 @@ public class Notice extends Timestamped {
     private WorkSpaceUser workSpaceUser;
 
 
-    private String imageUrl = null;
+    private String imageUrl;
 
 }
 
