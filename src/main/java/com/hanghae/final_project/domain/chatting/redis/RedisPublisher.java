@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.redis;
 
-import com.hanghae.final_project.domain.chatting.dto.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;

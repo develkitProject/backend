@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.chatting.dto;
+package com.hanghae.final_project.domain.chatting.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;

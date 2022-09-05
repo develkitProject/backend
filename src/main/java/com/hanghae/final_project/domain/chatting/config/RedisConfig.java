@@ -1,7 +1,6 @@
 package com.hanghae.final_project.domain.chatting.config;
 
-import com.hanghae.final_project.domain.chatting.dto.ChatMessageDto;
-import com.hanghae.final_project.domain.chatting.model.Chat;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Bean;

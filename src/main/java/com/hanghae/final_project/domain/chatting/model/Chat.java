@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.model;
 
-import com.hanghae.final_project.domain.chatting.dto.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.*;
 

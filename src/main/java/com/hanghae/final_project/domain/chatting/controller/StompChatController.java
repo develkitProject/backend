@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.controller;
 
 
-import com.hanghae.final_project.domain.chatting.dto.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.domain.chatting.service.ChatCacheService;
