@@ -10,9 +10,13 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class DocumentListResponseDto extends Timestamped {
+    private Long id;
     private String title;
+//    private String imageUrl;
     private String nickname;
     private Long workSpaceId;
+    private String createdAt;
+    private String modifiedAt;
 
     public DocumentListResponseDto(Document document) {
         this.title = document.getTitle();

@@ -8,6 +8,8 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -32,6 +34,9 @@ public class DocumentService {
                                         DocumentRequestDto documentRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+        if(findWorkSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
 
 
 //        try {
@@ -50,12 +55,14 @@ public class DocumentService {
 
         documentRepository.save(document);
 
-        assert findWorkSpace != null;
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
+                .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
                 .workSpaceId(findWorkSpace.getId())
+                .createdAt(document.getCreatedAt())
+                .modifiedAt(document.getModifiedAt())
                 .build();
 
         return new ResponseDto<>(true, documentResponseDto, null);
@@ -64,14 +71,22 @@ public class DocumentService {
     // 문서 전체조회
     @Transactional
     public ResponseDto<?> getDocumentList(Long workSpaceId) {
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+        if(findWorkSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
+
         List<Document> documentList = documentRepository.findAllByWorkSpaceId(workSpaceId);
         List<DocumentListResponseDto> documentResponseDtoList = new ArrayList<>();
 
             for (Document document : documentList) {
                 documentResponseDtoList.add(DocumentListResponseDto.builder()
+                        .id(document.getId())
                         .title(document.getTitle())
-                        .workSpaceId(workSpaceId)
                         .nickname(document.getUser().getNickname())
+                        .workSpaceId(workSpaceId)
+                        .createdAt(document.getCreatedAt())
+                        .modifiedAt(document.getModifiedAt())
                         .build());
             }
 
@@ -82,16 +97,25 @@ public class DocumentService {
     @Transactional
     public ResponseDto<?> getDocument(Long workSpaceId, Long id) {
 
-        Document document = documentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
-        );
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+        if(findWorkSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
+
+        Document document = documentRepository.findById(id).orElse(null);
+        if(document == null) {
+            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
+        }
 //        document.setWorkSpace(findworkSpace); // 할 팔요 없을 듯
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
-                .workSpaceId(workSpaceId)
-                .nickname(document.getUser().getNickname())
+                .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
+                .nickname(document.getUser().getNickname())
+                .workSpaceId(workSpaceId)
+                .createdAt(document.getCreatedAt())
+                .modifiedAt(document.getModifiedAt())
                 .build();
 
         return new ResponseDto<>(true, documentResponseDto, null);
@@ -104,9 +128,10 @@ public class DocumentService {
                                                 Long id,
                                                 DocumentRequestDto documentRequestDto) {
 
-        Document document = documentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
-        );
+        Document document = documentRepository.findById(id).orElse(null);
+        if(document == null) {
+            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
+        }
 
         // 바뀌기 전의 사진파일을 s3에서 삭제
 //        s3UploaderService.deleteImage(document.getImageUrl());
@@ -119,10 +144,13 @@ public class DocumentService {
         documentRepository.save(document);
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
-                .workSpaceId(workSpaceId)
-                .nickname(document.getUser().getNickname())
+                .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
+                .nickname(document.getUser().getNickname())
+                .workSpaceId(workSpaceId)
+                .createdAt(document.getCreatedAt())
+                .modifiedAt(document.getModifiedAt())
                 .build();
 
         return new ResponseDto<>(true, documentResponseDto, null);
@@ -132,16 +160,23 @@ public class DocumentService {
     // 문서 삭제 -> 작성자가 아니면 삭제할 수 없도록? 아니면 롤을 가진사람이나 본인?
     @Transactional
     public ResponseDto<?> deleteDocument(Long workSpaceId, Long id) {
-        Document document = documentRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
-        );
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+        if(findWorkSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
+
+        Document document = documentRepository.findById(id).orElse(null);
+        if(document == null) {
+            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
+        }
 
         documentRepository.delete(document);
 
-        return new ResponseDto<>(true,  "문서가 삭제 되었습니다", null);
+        return new ResponseDto<>(true, "삭제되었습니다." , null);
     }
 
 }
+
 
 // static 써야하는이유 -> 생성된 객체를 선언해놓고 써야됨 이해함 ㅇㅋ
 // 사진을 어떻게?
