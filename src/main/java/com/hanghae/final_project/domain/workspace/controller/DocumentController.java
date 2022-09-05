@@ -3,7 +3,9 @@ package com.hanghae.final_project.domain.workspace.controller;
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,8 +18,9 @@ public class DocumentController {
     // 문서 생성
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<?> createDocument(@PathVariable Long workspaceId,
-                                         @RequestBody DocumentRequestDto documentRequestDto) {
-        return documentService.createDocument(workspaceId, documentRequestDto);
+                                         @RequestBody DocumentRequestDto documentRequestDto,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return documentService.createDocument(workspaceId, documentRequestDto, userDetails);
     }
 
     // 문서 전체조회

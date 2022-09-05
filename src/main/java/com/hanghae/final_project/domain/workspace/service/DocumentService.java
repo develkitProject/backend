@@ -1,13 +1,16 @@
 package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Document;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,11 +28,11 @@ public class DocumentService {
 
     // 문서 생성
     @Transactional
-    public ResponseDto<Document> createDocument(Long id,
-                                                DocumentRequestDto documentRequestDto) {
-        WorkSpace findWorkSpace = workSpaceRepository.findById(id).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
-        );
+    public ResponseDto<?> createDocument(Long workSpaceId,
+                                        DocumentRequestDto documentRequestDto,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+
 
 //        try {
 //            s3UploaderService.upload(documentRequestDto.getImageUrl(), "User");
@@ -42,52 +45,65 @@ public class DocumentService {
                         .content(documentRequestDto.getContent())
 //                        .imageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl()))) // 리턴 타입이 byte[]
                         .workSpace(findWorkSpace)
+                        .user(userDetails.getUser())
                         .build();
 
         documentRepository.save(document);
-        return new ResponseDto<>(true, document, null);
+
+        assert findWorkSpace != null;
+        DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
+                .title(document.getTitle())
+                .content(document.getContent())
+                .nickname(document.getUser().getNickname())
+                .workSpaceId(findWorkSpace.getId())
+                .build();
+
+        return new ResponseDto<>(true, documentResponseDto, null);
     }
 
     // 문서 전체조회
     @Transactional
-    public ResponseDto<List<DocumentResponseDto>> getDocumentList(Long workSpaceId) {
-        List<Document> documentList = documentRepository.findByworkSpaceId(workSpaceId);
-        List<DocumentResponseDto> documentResponseDtoList = new ArrayList<>();
+    public ResponseDto<?> getDocumentList(Long workSpaceId) {
+        List<Document> documentList = documentRepository.findAllByWorkSpaceId(workSpaceId);
+        List<DocumentListResponseDto> documentResponseDtoList = new ArrayList<>();
 
-        for (Document document : documentList) {
-            documentResponseDtoList.add(DocumentResponseDto.builder()
-                            .id(document.getId())
-                            .title(document.getTitle())
-                            .content(document.getContent())
-                            .build());
-        }
+            for (Document document : documentList) {
+                documentResponseDtoList.add(DocumentListResponseDto.builder()
+                        .title(document.getTitle())
+                        .workSpaceId(workSpaceId)
+                        .nickname(document.getUser().getNickname())
+                        .build());
+            }
 
         return new ResponseDto<>(true, documentResponseDtoList, null);
     }
 
     // 문서 상세조회
     @Transactional
-    public ResponseDto<Document> getDocument(Long workSpaceId, Long id) {
-        WorkSpace findworkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
-        );
+    public ResponseDto<?> getDocument(Long workSpaceId, Long id) {
+
         Document document = documentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
 //        document.setWorkSpace(findworkSpace); // 할 팔요 없을 듯
-        return new ResponseDto<>(true, document, null);
+
+        DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
+                .workSpaceId(workSpaceId)
+                .nickname(document.getUser().getNickname())
+                .title(document.getTitle())
+                .content(document.getContent())
+                .build();
+
+        return new ResponseDto<>(true, documentResponseDto, null);
 
     }
 
-    // 문서 수정
+    // 문서 수정 -> 작성자가 아니면 수정 할 수 없도록? 아니면 아무나 수정하고 수정한 사람 이름이 나오게? 그러면 워크스페이스에 있는 사용자인지 확인해야함 이런 개씨발
     @Transactional
-    public ResponseDto<Document> updateDocument(Long workSpaceId,
+    public ResponseDto<?> updateDocument(Long workSpaceId,
                                                 Long id,
                                                 DocumentRequestDto documentRequestDto) {
 
-        WorkSpace workSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
-        );
         Document document = documentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
@@ -98,28 +114,31 @@ public class DocumentService {
         document.setTitle(documentRequestDto.getTitle());
         document.setContent(documentRequestDto.getContent());
 //        document.setImageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl())));
-        // 할 필요 없을듯
-//        document.setWorkSpace(workSpace);
+//        document.setWorkSpace(workSpace);// 할 필요 없을듯
 
         documentRepository.save(document);
 
-        return new ResponseDto<>(true, document, null);
+        DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
+                .workSpaceId(workSpaceId)
+                .nickname(document.getUser().getNickname())
+                .title(document.getTitle())
+                .content(document.getContent())
+                .build();
+
+        return new ResponseDto<>(true, documentResponseDto, null);
     }
 
 
-    // 문서 삭제
+    // 문서 삭제 -> 작성자가 아니면 삭제할 수 없도록? 아니면 롤을 가진사람이나 본인?
     @Transactional
-    public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
-        WorkSpace workSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 워크스페이스입니다.")
-        );
+    public ResponseDto<?> deleteDocument(Long workSpaceId, Long id) {
         Document document = documentRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 문서입니다.")
         );
 
         documentRepository.delete(document);
 
-        return new ResponseDto<>(true, "문서가 삭제 되었습니다", null);
+        return new ResponseDto<>(true,  "문서가 삭제 되었습니다", null);
     }
 
 }
@@ -136,3 +155,11 @@ public class DocumentService {
 // s3는 파일 업로드, 삭제, 디코딩 등이있음
 // url 디코딩하고 s3에 넣으면 url이 생성이 됨 그걸 리스폰스에 담아서 주면 끝
 // 업로드하면 s3 url을 주는거임
+
+// RESPONSE
+// 전체조회 할 때 -> List<DTO>
+// 상세조회 할 때 -> DTO
+// 생성할 때 -> DTO
+// 수정할 때 -> DTO
+// 삭제 할 때 -> String
+

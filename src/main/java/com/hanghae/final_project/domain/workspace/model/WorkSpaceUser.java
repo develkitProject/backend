@@ -1,7 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 import com.hanghae.final_project.domain.user.model.User;
-import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,5 +27,6 @@ public class WorkSpaceUser {
     @ManyToOne(fetch = FetchType.LAZY )
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
+
 
 }

@@ -1,6 +1,7 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
+import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
 import lombok.*;
 
@@ -27,6 +28,10 @@ public class Document extends Timestamped {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
@@ -46,4 +51,3 @@ public class Document extends Timestamped {
 //        this.imageUrl = documentRequestDto.getImageUrl();
     }
 }
-

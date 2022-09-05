@@ -1,7 +1,5 @@
 package com.hanghae.final_project.domain.workspace.model;
 
-
-import com.hanghae.final_project.domain.workspace.model.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
