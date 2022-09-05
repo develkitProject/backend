@@ -1,20 +1,19 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.hanghae.final_project.domain.user.model.User;
+import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Clob;
 
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
 @Entity
-public class Document extends Timestamped{
+public class Document extends Timestamped {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
@@ -29,9 +28,26 @@ public class Document extends Timestamped{
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
-    private String imageUrl = null;
-}
+//    private String imageUrl = null;
 
+    public Document(DocumentRequestDto documentRequestDto) {
+        this.title = documentRequestDto.getTitle();
+        this.content = documentRequestDto.getContent();
+//        this.imageUrl = documentRequestDto.getImageUrl();
+
+    }
+
+
+    public void update(DocumentRequestDto documentRequestDto) {
+        this.title = documentRequestDto.getTitle();
+        this.content = documentRequestDto.getContent();
+//        this.imageUrl = documentRequestDto.getImageUrl();
+    }
+}

@@ -12,6 +12,7 @@ import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.security.provider.JwtAuthenticationProvider;
 import com.hanghae.final_project.global.security.provider.JwtAuthorizationProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,6 +20,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -51,7 +53,6 @@ public class WebSecurityConfig {
     private final AuthorizationFailureHandler authorizationFailureHandler;
 
 
-
     @Bean
     public BCryptPasswordEncoder encodePassword() {
         return new BCryptPasswordEncoder();
@@ -67,12 +68,20 @@ public class WebSecurityConfig {
                         "/webjars/**",
                         "/swagger-resources/**",
                         "/swagger/**",
-                        "/h2-console/**");
+                        "/h2-console/**",
+                        "/ws/**",
+                        "/chat/**",
+                        "/resources/**",
+                        "/ws-stomp/**",
+                        "/pub/**",
+                        "/sub/**")
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 
     }
 
     @Bean
-    public SecurityFilterChain filterChain( HttpSecurity http, AuthenticationManagerBuilder auth) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManagerBuilder auth) throws Exception {
+
         //인증 (Authentication)**: 사용자 신원을 확인하는 행위
         //인가 (Authorization)**: 사용자 권한을 확인하는 행위
         auth
@@ -81,6 +90,8 @@ public class WebSecurityConfig {
 
         http.csrf().disable();
         http.cors().configurationSource(corsConfigurationSource());
+
+
 
         http
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
@@ -97,6 +108,7 @@ public class WebSecurityConfig {
                 .and()
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler);
+
 
         return http.build();
     }
@@ -127,6 +139,7 @@ public class WebSecurityConfig {
 
         // 회원 관리 API SKIP 적용
         skipPathList.add("POST,/api/members/signup");
+        skipPathList.add("POST,/api/members/email");
 
         skipPathList.add("GET,/api/v1/kakao/signup");
         skipPathList.add("GET,/user/kakao/callback/**");

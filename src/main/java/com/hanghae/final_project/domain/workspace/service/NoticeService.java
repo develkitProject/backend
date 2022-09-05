@@ -7,8 +7,8 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.error.errorcode.CustomErrorCode;
-import com.hanghae.final_project.global.error.exception.RestApiException;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -85,12 +85,12 @@ public class NoticeService {
     //workSpcaeId가 없을때 에러코드실행
     private WorkSpace isWorkspaceExist(Long workSpaceId) {
         return workSpaceRepository.findById(workSpaceId).orElseThrow(
-                () -> new RestApiException(CustomErrorCode.INVALID_ID));
+                () -> new RequestException(ErrorCode.INVALID_PARAMETER));
     }
     //NoticeId가 없을때 에러코드실행
     private Notice isNoticeExist(Long noticeId) {
         return noticeRepository.findById(noticeId).orElseThrow(
-                () -> new RestApiException(CustomErrorCode.INVALID_ID));
+                () -> new RequestException(ErrorCode.INVALID_PARAMETER));
     }
 
 
