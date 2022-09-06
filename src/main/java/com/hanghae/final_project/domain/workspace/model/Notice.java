@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.user.model.User;
 
 import com.hanghae.final_project.domain.workspace.dto.NoticeRequestDto;
@@ -31,11 +32,12 @@ public class Notice extends Timestamped {
     @Column(nullable = false)
     private String content;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
-
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -47,4 +49,3 @@ public class Notice extends Timestamped {
         this.content = noticeRequestDto.getContent();
     }
 }
-

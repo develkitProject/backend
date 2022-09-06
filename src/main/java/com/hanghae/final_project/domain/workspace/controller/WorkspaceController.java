@@ -3,11 +3,18 @@ package com.hanghae.final_project.domain.workspace.controller;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.exception.ErrorCode;
+import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.io.IOException;
 
 @Slf4j
 @RestController
@@ -19,9 +26,14 @@ public class WorkspaceController {
 
     // 워크 스페이스 생성
     @PostMapping
-    public ResponseDto<?> createWorkspace(@RequestBody WorkspaceRequestDto requestDto,
-                                          @AuthenticationPrincipal UserDetails userDetails) {
+    public ResponseDto<?> createWorkspace(@Valid @RequestBody WorkspaceRequestDto requestDto,
+                                          Errors errors,
+                                          @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         log.info("요청 메소드 [POST] /api/workspaces");
+        if (errors.hasErrors()) {
+            log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
+            throw new RequestException(ErrorCode.WORKSPACE_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
+        }
         return workspaceService.createWorkspace(requestDto, userDetails);
     }
 
@@ -35,9 +47,14 @@ public class WorkspaceController {
     // 워크스페이스 정보 수정
     @PutMapping("/{workspaceId}")
     public ResponseDto<?> updateWorkspace(@PathVariable Long workspaceId,
-                                          @RequestBody WorkspaceRequestDto requestDto,
-                                          @AuthenticationPrincipal UserDetails userDetails) {
+                                          @Valid @RequestBody WorkspaceRequestDto requestDto,
+                                          Errors errors,
+                                          @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         log.info("요청 메소드 [PUT] /api/workspaces/" + workspaceId);
+        if (errors.hasErrors()) {
+            log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
+            throw new RequestException(ErrorCode.WORKSPACE_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
+        }
         return workspaceService.updateWorkspace(workspaceId, requestDto, userDetails);
     }
 
@@ -81,4 +98,11 @@ public class WorkspaceController {
     public ResponseDto<?> getAllWorkspaces() {
         return workspaceService.getAllWorkspaces();
     }
+
+    // workspace의 공지사항과 게시글 목록 반환
+    @GetMapping("/{workspaceId}/main")
+    public ResponseDto<?> getMain(@PathVariable Long workspaceId) {
+        return workspaceService.getMain(workspaceId);
+    }
+
 }
