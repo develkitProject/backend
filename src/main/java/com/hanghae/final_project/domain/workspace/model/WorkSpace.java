@@ -12,10 +12,10 @@ import java.util.List;
 
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
-@Builder
 @Getter
 @Entity
+@AllArgsConstructor
+@Builder
 public class WorkSpace extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,6 +28,9 @@ public class WorkSpace extends Timestamped implements Serializable {
     @Column(nullable = false)
     private String content;
 
+    @Column(nullable = false)
+    private String imageUrl;
+
     /*@JsonIgnore
     @OneToOne(mappedBy = "workSpace", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     private Invitation invitation;*/
@@ -36,20 +39,18 @@ public class WorkSpace extends Timestamped implements Serializable {
     @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<WorkSpaceUser> workSpaceUsers = new ArrayList<>();
 
-    public static WorkSpace of(WorkspaceRequestDto requestDto) {
+    @Builder
+    public static WorkSpace of(WorkspaceRequestDto requestDto, String imageUrl) {
         return WorkSpace.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .imageUrl(imageUrl)
                 .build();
     }
 
-    public WorkSpace(WorkspaceRequestDto requestDto) {
+    public void update(WorkspaceRequestDto requestDto, String imageUrl) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-    }
-
-    public void update(WorkspaceRequestDto requestDto) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+        this.imageUrl = imageUrl;
     }
 }

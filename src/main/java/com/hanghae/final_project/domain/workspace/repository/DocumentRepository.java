@@ -6,6 +6,7 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DocumentRepository extends JpaRepository<Document, Long> {
 
@@ -14,4 +15,7 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     Document findByWorkSpaceId(Long workSpaceId);
 
     List<Document> findAllByWorkSpaceId(Long workSpaceId);
+
+
+    List<Document> findAllByWorkSpaceIdOrderByCreatedAtDesc(Long workspaceId);
 }
