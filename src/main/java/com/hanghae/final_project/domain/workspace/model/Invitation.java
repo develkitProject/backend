@@ -25,4 +25,11 @@ public class Invitation {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
+
+    public static Invitation of(String invitationCode,WorkSpace workSpace){
+        return Invitation.builder()
+                .invite(invitationCode)
+                .workSpace(workSpace)
+                .build();
+    }
 }
