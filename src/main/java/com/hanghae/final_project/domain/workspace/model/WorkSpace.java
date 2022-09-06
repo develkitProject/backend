@@ -1,11 +1,15 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -28,9 +32,9 @@ public class WorkSpace extends Timestamped implements Serializable {
     @OneToOne(mappedBy = "workSpace", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY, orphanRemoval = true)
     private Invitation invitation;*/
 
-    /*@JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
-    private List<WorkSpaceUser> workSpaceUsers = new ArrayList<>();*/
+    private List<WorkSpaceUser> workSpaceUsers = new ArrayList<>();
 
     public static WorkSpace of(WorkspaceRequestDto requestDto) {
         return WorkSpace.builder()
