@@ -2,7 +2,6 @@ package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.domain.websocket.chat.ChatRoomService;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -30,7 +29,6 @@ public class WorkspaceService {
     private final WorkspaceUserRepository workspaceUserRepository;
     private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
-    private final ChatRoomService chatRoomService;
 
     @Transactional
     public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) {
@@ -46,7 +44,6 @@ public class WorkspaceService {
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
         // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
-        chatRoomService.createChatRoom(workSpace.getTitle());
 
         return ResponseDto.success(savedWorkspaceUser);
     }

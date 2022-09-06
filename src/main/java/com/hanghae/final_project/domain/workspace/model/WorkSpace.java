@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.workspace.model;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
 
