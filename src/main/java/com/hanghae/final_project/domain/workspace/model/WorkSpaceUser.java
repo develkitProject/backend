@@ -30,6 +30,7 @@ public class WorkSpaceUser {
     private WorkSpace workSpace;
 
 
+
     public static WorkSpaceUser of(User user, WorkSpace workSpace) {
         return WorkSpaceUser.builder()
                 .user(user)

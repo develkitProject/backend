@@ -52,6 +52,7 @@ dependencies {
 	// aws
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
 
+
 	// slf4j for test
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'

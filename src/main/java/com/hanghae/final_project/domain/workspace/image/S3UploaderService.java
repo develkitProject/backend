@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,7 +17,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Slf4j
-@Service
 @Component
 @RequiredArgsConstructor
 public class S3UploaderService {
@@ -28,7 +26,7 @@ public class S3UploaderService {
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;  // S3 버킷 이름
 
-    public String upload(String file, String dirName) throws IOException {
+    public String upload(String file, String dirName) throws IOException { // 파일명, 경로이름
         File uploadFile = convert(file)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 

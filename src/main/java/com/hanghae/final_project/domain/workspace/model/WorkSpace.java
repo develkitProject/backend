@@ -1,8 +1,7 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.hanghae.final_project.domain.websocket.chat.ChatRoom;
+
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
 
@@ -16,7 +15,7 @@ import java.util.List;
 @Builder
 @Getter
 @Entity
-public class WorkSpace extends Timestamped {
+public class WorkSpace extends Timestamped implements Serializable {
 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
