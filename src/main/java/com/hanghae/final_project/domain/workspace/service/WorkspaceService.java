@@ -4,6 +4,7 @@ import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
+import com.hanghae.final_project.domain.workspace.image.S3UploaderService;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
@@ -16,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -29,15 +32,26 @@ public class WorkspaceService {
     private final WorkspaceUserRepository workspaceUserRepository;
     private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
+    private final S3UploaderService s3UploaderService;
 
     @Transactional
-    public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) {
+    public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) throws IOException{
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         // 워크 스페이스를 생성하고, 자신의 정보를 넣어줌
 //        WorkSpace workSpace = WorkSpace.of(requestDto);
-        WorkSpace workSpace = new WorkSpace(requestDto);
+
+        // 이미지가 올라와있지 않다면, workspaceImage를 기본값으로. 변경 x
+        // 이미지가 올라와있다면, upload를 통해서
+
+
+        String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
+        if (requestDto.getImage() != null) {
+            imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
+        }
+
+        WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl);
         WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
@@ -65,7 +79,7 @@ public class WorkspaceService {
 
     // 워크스페이스 정보 수정
     @Transactional
-    public ResponseDto<?> updateWorkspace(Long workspaceId, WorkspaceRequestDto requestDto, UserDetails userDetails) {
+    public ResponseDto<?> updateWorkspace(Long workspaceId, WorkspaceRequestDto requestDto, UserDetails userDetails)throws IOException {
         // 1. 유저 가지고오기
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
@@ -81,7 +95,15 @@ public class WorkspaceService {
         }
 
         // 3. 데이터 수정하기
-        workspace.update(requestDto);
+        String imageUrl = workspace.getImageUrl();
+        if (requestDto.getImage() != null) {
+            String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
+            s3UploaderService.deleteImage(deleteUrl);
+
+            imageUrl = s3UploaderService.upload(requestDto.getImage(), "static");
+        }
+
+        workspace.update(requestDto, imageUrl);
 
         return ResponseDto.success(workspace);
     }
@@ -150,6 +172,9 @@ public class WorkspaceService {
             throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
         }
 
+        String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("static"));
+        s3UploaderService.deleteImage(deleteUrl);
+
         workspaceRepository.delete(workspaceById);
         workspaceUserRepository.delete(workSpaceUser);
 
@@ -161,4 +186,5 @@ public class WorkspaceService {
         List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
         return ResponseDto.success(allWorkspaces);
     }
+
 }

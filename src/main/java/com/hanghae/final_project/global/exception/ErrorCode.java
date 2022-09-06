@@ -49,6 +49,7 @@ public enum ErrorCode {
     NO_PERMISSION_TO_DELETE_NOTICE_400(HttpStatus.FORBIDDEN, "공지 사항 삭제 권한이 없습니다."),
 
     // Workspace 관련
+    WORKSPACE_INFO_NOT_FORMATTED(HttpStatus.NOT_ACCEPTABLE, ""),
     WORKSPACE_NOT_FOUND_404(HttpStatus.NOT_FOUND, "해당 WORKSPACE가 존재하지 않습니다"),
     WORKSPACE_IN_USER_NOT_FOUND_404(HttpStatus.NOT_FOUND, "해당 WORKSPACE에 존재하는 사용자가 아닙니다"),
     WORKSPACE_DUPLICATION_409(HttpStatus.CONFLICT, "해당 사용자가 WORKSPACE에 존재합니다"),
