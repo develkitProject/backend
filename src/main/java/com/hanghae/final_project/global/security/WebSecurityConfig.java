@@ -64,6 +64,7 @@ public class WebSecurityConfig {
                 .ignoring()
                 .antMatchers( //Swagger 문서 읽기위한 요청허용
                         "/swagger-ui/**",
+                        "/swagger-ui.html",
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-resources/**",

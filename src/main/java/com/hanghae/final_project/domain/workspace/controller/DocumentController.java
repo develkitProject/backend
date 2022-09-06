@@ -4,10 +4,10 @@ import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.security.UserDetailsImpl;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
 
 @RequiredArgsConstructor
 @RestController
