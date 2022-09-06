@@ -3,10 +3,16 @@ package com.hanghae.final_project.domain.workspace.service;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
+import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.image.S3UploaderService;
+import com.hanghae.final_project.domain.workspace.model.Document;
+import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
+import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
+import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
@@ -23,6 +29,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -33,6 +40,8 @@ public class WorkspaceService {
     private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final S3UploaderService s3UploaderService;
+    private final DocumentRepository documentRepository;
+    private final NoticeRepository noticeRepository;
 
     @Transactional
     public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) throws IOException{
@@ -47,7 +56,7 @@ public class WorkspaceService {
 
 
         String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
-        if (requestDto.getImage() != null) {
+        if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
         }
 
@@ -96,7 +105,7 @@ public class WorkspaceService {
 
         // 3. 데이터 수정하기
         String imageUrl = workspace.getImageUrl();
-        if (requestDto.getImage() != null) {
+        if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
             s3UploaderService.deleteImage(deleteUrl);
 
@@ -135,7 +144,7 @@ public class WorkspaceService {
         // 2. workspaceUser에 해당하는 User들을 모두 꺼내오기
 
         List<WorkSpaceUser> workSpaceUsers = workspaceUserRepository.findAllByWorkSpaceId(workspaceId);
-        WorkspaceResponseDto responseDto = new WorkspaceResponseDto(workSpaceUsers.stream().map(list -> list.getUser()).collect(Collectors.toList()));
+        UserResponseDto responseDto = new UserResponseDto(workSpaceUsers.stream().map(list -> list.getUser()).collect(Collectors.toList()));
 
         return ResponseDto.success(responseDto);
     }
@@ -187,4 +196,11 @@ public class WorkspaceService {
         return ResponseDto.success(allWorkspaces);
     }
 
+    public ResponseDto<?> getMain(Long workspaceId) {
+        List<Document> documents = documentRepository.findAllByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).stream().limit(4).collect(Collectors.toList());
+        Notice firstNotice = noticeRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).orElse(null);
+
+        MainResponseDto responseDto = MainResponseDto.createResponseDto(documents, firstNotice);
+        return ResponseDto.success(responseDto);
+    }
 }

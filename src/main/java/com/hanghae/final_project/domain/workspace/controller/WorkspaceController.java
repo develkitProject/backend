@@ -99,4 +99,10 @@ public class WorkspaceController {
         return workspaceService.getAllWorkspaces();
     }
 
+    // workspace의 공지사항과 게시글 목록 반환
+    @GetMapping("/{workspaceId}/main")
+    public ResponseDto<?> getMain(@PathVariable Long workspaceId) {
+        return workspaceService.getMain(workspaceId);
+    }
+
 }
