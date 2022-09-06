@@ -38,8 +38,10 @@ public class InvitationService {
         //해당 워크스페이스에 존재하는 유저인지 확인
         WorkSpaceUser workSpaceUser = validateUser(workspaceId, userDetails);
 
+        //code 만들기
         String invitationCode = makeCode(workspaceId,workSpace);
 
+        //dto 생성
         ResInvitationDto resInvitationDto =ResInvitationDto.of(
                 workSpaceUser.getWorkSpace().getId(),
                 invitationCode
