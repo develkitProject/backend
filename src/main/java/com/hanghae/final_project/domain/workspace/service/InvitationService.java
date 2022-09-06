@@ -6,7 +6,8 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import com.hanghae.final_project.domain.workspace.repository.InvitationRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserRepository;
+
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
@@ -26,7 +27,7 @@ public class InvitationService {
 
     private final InvitationRepository invitationRepository;
 
-    private final WorkspaceUserRepository workspaceUserRepository;
+    private final WorkSpaceUserRepository workspaceUserRepository;
 
     private final WorkSpaceRepository workSpaceRepository;
 

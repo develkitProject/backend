@@ -68,14 +68,17 @@ public class WebSecurityConfig {
                         "/webjars/**",
                         "/swagger-resources/**",
                         "/swagger/**",
-                        "/h2-console/**",
-                        "/ws/**",
-                        "/chat/**",
-                        "/resources/**",
-                        "/ws-stomp/**",
-                        "/pub/**",
-                        "/sub/**")
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+                        "/h2-console/**"
+                        //"/ws/**",
+                        //"/chat/**",
+                        //"/resources/**",
+                        //"/ws-stomp/**"
+                        //"/pub/**",
+                        //"/sub/**"
+                        //"/stomp/chat/**"
+        );
+        //이건 무슨의미인가요?
+//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 
     }
 
@@ -140,11 +143,13 @@ public class WebSecurityConfig {
         // 회원 관리 API SKIP 적용
         skipPathList.add("POST,/api/members/signup");
         skipPathList.add("POST,/api/members/email");
-
-        skipPathList.add("GET,/api/v1/kakao/signup");
         skipPathList.add("GET,/user/kakao/callback/**");
 
-        // 각 기능의 조회
+
+        //WebSocket 관련 -> Filter 역할 Intercepter로 대신함.
+        skipPathList.add("GET,/stomp/chat/**");
+        skipPathList.add("GET,/chat/**");
+
 
         //기본 페이지 설정
         skipPathList.add("GET,/");

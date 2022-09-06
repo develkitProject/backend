@@ -6,14 +6,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class LoginDto {
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+public class KakaoSocialDto {
 
     private String username;
+    private String nickname;
     private String profileImage;
-
-
 }

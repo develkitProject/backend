@@ -30,6 +30,7 @@ public final class JwtTokenUtils {
 
 
 
+
     public static String generateJwtToken(UserDetailsImpl userDetails){
         String token = null;
 
@@ -51,4 +52,6 @@ public final class JwtTokenUtils {
     private static Algorithm generateAlgorithm(){
         return Algorithm.HMAC256(JWT_SECRET);
     }
+
+
 }
