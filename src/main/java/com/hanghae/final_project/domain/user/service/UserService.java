@@ -11,6 +11,7 @@ import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,7 +52,15 @@ public class UserService {
 
     //이메일 중복체크
     public ResponseEntity<?> checkEmail(SignupDto signupDto) {
-        checkDuplicate(signupDto.getUsername());
+        Optional<User> found = userRepository.findByUsername(signupDto.getUsername());
+
+        if (found.isPresent()) {
+            return new ResponseEntity<>(ResponseDto.fail(
+                            ErrorCode.USER_LOGINID_DUPLICATION_409.name(),
+                            ErrorCode.USER_LOGINID_DUPLICATION_409.getMessage()),
+                    HttpStatus.OK
+            );
+        }
         return new ResponseEntity<>(ResponseDto.success(null),HttpStatus.OK);
     }
 
@@ -99,7 +108,7 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(username);
 
         if (found.isPresent()) {
-            throw new RequestException(ErrorCode.USER_DUPLICATED);
+          throw new RequestException(ErrorCode.USER_LOGINID_DUPLICATION_409);
         }
     }
 
