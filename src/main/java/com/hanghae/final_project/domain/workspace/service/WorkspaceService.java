@@ -49,6 +49,9 @@ public class WorkspaceService {
         //redis에 방정보 올리기
         chatRoomRepository.createChatRoom(savedWorkspace.getId().toString());
 
+        // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
+
+
         return ResponseDto.success(savedWorkspaceUser);
     }
 
@@ -138,5 +141,31 @@ public class WorkspaceService {
 
         workspaceUserRepository.delete(workSpaceUser);
         return ResponseDto.success(true);
+    }
+
+    @Transactional
+    public ResponseDto<?> deleteWorkspace(Long workspaceId, UserDetails userDetails) {
+        //
+        User user = userRepository.findByUsername(userDetails.getUsername()).get();
+
+        WorkSpace workspaceById = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workspaceById == null)
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+
+        WorkSpaceUser workSpaceUser = workspaceUserRepository.findByUserAndWorkSpaceId(user, workspaceId).orElse(null);
+        if (workSpaceUser == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
+        }
+
+        workspaceRepository.delete(workspaceById);
+        workspaceUserRepository.delete(workSpaceUser);
+
+        return ResponseDto.success(true);
+    }
+
+    public ResponseDto<?> getAllWorkspaces() {
+
+        List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
+        return ResponseDto.success(allWorkspaces);
     }
 }

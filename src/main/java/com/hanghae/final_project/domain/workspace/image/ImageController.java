@@ -16,7 +16,7 @@ public class ImageController {
 
     @PostMapping("/api/images")
     public String upload(@RequestParam("images") String images) throws IOException {
-        s3UploaderService.upload(images, "static");
+        s3UploaderService.upload(images, "upload");
         return "test";
     }
 
