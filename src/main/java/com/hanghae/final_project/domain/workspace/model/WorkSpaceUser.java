@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -28,7 +29,6 @@ public class WorkSpaceUser {
     @ManyToOne
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
-
 
 
     public static WorkSpaceUser of(User user, WorkSpace workSpace) {

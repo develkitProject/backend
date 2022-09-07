@@ -1,7 +1,6 @@
 package com.hanghae.final_project.domain.workspace.model;
 
 
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
@@ -13,6 +12,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter

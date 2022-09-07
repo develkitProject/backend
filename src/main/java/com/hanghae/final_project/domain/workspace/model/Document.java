@@ -8,6 +8,7 @@ import lombok.*;
 
 import javax.persistence.*;
 
+
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -30,6 +31,7 @@ public class Document extends Timestamped {
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
+
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -37,6 +39,7 @@ public class Document extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
+
 
 //    private String imageUrl = null;
 

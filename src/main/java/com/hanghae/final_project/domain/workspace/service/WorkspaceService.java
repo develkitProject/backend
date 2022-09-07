@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.service;
 
+import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
@@ -15,7 +16,7 @@ import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkspaceUserRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
@@ -37,12 +38,14 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class WorkspaceService {
-    private final WorkspaceUserRepository workspaceUserRepository;
+    private final WorkSpaceUserRepository workspaceUserRepository;
     private final WorkSpaceRepository workspaceRepository;
     private final UserRepository userRepository;
     private final S3UploaderService s3UploaderService;
     private final DocumentRepository documentRepository;
     private final NoticeRepository noticeRepository;
+
+    private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) throws IOException{
@@ -50,6 +53,7 @@ public class WorkspaceService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         // 워크 스페이스를 생성하고, 자신의 정보를 넣어줌
+
 //        WorkSpace workSpace = WorkSpace.of(requestDto);
 
         // 이미지가 올라와있지 않다면, workspaceImage를 기본값으로. 변경 x
@@ -71,6 +75,7 @@ public class WorkspaceService {
         // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
 
         return ResponseDto.success(responseDto);
+
     }
 
     // 참여한 모든 workspace 조회
