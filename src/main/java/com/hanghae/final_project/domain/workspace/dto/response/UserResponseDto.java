@@ -1,18 +1,9 @@
 package com.hanghae.final_project.domain.workspace.dto.response;
 
-import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
-import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
 
 @Getter
 @AllArgsConstructor

@@ -189,8 +189,13 @@ public class WorkspaceService {
             throw new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404);
         }
 
-        String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("static"));
-        s3UploaderService.deleteImage(deleteUrl);
+        try {
+            String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("static"));
+            s3UploaderService.deleteImage(deleteUrl);
+
+        } catch (IndexOutOfBoundsException e) {
+            log.info("기본 이미지");
+        }
 
         workspaceRepository.delete(workspaceById);
         workspaceUserRepository.delete(workSpaceUser);
