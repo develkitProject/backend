@@ -46,8 +46,6 @@ public class User extends Timestamped implements Serializable {
     @Enumerated(value = EnumType.STRING)
     private UserSocialEnum social;
 
-
-
     public static User of(SignupDto signupDto, BCryptPasswordEncoder passwordEncoder){
         return User.builder()
                 .profileImage(STANDARD_IMAGE_ROUTE)

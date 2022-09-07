@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
@@ -68,9 +69,10 @@ public class WorkspaceController {
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @PostMapping("/join/{workspaceId}")
     public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
+                                                @RequestBody WorkspaceJoinRequestDto requestDto,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
         log.info("요청 메소드 [POST] /api/workspaces/join/" + workspaceId);
-        return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
+        return workspaceService.joinMemberInWorkspace(workspaceId, requestDto, userDetails);
     }
 
     //워크스페이스 내 회원 조회
