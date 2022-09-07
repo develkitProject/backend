@@ -1,6 +1,5 @@
 package com.hanghae.final_project.domain.websocket.chat;
 
-import com.hanghae.final_project.domain.websocket.redis.RedisSubscriber;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -21,8 +20,6 @@ public class ChatRoomService {
     // 채팅방에 발행되는 메시지를 처리할 listener
     private final RedisMessageListenerContainer redisMessageListener;
 
-    // 구독 처리 서비스
-    private final RedisSubscriber redisSubscriber;
     private final ChatRoomRepository chatRoomRepository;
 
     //Redis
@@ -42,22 +39,6 @@ public class ChatRoomService {
         ChatRoom chatRoom = ChatRoom.create(name);
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
         return savedChatRoom;
-    }
-
-    //ChannelTopic에 들어갈 때는 roomId가 String
-    /*
-    * 채팅방 입장 : redis에 topic을 만들고 pub/sub 통신을 하기 위해 리스너를 설정한다*/
-    public void enterChatRoom(String roomId) {
-        ChannelTopic topic = topics.get(roomId);
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);
-            topics.put(roomId, topic);
-        }
-    }
-
-    public ChannelTopic getTopic(String roomId) {
-        return topics.get(roomId);
     }
 
     public List<ChatRoom> findAllRoom() {
