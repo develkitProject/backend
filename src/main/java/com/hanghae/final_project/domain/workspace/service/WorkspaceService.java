@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
@@ -59,14 +60,13 @@ public class WorkspaceService {
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
         }
-
         WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl, user);
         WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace(), savedWorkspaceUser.getUser());
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace());
 
         // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
 
@@ -80,7 +80,7 @@ public class WorkspaceService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
-        List<WorkspaceResponseDto> responseDtos = repositories.stream().map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace(), workSpaceUser.getUser())).collect(Collectors.toList());
+        List<WorkspaceResponseDto> responseDtos = repositories.stream().map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace())).collect(Collectors.toList());
 
         return ResponseDto.success(responseDtos);
     }
@@ -112,14 +112,14 @@ public class WorkspaceService {
         }
 
         workspace.update(requestDto, imageUrl);
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workspace, workspace.getCreatedBy());
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workspace);
 
         return ResponseDto.success(responseDto);
     }
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @Transactional
-    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, UserDetails userDetails) {
+    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
         if (workSpace == null) {
@@ -132,10 +132,14 @@ public class WorkspaceService {
             throw new RequestException(ErrorCode.WORKSPACE_DUPLICATION_409);
         }
 
+        if (!requestDto.getCode().equals(workSpace.getInvite_code())) {
+            throw new RequestException(ErrorCode.WORKSPACE_INVITATION_CODE_NOT_SAME);
+        }
+
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);
 
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace(), workSpaceUser.getUser());
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace());
 
         return ResponseDto.success(responseDto);
     }
@@ -197,8 +201,8 @@ public class WorkspaceService {
     public ResponseDto<?> getAllWorkspaces() {
 
         List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
-        WorkspaceResponseDto.createResponseDto(allWorkspaces)
-        return ResponseDto.success(allWorkspaces);
+        List<WorkspaceResponseDto> responseDtos = allWorkspaces.stream().map(workSpace -> WorkspaceResponseDto.createResponseDto(workSpace)).collect(Collectors.toList());
+        return ResponseDto.success(responseDtos);
     }
 
     public ResponseDto<?> getMain(Long workspaceId) {

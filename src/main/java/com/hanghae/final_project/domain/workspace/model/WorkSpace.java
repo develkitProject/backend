@@ -12,6 +12,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
@@ -46,6 +47,10 @@ public class WorkSpace extends Timestamped implements Serializable {
     @ManyToOne
     private User createdBy;
 
+    @Column(nullable = false)
+    private String invite_code;
+
+
     @Builder
     public static WorkSpace of(WorkspaceRequestDto requestDto, String imageUrl, User user) {
         return WorkSpace.builder()
@@ -53,6 +58,7 @@ public class WorkSpace extends Timestamped implements Serializable {
                 .content(requestDto.getContent())
                 .createdBy(user)
                 .imageUrl(imageUrl)
+                .invite_code(UUID.randomUUID().toString())
                 .build();
     }
 

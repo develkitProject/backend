@@ -32,6 +32,7 @@ public class WorkspaceResponseDto {
         private String title;
         private String content;
         private String imageUrl;
+        private String invite_code;
         private Users createdBy;
 
         /*public Workspaces(WorkSpace workSpace, User user) {
@@ -46,6 +47,7 @@ public class WorkspaceResponseDto {
             this.title = workSpace.getTitle();
             this.content = workSpace.getContent();
             this.imageUrl = workSpace.getImageUrl();
+            this.invite_code = workSpace.getInvite_code();
             this.createdBy = new Users(workSpace.getCreatedBy());
         }
 
@@ -54,7 +56,6 @@ public class WorkspaceResponseDto {
         static class Users {
             private Long id;
             private String username;
-            private String password;
             private String nickname;
             private String profileImage;
             private UserSocialEnum social;
