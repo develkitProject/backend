@@ -31,4 +31,6 @@ public class Alarm {
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 
+
+
 }

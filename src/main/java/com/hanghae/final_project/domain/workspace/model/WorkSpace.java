@@ -3,8 +3,10 @@ package com.hanghae.final_project.domain.workspace.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -39,11 +41,17 @@ public class WorkSpace extends Timestamped implements Serializable {
     @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<WorkSpaceUser> workSpaceUsers = new ArrayList<>();
 
+    // workspace를 만든 사람의 정보
+    @JoinColumn(name = "createdByUser_id")
+    @ManyToOne
+    private User createdBy;
+
     @Builder
-    public static WorkSpace of(WorkspaceRequestDto requestDto, String imageUrl) {
+    public static WorkSpace of(WorkspaceRequestDto requestDto, String imageUrl, User user) {
         return WorkSpace.builder()
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .createdBy(user)
                 .imageUrl(imageUrl)
                 .build();
     }

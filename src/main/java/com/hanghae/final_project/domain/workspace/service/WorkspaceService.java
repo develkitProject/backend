@@ -60,15 +60,17 @@ public class WorkspaceService {
             imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
         }
 
-        WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl);
+        WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl, user);
         WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace(), savedWorkspaceUser.getUser());
+
         // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
 
-        return ResponseDto.success(savedWorkspaceUser);
+        return ResponseDto.success(responseDto);
     }
 
     // 참여한 모든 workspace 조회
@@ -77,13 +79,10 @@ public class WorkspaceService {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
-        List<WorkSpaceUser> allWorkSpaceUserByUser = workspaceUserRepository.findAllByUser(user);
+        List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
+        List<WorkspaceResponseDto> responseDtos = repositories.stream().map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace(), workSpaceUser.getUser())).collect(Collectors.toList());
 
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.builder()
-                .workSpaces(allWorkSpaceUserByUser.stream().map(list -> list.getWorkSpace()).collect(Collectors.toList()))
-                .build();
-
-        return ResponseDto.success(responseDto);
+        return ResponseDto.success(responseDtos);
     }
 
     // 워크스페이스 정보 수정
@@ -113,8 +112,9 @@ public class WorkspaceService {
         }
 
         workspace.update(requestDto, imageUrl);
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workspace, workspace.getCreatedBy());
 
-        return ResponseDto.success(workspace);
+        return ResponseDto.success(responseDto);
     }
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
@@ -135,7 +135,9 @@ public class WorkspaceService {
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);
 
-        return ResponseDto.success(workSpaceUser);
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace(), workSpaceUser.getUser());
+
+        return ResponseDto.success(responseDto);
     }
 
     //워크스페이스 내 회원 조회
@@ -144,9 +146,11 @@ public class WorkspaceService {
         // 2. workspaceUser에 해당하는 User들을 모두 꺼내오기
 
         List<WorkSpaceUser> workSpaceUsers = workspaceUserRepository.findAllByWorkSpaceId(workspaceId);
-        UserResponseDto responseDto = new UserResponseDto(workSpaceUsers.stream().map(list -> list.getUser()).collect(Collectors.toList()));
+//        UserResponseDto responseDto = new UserResponseDto(workSpaceUsers.stream().map(list -> list.getUser()).collect(Collectors.toList()));
+        List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
+        List<UserResponseDto> userResponseDtos = users.stream().map(user -> UserResponseDto.createResponseDto(user)).collect(Collectors.toList());
 
-        return ResponseDto.success(responseDto);
+        return ResponseDto.success(userResponseDtos);
     }
 
     //워크스페이스 나가기
@@ -193,6 +197,7 @@ public class WorkspaceService {
     public ResponseDto<?> getAllWorkspaces() {
 
         List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
+        WorkspaceResponseDto.createResponseDto(allWorkspaces)
         return ResponseDto.success(allWorkspaces);
     }
 
