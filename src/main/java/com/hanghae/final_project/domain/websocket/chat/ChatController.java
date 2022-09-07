@@ -1,6 +1,7 @@
 package com.hanghae.final_project.domain.websocket.chat;
 
 import com.hanghae.final_project.domain.websocket.redis.RedisPublisher;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;

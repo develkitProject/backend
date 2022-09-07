@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.websocket.chat;
 
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,6 +12,7 @@ import java.util.List;
 
 // import 생략...
 
+@Api(tags = "WorkSpace Chat")
 @RequiredArgsConstructor
 @Controller
 @RequestMapping("/chat")

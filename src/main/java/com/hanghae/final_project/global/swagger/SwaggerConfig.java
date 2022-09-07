@@ -23,8 +23,12 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     //스웨거 페이지에 소개될 설명들
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("cheoljun")
-                .description("Image EXAMPLE")
+                .title("develkit")
+                .description("develkit api")
+                .termsOfServiceUrl("https://www.notion.so/8-C-4-fa3d156f49484e0abe24e588cd51d19c")
+                .contact(new Contact("Contact", "https://www.notion.so/8-C-4-fa3d156f49484e0abe24e588cd51d19c", "4teamhanhhae99@gmail.com"))
+//                .license("license")
+//                .licenseUrl("업서요")
                 .build();
     }
 
@@ -32,10 +36,10 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
     public Docket commonApi() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .ignoredParameterTypes(AuthenticationPrincipal.class)
-                .groupName("swg-group1")//빈설정을 여러개 해줄경우 구분하기 위한 구분자.
+                .groupName("develkit")//빈설정을 여러개 해줄경우 구분하기 위한 구분자.
                 .useDefaultResponseMessages(false)
                 .select()//apis, paths를 사용해주기 위한 builder
-                .apis(RequestHandlerSelectors.basePackage("com.hanghae.final_project"))
+                .apis(RequestHandlerSelectors.basePackage("com.hanghae.final_project"))// @RestController를 돌면서 다 찾음
                 .paths(PathSelectors.any())//스웨거에서 보여줄 api 필터링
                 .build()
                 .apiInfo(apiInfo())//스웨거 설명
