@@ -1,6 +1,6 @@
 application.properties
 application.yml
-*.yml
+
 HELP.md
 .gradle
 build/

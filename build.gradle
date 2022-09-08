@@ -87,6 +87,9 @@ dependencies {
 	implementation ('it.ozimov:embedded-redis:0.7.3') { exclude group: "org.slf4j", module: "slf4j-simple" }
 
 }
+jar{
+	enabled=false
+}
 
 tasks.named('test') {
 	useJUnitPlatform()
