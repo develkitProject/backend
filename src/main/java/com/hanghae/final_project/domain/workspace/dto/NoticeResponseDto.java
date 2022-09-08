@@ -14,6 +14,7 @@ public class NoticeResponseDto {
     private String content;
     private Long workspaceId;
     private String nickname;
+    private String createdAt;
 
     public static NoticeResponseDto of(Notice notice) {
         return NoticeResponseDto.builder()
@@ -21,6 +22,8 @@ public class NoticeResponseDto {
                 .workspaceId(notice.getWorkSpace().getId())
                 .title(notice.getTitle())
                 .content(notice.getContent())
+                .nickname(notice.getUser().getNickname())
+                .createdAt(notice.getCreatedAt())
                 .build();
     }
 }
