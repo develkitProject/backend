@@ -45,10 +45,9 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/*
-<<<<<<< HEAD
-src/test/**
-=======
+src/main/resources/templates/*
+application.yml
+application-secret.yml
 src/test/**
 
 caches/**
@@ -56,4 +55,3 @@ wrapper/**
 daemon/**
 native/**
 .tmp/**
->>>>>>> ingwon
