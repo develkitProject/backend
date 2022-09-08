@@ -1,15 +1,19 @@
 package com.hanghae.final_project.domain.workspace.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.workspace.model.Document;
 import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
+import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,16 +21,18 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class MainResponseDto {
+    private Workspaces workspaces;
     private List<Documents> documents;
     private Notices notices;
 
-    public static MainResponseDto createResponseDto(List<Document> documents, Notice notice) {
+    public static MainResponseDto createResponseDto(WorkSpace workSpace, List<Document> documents, Notice notice) {
         List<Documents> documentsList = documents.stream().map(document -> createDocument(document)).collect(Collectors.toList());
+        Workspaces workspaces = new Workspaces(workSpace);
         if (notice == null) {
-            return new MainResponseDto(documentsList, null);
+            return new MainResponseDto(workspaces, documentsList, null);
         }
         Notices notices = new Notices(notice);
-        return new MainResponseDto(documentsList, notices);
+        return new MainResponseDto(workspaces, documentsList, notices);
     }
 
     public static Documents createDocument(Document document) {
@@ -68,7 +74,6 @@ public class MainResponseDto {
                 this.social = user.getSocial();
             }
         }
-
     }
 
     @Getter
@@ -85,6 +90,43 @@ public class MainResponseDto {
             this.title = notice.getTitle();
             this.content = notice.getContent();
             this.imageUrl = notice.getImageUrl();
+        }
+    }
+
+    @Getter
+    @AllArgsConstructor
+    static class Workspaces {
+        private Long id;
+        private String title;
+        private String content;
+        private String imageUrl;
+        private Users createdBy;
+        private String invite_code;
+
+        public Workspaces(WorkSpace workSpace) {
+            this.id = workSpace.getId();
+            this.title = workSpace.getTitle();
+            this.content = workSpace.getContent();
+            this.imageUrl = workSpace.getImageUrl();
+            this.invite_code = workSpace.getInvite_code();
+            this.createdBy = new Users(workSpace.getCreatedBy());
+        }
+
+        @Getter
+        public class Users {
+            private Long id;
+            private String username;
+            private String nickname;
+            private String profileImage;
+            private UserSocialEnum social;
+
+            public Users(User user) {
+                this.id = user.getId();
+                this.username = user.getUsername();
+                this.nickname = user.getNickname();
+                this.profileImage = user.getProfileImage();
+                this.social = user.getSocial();
+            }
         }
     }
 }

@@ -50,7 +50,6 @@ public class WorkSpace extends Timestamped implements Serializable {
     @Column(nullable = false)
     private String invite_code;
 
-
     @Builder
     public static WorkSpace of(WorkspaceRequestDto requestDto, String imageUrl, User user) {
         return WorkSpace.builder()

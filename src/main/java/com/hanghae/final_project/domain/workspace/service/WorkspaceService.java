@@ -216,10 +216,15 @@ public class WorkspaceService {
     }
 
     public ResponseDto<?> getMain(Long workspaceId) {
+        WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
+        if (workSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
+
         List<Document> documents = documentRepository.findAllByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).stream().limit(4).collect(Collectors.toList());
         Notice firstNotice = noticeRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).orElse(null);
 
-        MainResponseDto responseDto = MainResponseDto.createResponseDto(documents, firstNotice);
+        MainResponseDto responseDto = MainResponseDto.createResponseDto(workSpace, documents, firstNotice);
         return ResponseDto.success(responseDto);
     }
 }
