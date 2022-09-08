@@ -45,15 +45,13 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/*
-<<<<<<< HEAD
+application-secret.yml
+application.yml
+src/main/resources/templates/*
 src/test/**
-=======
-src/test/**
-
 caches/**
 wrapper/**
 daemon/**
 native/**
 .tmp/**
->>>>>>> ingwon
+
