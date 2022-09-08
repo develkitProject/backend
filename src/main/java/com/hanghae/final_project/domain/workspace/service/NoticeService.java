@@ -40,6 +40,7 @@ public class NoticeService {
                 .user(userDetails.getUser())
                 .workSpace(findWorkSpace)
                 .build();
+
         noticeRepository.save(notice);
         NoticeResponseDto noticeResponseDto = NoticeResponseDto.builder()
                 .title(notice.getTitle())
