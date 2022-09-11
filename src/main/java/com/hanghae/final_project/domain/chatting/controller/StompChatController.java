@@ -4,7 +4,7 @@ package com.hanghae.final_project.domain.chatting.controller;
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
-import com.hanghae.final_project.domain.chatting.service.ChatCacheService;
+import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
 import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class StompChatController {
     private final RedisPublisher redisPublisher;
     private final ChatRoomRepository chatRoomRepository;
 
-    private final ChatCacheService chatCacheService;
+    private final ChatRedisCacheService chatRedisCacheService;
 
     private final HeaderTokenExtractor headerTokenExtractor;
     private final JwtDecoder jwtDecoder;
@@ -33,12 +33,12 @@ public class StompChatController {
 
         String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
 
-        message.setWriter(nickname);
-        message.setMessage(nickname+"님이 채팅방에 참여하였습니다");
+        //message.setWriter(nickname);
+        //message.setMessage(nickname+"님이 채팅방에 참여하였습니다");
         chatRoomRepository.enterChatRoom(message.getRoomId());
-        log.info( "log Info"+chatRoomRepository.getTopic(message.getRoomId()).toString());
-        redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
-        //template.convertAndSend("/sub/chat/room/"+ message.getRoomId(),message);
+        log.info( "log Info "+chatRoomRepository.getTopic(message.getRoomId()).toString());
+        //redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
+
     }
 
     @MessageMapping("/chat/message")
@@ -48,7 +48,7 @@ public class StompChatController {
 
         message.setWriter(nickname);
         redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
-        chatCacheService.addChat(message);
-        //template.convertAndSend("/sub/chat/room/"+ message.getRoomId(),message);
+        chatRedisCacheService.addChat(message);
+
     }
 }

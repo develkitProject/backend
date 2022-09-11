@@ -1,5 +1,7 @@
 package com.hanghae.final_project.global.security.jwt;
 
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.stereotype.Component;
 
 import java.util.NoSuchElementException;
@@ -22,9 +24,10 @@ public class HeaderTokenExtractor {
          * header 값이 비어있거나 또는 HEADER_PREFIX 값보다 짧은 경우
          * 이셉션을(예외)를 던져주어야 합니다.
          */
+
         if(header == null || header.equals("") || header.length() < HEADER_PREFIX.length()){
 //            System.out.println("error request : "+request.getRequestURI());
-            throw new NoSuchElementException("올바른 JWT 정보가 아닙니다.");
+            throw new AuthenticationServiceException("올바른 JWT 정보가 아닙니다.");
         }
 
         return header.substring(HEADER_PREFIX.length());
