@@ -68,14 +68,14 @@ public class WebSecurityConfig {
                         "/webjars/**",
                         "/swagger-resources/**",
                         "/swagger/**",
-                        "/h2-console/**"
+                        "/h2-console/**",
                         //"/ws/**",
                         //"/chat/**",
                         //"/resources/**",
                         //"/ws-stomp/**"
                         //"/pub/**",
                         //"/sub/**"
-                        //"/stomp/chat/**"
+                        "/stomp/chat/**"
         );
         //이건 무슨의미인가요?
 //                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
