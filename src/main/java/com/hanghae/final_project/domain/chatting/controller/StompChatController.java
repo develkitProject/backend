@@ -47,6 +47,7 @@ public class StompChatController {
     public void message(ChatMessageDto message,@Header("token") String token){
         String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
         message.setWriter(nickname);
+        message.setType(ChatMessageDto.MessageType.TALK);
         redisPublisher.publish(channelTopic,message);
         chatRedisCacheService.addChat(message);
     }

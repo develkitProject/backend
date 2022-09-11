@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -16,7 +18,11 @@ public class ChatRoomService {
         chatRoomRepository.enterChatRoom(roomId,sessionId,username);
     }
 
-    public void leaveChatRoom(String sessionId){
-        chatRoomRepository.leaveChatRoom(sessionId);
+    public String leaveChatRoom(String sessionId){
+        return chatRoomRepository.leaveChatRoom(sessionId);
+    }
+    public List<String> findUser(String roomId,String sessionId){
+
+       return chatRoomRepository.findUsersInWorkSpace(roomId,sessionId);
     }
 }

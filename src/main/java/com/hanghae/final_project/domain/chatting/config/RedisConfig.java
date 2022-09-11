@@ -42,6 +42,7 @@ public class RedisConfig {
     }
     @Bean
     public MessageListenerAdapter listenerAdapter(RedisSubscriber redisSubscriber){
+
         return new MessageListenerAdapter(redisSubscriber,"sendMessage");
     }
     @Bean
@@ -77,6 +78,14 @@ public class RedisConfig {
         return  redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<String , String> roomRedisTemplate(RedisConnectionFactory connectionFactory){
+        RedisTemplate<String ,String> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        return redisTemplate;
+    }
     @Bean
     public RedisTemplate<String, ChatMessageDto> chatRedisTemplate(RedisConnectionFactory connectionFactory){
         RedisTemplate<String, ChatMessageDto> chatRedisTemplate = new RedisTemplate<>();

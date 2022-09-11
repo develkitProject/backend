@@ -16,11 +16,15 @@ public class RedisPublisher {
      * redis 발행 서비스
      *
      * */
-    private final RedisTemplate<String,Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic , ChatMessageDto messageDto){
+    public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
 
 
         redisTemplate.convertAndSend(topic.getTopic(), messageDto);
+    }
+
+    public void publishRoomInfo(ChannelTopic topic) {
+        redisTemplate.convertAndSend(topic.getTopic(), "");
     }
 }
