@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.chatting.config;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
+import com.hanghae.final_project.domain.chatting.service.ChatRoomService;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.security.jwt.JwtDecoder;
@@ -30,9 +31,9 @@ public class StompHandler implements ChannelInterceptor {
     public static final String INVALID_ROOM_ID ="InvalidRoomId";
 
     private final HeaderTokenExtractor headerTokenExtractor;
-
     private final ChatUtils chatUtils;
 
+    private final ChatRoomService chatRoomService;
 
 
 
@@ -54,22 +55,35 @@ public class StompHandler implements ChannelInterceptor {
             log.info("SubScribe destination : "+ message.getHeaders().get(SIMP_DESTINATION) );
             log.info("SubScribe sessionId : "+message.getHeaders().get(SIMP_SESSION_ID));
 
-            String destination = Optional.ofNullable
-                            ((String) message.getHeaders().get(SIMP_DESTINATION)).orElse(INVALID_ROOM_ID);
+            String headerToken = accessor.getFirstNativeHeader(TOKEN);
+            String token = headerTokenExtractor.extract(headerToken);
+            String username = jwtDecoder.decodeUsername(token);
 
-            //String roomId = chatUtils.getRoodIdFromDestination(destination);
-            //redisContainer에 RoodId 를 통해  Channnel Topic등록
-            //chatRoomRepository.enterChatRoom(roomId);
+            String destination = Optional.ofNullable(
+                    (String) message.getHeaders().get(SIMP_DESTINATION)
+                    ).orElse(INVALID_ROOM_ID);
+
+            String sessionId = Optional.ofNullable(
+                    (String) message.getHeaders().get(SIMP_SESSION_ID)
+            ).orElse(null);
+
+            String roomId = chatUtils.getRoodIdFromDestination(destination);
+
+            //redis에  key(roomId) :  Value( sessionId , nickname ) 저장
+            chatRoomService.enterChatRoom(roomId,sessionId,username);
         }
-
         //소켓 연결 후 , 소켓 연결 해제 시
         else if(StompCommand.DISCONNECT == accessor.getCommand()){
             log.info("Disconnect destination : "+ message.getHeaders().get(SIMP_DESTINATION) );
             log.info("Disconnect sessionId : "+message.getHeaders().get(SIMP_SESSION_ID));
-
             //reids SubScribe 해제
             //Session_Id를 통해서
 
+            String sessionId = Optional.ofNullable(
+                    (String) message.getHeaders().get(SIMP_SESSION_ID)
+            ).orElse(null);
+
+            chatRoomService.leaveChatRoom(sessionId);
         }
         return message;
     }

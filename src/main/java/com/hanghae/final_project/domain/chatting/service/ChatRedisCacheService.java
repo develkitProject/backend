@@ -46,10 +46,12 @@ public class ChatRedisCacheService {
     private HashOperations<String,String,ChatRoomDto> opsHashChatRoom;
 
 
-
+    // (마지막 refactoring에는 삭제)
+    // Test를 위한 적재해놓는 작업
     //DB에 존재하는 workspace CHAT_ROOM_ID를 redis에 미리 서버 띄울 때, 적재해놓기.
     @PostConstruct
     private void init(){
+
         opsHashChatRoom=redisTemplate.opsForHash();
 
         //DB 로부터 workspace_id 가져와서
@@ -61,6 +63,9 @@ public class ChatRedisCacheService {
                     ChatRoomDto.create(workSpace.getId().toString())
             );
         }
+
+
+
     }
 
     //채팅 메시지가 왔을 때, redis에 적재해놓기

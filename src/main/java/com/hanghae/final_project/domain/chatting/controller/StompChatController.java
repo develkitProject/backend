@@ -9,6 +9,7 @@ import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ public class StompChatController {
 
     private final ChatRedisCacheService chatRedisCacheService;
 
+    private final ChannelTopic channelTopic;
     private final HeaderTokenExtractor headerTokenExtractor;
     private final JwtDecoder jwtDecoder;
     /*
@@ -31,24 +33,21 @@ public class StompChatController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageDto message, @Header("token") String token) {
 
-        String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
-
-        //message.setWriter(nickname);
-        //message.setMessage(nickname+"님이 채팅방에 참여하였습니다");
-        chatRoomRepository.enterChatRoom(message.getRoomId());
-        log.info( "log Info "+chatRoomRepository.getTopic(message.getRoomId()).toString());
-        //redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
+//        String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
+//
+//        //message.setWriter(nickname);
+//        //message.setMessage(nickname+"님이 채팅방에 참여하였습니다");
+//        //chatRoomRepository.enterChatRoom(message.getRoomId());
+//        //log.info( "log Info "+chatRoomRepository.getTopic(message.getRoomId()).toString());
+//        //redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
 
     }
 
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto message,@Header("token") String token){
-
         String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
-
         message.setWriter(nickname);
-        redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
+        redisPublisher.publish(channelTopic,message);
         chatRedisCacheService.addChat(message);
-
     }
 }
