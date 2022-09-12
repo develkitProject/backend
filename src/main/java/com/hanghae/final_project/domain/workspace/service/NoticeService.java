@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.workspace.dto.NoticeResponseDto;
-import com.hanghae.final_project.domain.workspace.dto.NoticeRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.NoticeResponseDto;
+import com.hanghae.final_project.domain.workspace.dto.request.NoticeRequestDto;
 import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;

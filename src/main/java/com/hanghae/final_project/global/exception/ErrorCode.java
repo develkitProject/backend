@@ -57,8 +57,9 @@ public enum ErrorCode {
     WORKSPACE_INVITATION_CODE_DOES_NOT_EXIST(HttpStatus.FORBIDDEN, "초대 코드를 입력해주세요"),
 
     // Schedule 관련
-    SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다")
-
+    SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다"),
+    //이미지 관련
+    NO_IMAGE_FILE(HttpStatus.BAD_REQUEST,"이미지 파일을 확인해 주세요")
     ;
 
 
