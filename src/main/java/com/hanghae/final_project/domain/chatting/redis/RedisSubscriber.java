@@ -16,29 +16,8 @@ import org.springframework.stereotype.Service;
 public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplate;
-
     private final SimpMessageSendingOperations messagingTemplate;
 
-
-//    @Override
-//    public void onMessage(Message message, byte[] pattern) {
-//        log.info("Subscribe on message()");
-//        try{
-//            //redis에서 발행된 데이터를 받아 deserialize
-//            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-//
-//            //ChatMessage 객체로 맵핑
-//            ChatMessageDto roomMessage = objectMapper.readValue(publishMessage,ChatMessageDto.class);
-//
-//            log.info("writer"+roomMessage.getWriter());
-//            log.info("roomID"+roomMessage.getRoomId());
-//            //WebSocket 구독자에게 채팅 메시지 Send
-//            messagingTemplate.convertAndSend("/sub/chat/room/"+roomMessage.getRoomId(),roomMessage);
-//        }catch (Exception e){
-//            log.error(e.getMessage());
-//        }
-//    }
 
     public void sendMessage(String publishMessage){
         log.info("Subscribe on message() 여기 들어옴");

@@ -23,8 +23,4 @@ public class RedisPublisher {
 
         redisTemplate.convertAndSend(topic.getTopic(), messageDto);
     }
-
-    public void publishRoomInfo(ChannelTopic topic) {
-        redisTemplate.convertAndSend(topic.getTopic(), "");
-    }
 }

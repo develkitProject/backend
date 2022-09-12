@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
 
-import com.hanghae.final_project.domain.workspace.dto.NoticeRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.request.NoticeRequestDto;
 import com.hanghae.final_project.domain.workspace.service.NoticeService;
 import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;

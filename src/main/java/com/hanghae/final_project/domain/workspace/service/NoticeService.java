@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.workspace.dto.NoticeResponseDto;
-import com.hanghae.final_project.domain.workspace.dto.NoticeRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.NoticeResponseDto;
+import com.hanghae.final_project.domain.workspace.dto.request.NoticeRequestDto;
 import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
@@ -42,12 +42,7 @@ public class NoticeService {
                 .build();
 
         noticeRepository.save(notice);
-        NoticeResponseDto noticeResponseDto = NoticeResponseDto.builder()
-                .title(notice.getTitle())
-                .content(notice.getContent())
-                .workspaceId(notice.getWorkSpace().getId())
-                .nickname(notice.getUser().getNickname())
-                .build();
+        NoticeResponseDto noticeResponseDto = NoticeResponseDto.of(notice);
 
         return new ResponseEntity<>(ResponseDto.success(noticeResponseDto), HttpStatus.OK);
     }
@@ -69,7 +64,7 @@ public class NoticeService {
     //공지사항 수정
     @Transactional
     public ResponseEntity<?> updateNotice(NoticeRequestDto noticeRequestDto,
-                                          Long noticeId){
+                                          Long noticeId) {
         Notice notice = isNoticeExist(noticeId);
         notice.updateNotice(noticeRequestDto);
         return new ResponseEntity<>(ResponseDto.success(NoticeResponseDto.of(notice)), HttpStatus.OK);
@@ -78,16 +73,18 @@ public class NoticeService {
 
     //공지사항 삭제
     @Transactional
-    public ResponseEntity<?> deleteNotice(Long noticeId){
+    public ResponseEntity<?> deleteNotice(Long noticeId) {
         isNoticeExist(noticeId);
         noticeRepository.deleteById(noticeId);
         return new ResponseEntity<>(ResponseDto.success(null), HttpStatus.OK);
     }
+
     //workSpcaeId가 없을때 에러코드실행
     private WorkSpace isWorkspaceExist(Long workSpaceId) {
         return workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.INVALID_PARAMETER));
     }
+
     //NoticeId가 없을때 에러코드실행
     private Notice isNoticeExist(Long noticeId) {
         return noticeRepository.findById(noticeId).orElseThrow(
@@ -95,5 +92,4 @@ public class NoticeService {
     }
 
 
-
-    }
+}

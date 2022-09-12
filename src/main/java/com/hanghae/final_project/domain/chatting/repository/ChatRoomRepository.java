@@ -46,7 +46,6 @@ public class ChatRoomRepository {
         opsHashEnterRoom=roomRedisTemplate.opsForHash();
         opsHashChatRoom=redisTemplate.opsForHash();
        // scanOptions = ScanOptions.scanOptions().build();
-
     }
 
     //(thymeleaf test용 함수 마지막 refactoring에 제거 예정)

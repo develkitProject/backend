@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.workspace.dto;
+package com.hanghae.final_project.domain.workspace.dto.request;
 
 
 import lombok.Getter;

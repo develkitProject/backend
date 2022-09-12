@@ -54,10 +54,12 @@ public enum ErrorCode {
     WORKSPACE_IN_USER_NOT_FOUND_404(HttpStatus.NOT_FOUND, "해당 WORKSPACE에 존재하는 사용자가 아닙니다"),
     WORKSPACE_DUPLICATION_409(HttpStatus.CONFLICT, "해당 사용자가 WORKSPACE에 존재합니다"),
     WORKSPACE_INVITATION_CODE_NOT_SAME(HttpStatus.FORBIDDEN, "초대 코드가 동일하지 않습니다"),
+    WORKSPACE_INVITATION_CODE_DOES_NOT_EXIST(HttpStatus.FORBIDDEN, "초대 코드를 입력해주세요"),
 
     // Schedule 관련
-    SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다")
-
+    SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다"),
+    //이미지 관련
+    NO_IMAGE_FILE(HttpStatus.BAD_REQUEST,"이미지 파일을 확인해 주세요")
     ;
 
 
