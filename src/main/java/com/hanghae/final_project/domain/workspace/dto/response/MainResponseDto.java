@@ -11,8 +11,11 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,12 +87,16 @@ public class MainResponseDto {
         private String title;
         private String content;
         private String imageUrl;
+        private String createdAt;
+        private String modifiedAt;
 
         public Notices(Notice notice) {
             this.id = notice.getId();
             this.title = notice.getTitle();
             this.content = notice.getContent();
             this.imageUrl = notice.getImageUrl();
+            this.createdAt = notice.getCreatedAt();
+            this.modifiedAt = notice.getModifiedAt();
         }
     }
 

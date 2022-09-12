@@ -125,6 +125,7 @@ public class WorkspaceService {
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @Transactional
     public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
+
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
         if (workSpace == null) {

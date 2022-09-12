@@ -44,7 +44,7 @@ public class WorkSpace extends Timestamped implements Serializable {
 
     // workspace를 만든 사람의 정보
     @JoinColumn(name = "createdByUser_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private User createdBy;
 
     @Column(nullable = false)

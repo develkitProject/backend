@@ -14,13 +14,18 @@ public class NoticeResponseDto {
     private String content;
     private Long workspaceId;
     private String nickname;
+    private String createdAt;
+    private String modifiedAt;
 
     public static NoticeResponseDto of(Notice notice) {
         return NoticeResponseDto.builder()
                 .id(notice.getId())
                 .workspaceId(notice.getWorkSpace().getId())
                 .title(notice.getTitle())
+                .nickname(notice.getUser().getNickname())
                 .content(notice.getContent())
+                .createdAt(notice.getCreatedAt())
+                .modifiedAt(notice.getModifiedAt())
                 .build();
     }
 }
