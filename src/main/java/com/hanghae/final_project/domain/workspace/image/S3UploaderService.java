@@ -32,7 +32,6 @@ public class S3UploaderService {
 
         return upload(uploadFile, dirName);
     }
-
     // S3로 파일 업로드하기
     private String upload(File uploadFile, String dirName) {
         String fileName = dirName + "/" + UUID.randomUUID();   // S3에 저장된 파일 이름
