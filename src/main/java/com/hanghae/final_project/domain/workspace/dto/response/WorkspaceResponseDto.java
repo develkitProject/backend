@@ -35,13 +35,6 @@ public class WorkspaceResponseDto {
         private String invite_code;
         private Users createdBy;
 
-        /*public Workspaces(WorkSpace workSpace, User user) {
-            this.id = workSpace.getId();
-            this.title = workSpace.getTitle();
-            this.content = workSpace.getContent();
-            this.imageUrl = workSpace.getImageUrl();
-            this.createdBy = new Users(user);
-        }*/
         public Workspaces(WorkSpace workSpace) {
             this.id = workSpace.getId();
             this.title = workSpace.getTitle();
