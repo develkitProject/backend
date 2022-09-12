@@ -1,6 +1,6 @@
 application.properties
 application.yml
-*.yml
+
 HELP.md
 .gradle
 build/
@@ -45,11 +45,10 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/templates/*
-application.yml
 application-secret.yml
+application.yml
+src/main/resources/templates/*
 src/test/**
-
 caches/**
 wrapper/**
 daemon/**

@@ -1,0 +1,82 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to Amazon EC2
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the "develop" branch
+  push:
+    branches: [ "develop" ]
+
+env :
+  AWS_REGION: ap-northeast-2
+  S3_BUCKET_NAME: hosungdeploy
+  CODE_DEPLOY_APPLICATION_NAME: my-codedeploy-app
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: my-codedeploy-deploymnet-group
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name : Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      #(1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+
+        #(2) JDK 11 세팅
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+        #(3) Build with gradle
+      - name: make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{secrets.DEVELKIT_APPLICATION_YML}}" > ./application.yml
+        shell: bash
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
+
+        #(3)jar 파일
+      - name : Make Directory & copy jar
+        run : |
+          mkdir -p deploy
+          cp ./build/libs/*.jar ./deploy
+          cp appspec.yml ./deploy
+          cp ./scripts/*.sh ./deploy
+          zip -r ./$GITHUB_SHA.zip ./deploy
+        shell: bash
+
+
+        #(4) aws 인증
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region : ${{env.AWS_REGION}}
+
+        #(5) 빌드 결과물을 s3 버킷에 업로드
+      - name: Upload to AWS S3
+        run : aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://${{env.S3_BUCKET_NAME}}/
+
+
+      - name: Deploy to AWS EC2 from S3
+        run : |
+          aws deploy create-deployment \
+            --application-name ${{env.CODE_DEPLOY_APPLICATION_NAME}} \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --deployment-group-name ${{env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME}} \
+            --file-exists-behavior OVERWRITE \
+            --s3-location bucket=${{env.S3_BUCKET_NAME}},key=$GITHUB_SHA.zip,bundleType=zip

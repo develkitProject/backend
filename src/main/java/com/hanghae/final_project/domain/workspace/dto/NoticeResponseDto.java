@@ -17,6 +17,7 @@ public class NoticeResponseDto {
     private String createdAt;
     private String modifiedAt;
 
+
     public static NoticeResponseDto of(Notice notice) {
         return NoticeResponseDto.builder()
                 .id(notice.getId())

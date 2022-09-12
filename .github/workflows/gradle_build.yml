@@ -1,0 +1,39 @@
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on pull request events but only for the "develop" branch
+  pull_request:
+    branches: [ "develop" ]
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name : Deploy
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      #(1) 기본 체크아웃
+      - name: Checkout
+        uses: actions/checkout@v3
+
+        #(2) JDK 11 세팅
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '11'
+
+        #(3) Build with gradle
+      - name: make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{secrets.DEVELKIT_APPLICATION_YML}}" > ./application.yml
+        shell: bash
+
+      - name: Build with Gradle
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build
