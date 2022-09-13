@@ -106,11 +106,12 @@ public class KakaoUserService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
+        log.info("kakao_login_code : "+code);
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "c8cf862f6090965a35b740904db575b1");
-        body.add("redirect_uri", "http://localhost:3000/kakao");
+        body.add("redirect_uri", "https://d-velkit.com/kakao");
         body.add("code", code);
 
         // HTTP 요청 보내기

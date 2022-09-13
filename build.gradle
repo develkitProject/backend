@@ -52,25 +52,15 @@ dependencies {
 	// aws
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
 
-
 	// slf4j for test
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
-
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-
-	// redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-
 
 	//embedded-redis
 	implementation ('it.ozimov:embedded-redis:0.7.3')
 			{ exclude group: "org.slf4j", module: "slf4j-simple" }
-
 }
 jar{
 	enabled=false

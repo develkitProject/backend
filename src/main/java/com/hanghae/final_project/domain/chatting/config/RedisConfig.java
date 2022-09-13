@@ -24,10 +24,6 @@ public class RedisConfig {
 
     @Value("${spring.redis.host}")
     private String redisHostName;
-
-    @Value("${spring.redis.password}")
-    private String redisPassword;
-
     @Value("${spring.redis.port}")
     private int redisPort;
 
