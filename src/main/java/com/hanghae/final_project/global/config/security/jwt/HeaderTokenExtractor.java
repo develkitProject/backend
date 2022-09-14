@@ -1,4 +1,4 @@
-package com.hanghae.final_project.global.security.jwt;
+package com.hanghae.final_project.global.config.security.jwt;
 
 import org.springframework.stereotype.Component;
 

@@ -9,9 +9,9 @@ import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
-import com.hanghae.final_project.global.security.jwt.JwtTokenUtils;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.hanghae.final_project.global.security.handler.AuthenticationSuccessHandler.AUTH_HEADER;
-import static com.hanghae.final_project.global.security.handler.AuthenticationSuccessHandler.TOKEN_TYPE;
+import static com.hanghae.final_project.global.config.security.handler.AuthenticationSuccessHandler.AUTH_HEADER;
+import static com.hanghae.final_project.global.config.security.handler.AuthenticationSuccessHandler.TOKEN_TYPE;
 
 @Slf4j
 @Service

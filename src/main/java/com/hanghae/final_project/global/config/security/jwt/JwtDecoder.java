@@ -1,4 +1,4 @@
-package com.hanghae.final_project.global.security.jwt;
+package com.hanghae.final_project.global.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import java.util.Date;
 import java.util.Optional;
 
-import static com.hanghae.final_project.global.security.jwt.JwtTokenUtils.*;
+import static com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils.*;
 
 
 @Component

@@ -1,4 +1,4 @@
-package com.hanghae.final_project.global.security.filter;
+package com.hanghae.final_project.global.config.security.filter;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;

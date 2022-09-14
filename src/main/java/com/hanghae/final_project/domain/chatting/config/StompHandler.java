@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.config;
 
-import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
-import com.hanghae.final_project.global.security.jwt.JwtDecoder;
+import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
+import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;

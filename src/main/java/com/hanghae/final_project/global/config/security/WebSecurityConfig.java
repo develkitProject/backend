@@ -1,18 +1,17 @@
-package com.hanghae.final_project.global.security;
+package com.hanghae.final_project.global.config.security;
 
 
 
-import com.hanghae.final_project.global.security.filter.JwtAuthenticationFilter;
-import com.hanghae.final_project.global.security.filter.JwtAuthorizationFilter;
-import com.hanghae.final_project.global.security.handler.AccessDeniedHandler;
-import com.hanghae.final_project.global.security.handler.AuthenticationFailureHandler;
-import com.hanghae.final_project.global.security.handler.AuthenticationSuccessHandler;
-import com.hanghae.final_project.global.security.handler.AuthorizationFailureHandler;
-import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
-import com.hanghae.final_project.global.security.provider.JwtAuthenticationProvider;
-import com.hanghae.final_project.global.security.provider.JwtAuthorizationProvider;
+import com.hanghae.final_project.global.config.security.filter.JwtAuthenticationFilter;
+import com.hanghae.final_project.global.config.security.filter.JwtAuthorizationFilter;
+import com.hanghae.final_project.global.config.security.handler.AccessDeniedHandler;
+import com.hanghae.final_project.global.config.security.handler.AuthenticationFailureHandler;
+import com.hanghae.final_project.global.config.security.handler.AuthenticationSuccessHandler;
+import com.hanghae.final_project.global.config.security.handler.AuthorizationFailureHandler;
+import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
+import com.hanghae.final_project.global.config.security.provider.JwtAuthenticationProvider;
+import com.hanghae.final_project.global.config.security.provider.JwtAuthorizationProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +19,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
