@@ -94,7 +94,7 @@ public class UserService {
             //기존 이미지 아마존 S3에서 삭제.
             uploaderService.deleteImage(user.getProfileImage(),"user");
             //새로운 이미지 정보를 S3에 올리기
-            String imageUrl=uploaderService.upload(userProfileDto.getProfileImageUrl(),"user");
+            String imageUrl=uploaderService.uploadBase64Image(userProfileDto.getProfileImageUrl(),"user");
             userInfo.updateProfileImage(imageUrl);
         }
         return new ResponseEntity<>(ResponseDto.success(null),HttpStatus.OK);

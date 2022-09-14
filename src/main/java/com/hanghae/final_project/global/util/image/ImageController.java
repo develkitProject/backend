@@ -17,12 +17,12 @@ import java.io.IOException;
 @Slf4j
 public class ImageController {
 
-    private final FormDataImageService formDataImageService;
+    private final S3UploaderService s3UploaderService;
 
     @PostMapping("/api/images")
     public ResponseEntity<ResponseDto<ImageUploadResponseDto>> upload(
             @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
 
-        return formDataImageService.uploadFiles(images,"image");
+        return s3UploaderService.uploadFormDataImage(images,"image");
     }
 }

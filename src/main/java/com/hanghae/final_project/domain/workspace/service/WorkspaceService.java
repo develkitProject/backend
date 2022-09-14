@@ -58,7 +58,7 @@ public class WorkspaceService {
 
         String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
-            imgUrl = s3UploaderService.upload(requestDto.getImage(), "workspace");
+            imgUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "workspace");
         }
         WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl, user);
         WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
@@ -110,7 +110,7 @@ public class WorkspaceService {
             String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
             s3UploaderService.deleteImage(deleteUrl);
 
-            imageUrl = s3UploaderService.upload(requestDto.getImage(), "static");
+            imageUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "static");
         }
 
         workspace.update(requestDto, imageUrl);
