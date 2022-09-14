@@ -2,8 +2,8 @@ package com.hanghae.final_project.domain.workspace.controller;
 
 import com.hanghae.final_project.domain.workspace.dto.response.ResInvitationDto;
 import com.hanghae.final_project.domain.workspace.service.InvitationService;
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

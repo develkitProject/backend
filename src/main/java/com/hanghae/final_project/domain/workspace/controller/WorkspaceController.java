@@ -6,7 +6,7 @@ import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +15,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;

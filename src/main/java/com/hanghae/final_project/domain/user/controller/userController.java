@@ -5,7 +5,7 @@ import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.service.UserService;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -6,7 +6,7 @@ import com.hanghae.final_project.domain.workspace.model.Schedule;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.ScheduleRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;

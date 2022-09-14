@@ -4,8 +4,8 @@ import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

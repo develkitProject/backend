@@ -7,7 +7,7 @@ import com.hanghae.final_project.domain.chatting.model.Chat;
 import com.hanghae.final_project.domain.chatting.repository.ChatRepository;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

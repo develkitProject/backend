@@ -3,7 +3,7 @@ package com.hanghae.final_project.domain.workspace.controller;
 import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
 import com.hanghae.final_project.domain.workspace.dto.response.ResSchedulesDto;
 import com.hanghae.final_project.domain.workspace.service.ScheduleService;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

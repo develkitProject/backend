@@ -8,7 +8,7 @@ import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDt
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
-import com.hanghae.final_project.domain.workspace.image.S3UploaderService;
+import com.hanghae.final_project.global.util.image.S3UploaderService;
 import com.hanghae.final_project.domain.workspace.model.Document;
 import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -17,7 +17,7 @@ import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
@@ -25,13 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service

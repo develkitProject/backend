@@ -1,8 +1,8 @@
-package com.hanghae.final_project.global.security.handler;
+package com.hanghae.final_project.global.config.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
