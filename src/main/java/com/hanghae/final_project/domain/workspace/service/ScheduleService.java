@@ -26,7 +26,7 @@ public class ScheduleService {
     private final WorkSpaceRepository workSpaceRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public ResponseEntity<?> registerSchedule(ScheduleDto scheduleDto, Long workspaceId) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(ScheduleDto scheduleDto, Long workspaceId) {
 
         WorkSpace workSpace = isWorkspaceExist(workspaceId);
 
@@ -39,7 +39,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllSchedules(Long workspaceId) {
+    public ResponseEntity<ResponseDto<List<ResSchedulesDto>>> getAllSchedules(Long workspaceId) {
 
         isWorkspaceExist(workspaceId);
 
@@ -52,7 +52,7 @@ public class ScheduleService {
         return new ResponseEntity<>(ResponseDto.success(schedulesDtoList),HttpStatus.OK);
     }
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSchedule(Long schedulesId) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> getSchedule(Long schedulesId) {
 
         Schedule schedule= isScheduleExist(schedulesId);
        return new ResponseEntity<>(
@@ -61,13 +61,13 @@ public class ScheduleService {
        );
     }
 
-    public ResponseEntity<?> updateSchedule(Long schedulesId, ScheduleDto scheduleDto) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> updateSchedule(Long schedulesId, ScheduleDto scheduleDto) {
         Schedule schedule= isScheduleExist(schedulesId);
         schedule.updateSchedule(scheduleDto);
         return new ResponseEntity<>(ResponseDto.success(ResSchedulesDto.of(schedule)),HttpStatus.OK);
     }
 
-    public ResponseEntity<?> deleteSchedules(Long schedulesId) {
+    public ResponseEntity<ResponseDto<String>> deleteSchedules(Long schedulesId) {
         isScheduleExist(schedulesId);
         scheduleRepository.deleteById(schedulesId);
         return new ResponseEntity<>(ResponseDto.success(null),HttpStatus.OK);

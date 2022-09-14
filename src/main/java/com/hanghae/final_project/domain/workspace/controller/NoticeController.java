@@ -2,12 +2,16 @@ package com.hanghae.final_project.domain.workspace.controller;
 
 
 import com.hanghae.final_project.domain.workspace.dto.request.NoticeRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.response.NoticeResponseDto;
 import com.hanghae.final_project.domain.workspace.service.NoticeService;
+import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RequiredArgsConstructor
@@ -18,15 +22,15 @@ public class NoticeController {
 
     //공지사항 생성
     @PostMapping("/api/workspaces/{workspaceid}/notice")
-    public ResponseEntity<?> createNotice(@RequestBody NoticeRequestDto noticeRequestDto,
-                                          @PathVariable Long workspaceid,
-                                          @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseDto<NoticeResponseDto>> createNotice(@RequestBody NoticeRequestDto noticeRequestDto,
+                                                                       @PathVariable Long workspaceid,
+                                                                       @AuthenticationPrincipal UserDetailsImpl userDetails){
         return noticeService.createNotice(noticeRequestDto,workspaceid,userDetails);
     }
 
     //공지사항 조회
     @GetMapping("/api/workspaces/{workspaceid}/notice")
-    public ResponseEntity<?> getAllNotice(@PathVariable Long workspaceid){
+    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(@PathVariable Long workspaceid){
         return noticeService.getAllNotice(workspaceid);
     }
 
@@ -38,7 +42,7 @@ public class NoticeController {
     }
     //공지사항 삭제
     @DeleteMapping("/api/workspaces/{workspaceid}/notice/{noticeId}")
-    public ResponseEntity<?> deleteNotice(@PathVariable Long noticeId){
+    public ResponseEntity<ResponseDto<String>> deleteNotice(@PathVariable Long noticeId){
         return noticeService.deleteNotice(noticeId);
     }
 

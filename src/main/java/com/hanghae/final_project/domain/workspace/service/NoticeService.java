@@ -30,7 +30,7 @@ public class NoticeService {
     //공지사항 생성
 
     @Transactional
-    public ResponseEntity<?> createNotice(NoticeRequestDto noticeRequestDto,
+    public ResponseEntity<ResponseDto<NoticeResponseDto>> createNotice(NoticeRequestDto noticeRequestDto,
                                           Long workSpaceId,
                                           UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
@@ -48,8 +48,8 @@ public class NoticeService {
     }
 
     //공지사항 조회
-    @Transactional
-    public ResponseEntity<?> getAllNotice(Long workSpaceId) {
+    @Transactional(readOnly = true)
+    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(Long workSpaceId) {
 
         isWorkspaceExist(workSpaceId);
 
@@ -63,7 +63,7 @@ public class NoticeService {
 
     //공지사항 수정
     @Transactional
-    public ResponseEntity<?> updateNotice(NoticeRequestDto noticeRequestDto,
+    public ResponseEntity<ResponseDto<NoticeResponseDto>> updateNotice(NoticeRequestDto noticeRequestDto,
                                           Long noticeId) {
         Notice notice = isNoticeExist(noticeId);
         notice.updateNotice(noticeRequestDto);
@@ -73,7 +73,7 @@ public class NoticeService {
 
     //공지사항 삭제
     @Transactional
-    public ResponseEntity<?> deleteNotice(Long noticeId) {
+    public ResponseEntity<ResponseDto<String>> deleteNotice(Long noticeId) {
         isNoticeExist(noticeId);
         noticeRepository.deleteById(noticeId);
         return new ResponseEntity<>(ResponseDto.success(null), HttpStatus.OK);

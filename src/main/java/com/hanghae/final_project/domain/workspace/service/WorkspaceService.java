@@ -48,21 +48,19 @@ public class WorkspaceService {
     private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
-    public ResponseDto<?> createWorkspace(WorkspaceRequestDto requestDto, UserDetails userDetails) throws IOException{
+    public ResponseDto<WorkspaceResponseDto> createWorkspace(WorkspaceRequestDto requestDto,
+                                                             UserDetails userDetails) throws IOException{
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         // 워크 스페이스를 생성하고, 자신의 정보를 넣어줌
 
-//        WorkSpace workSpace = WorkSpace.of(requestDto);
-
         // 이미지가 올라와있지 않다면, workspaceImage를 기본값으로. 변경 x
         // 이미지가 올라와있다면, upload를 통해서
 
-
         String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
-            imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
+            imgUrl = s3UploaderService.upload(requestDto.getImage(), "workspace");
         }
         WorkSpace workSpace = WorkSpace.of(requestDto, imgUrl, user);
         WorkSpace savedWorkspace = workspaceRepository.save(workSpace);
@@ -72,27 +70,28 @@ public class WorkspaceService {
 
         WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace());
 
-        // 여기서 ff39e3ea-d198-488d-a0c4-48364d3e1e78
-
         return ResponseDto.success(responseDto);
-
     }
 
     // 참여한 모든 workspace 조회
-    @Transactional
-    public ResponseDto<?> getWorkspaces(UserDetails userDetails) {
+    public ResponseDto<List<WorkspaceResponseDto>> getWorkspaces(UserDetails userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
-        List<WorkspaceResponseDto> responseDtos = repositories.stream().map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace())).collect(Collectors.toList());
+        List<WorkspaceResponseDto> responseDtos = repositories
+                .stream()
+                .map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace()))
+                .collect(Collectors.toList());
 
         return ResponseDto.success(responseDtos);
     }
 
     // 워크스페이스 정보 수정
     @Transactional
-    public ResponseDto<?> updateWorkspace(Long workspaceId, WorkspaceRequestDto requestDto, UserDetails userDetails)throws IOException {
+    public ResponseDto<WorkspaceResponseDto> updateWorkspace(Long workspaceId,
+                                                             WorkspaceRequestDto requestDto,
+                                                             UserDetails userDetails)throws IOException {
         // 1. 유저 가지고오기
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
@@ -124,7 +123,7 @@ public class WorkspaceService {
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @Transactional
-    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
+    public ResponseDto<WorkspaceResponseDto> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
@@ -151,21 +150,26 @@ public class WorkspaceService {
     }
 
     //워크스페이스 내 회원 조회
-    public ResponseDto<?> getMembersInWorkspace(Long workspaceId) {
+    public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(Long workspaceId) {
+
         // 1. workspaceId에 해당하는 workspaceUser Entity를 꺼내기
         // 2. workspaceUser에 해당하는 User들을 모두 꺼내오기
 
         List<WorkSpaceUser> workSpaceUsers = workspaceUserRepository.findAllByWorkSpaceId(workspaceId);
-//        UserResponseDto responseDto = new UserResponseDto(workSpaceUsers.stream().map(list -> list.getUser()).collect(Collectors.toList()));
+
         List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
-        List<UserResponseDto> userResponseDtos = users.stream().map(user -> UserResponseDto.createResponseDto(user)).collect(Collectors.toList());
+
+        List<UserResponseDto> userResponseDtos = users
+                .stream()
+                .map(user -> UserResponseDto.createResponseDto(user))
+                .collect(Collectors.toList());
 
         return ResponseDto.success(userResponseDtos);
     }
 
     //워크스페이스 나가기
     @Transactional
-    public ResponseDto<?> quitWorkspace(Long workspaceId, UserDetails userDetails) {
+    public ResponseDto<Boolean> quitWorkspace(Long workspaceId, UserDetails userDetails) {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         WorkSpace workspaceById = workspaceRepository.findById(workspaceId).orElse(null);
@@ -182,7 +186,7 @@ public class WorkspaceService {
     }
 
     @Transactional
-    public ResponseDto<?> deleteWorkspace(Long workspaceId, UserDetails userDetails) {
+    public ResponseDto<Boolean> deleteWorkspace(Long workspaceId, UserDetails userDetails) {
         //
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
@@ -209,14 +213,14 @@ public class WorkspaceService {
         return ResponseDto.success(true);
     }
 
-    public ResponseDto<?> getAllWorkspaces() {
+    public ResponseDto<List<WorkspaceResponseDto>> getAllWorkspaces() {
 
         List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
         List<WorkspaceResponseDto> responseDtos = allWorkspaces.stream().map(workSpace -> WorkspaceResponseDto.createResponseDto(workSpace)).collect(Collectors.toList());
         return ResponseDto.success(responseDtos);
     }
 
-    public ResponseDto<?> getMain(Long workspaceId) {
+    public ResponseDto<MainResponseDto> getMain(Long workspaceId) {
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
         if (workSpace == null) {
             throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);

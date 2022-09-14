@@ -31,7 +31,7 @@ public class InvitationService {
 
     private final WorkSpaceRepository workSpaceRepository;
 
-    public ResponseEntity<?> getCode(Long workspaceId, UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<ResInvitationDto>> getCode(Long workspaceId, UserDetailsImpl userDetails) {
 
         //Workspace 가 존재하는지 확인
         WorkSpace workSpace=  checkWorkspace(workspaceId);
@@ -53,6 +53,7 @@ public class InvitationService {
 
     //해당 workspace 에 포함된 유저가 요청을 보낸것인지 확인하는 과정
     private WorkSpaceUser validateUser(Long workspaceId, UserDetailsImpl userDetails) {
+
        return workspaceUserRepository.findByUserAndWorkSpaceId(userDetails.getUser(), workspaceId)
                 .orElseThrow(() -> new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404));
     }
