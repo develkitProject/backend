@@ -39,7 +39,7 @@ public class FormDataImageService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    public ResponseEntity<ResponseDto> uploadFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
+    public ResponseEntity<ResponseDto<ImageUploadResponseDto>> uploadFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
 
         if(multipartFiles==null ||multipartFiles[0].getOriginalFilename().equals("")){
             throw new RequestException(ErrorCode.NO_IMAGE_FILE);

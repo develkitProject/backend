@@ -7,6 +7,7 @@ import com.hanghae.final_project.domain.workspace.model.Document;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
@@ -26,11 +27,12 @@ public class DocumentService {
 
     private final WorkSpaceRepository workSpaceRepository;
     private final DocumentRepository documentRepository;
-//    private final S3UploaderService s3UploaderService;
+
+    private final WorkSpaceUserRepository workSpaceUserRepository;
 
     // 문서 생성
     @Transactional
-    public ResponseDto<?> createDocument(Long workSpaceId,
+    public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
                                         DocumentRequestDto documentRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
@@ -38,17 +40,14 @@ public class DocumentService {
             throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
         }
 
-
-//        try {
-//            s3UploaderService.upload(documentRequestDto.getImageUrl(), "User");
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
+        //workspace에 존재하지 않는 유저가 글을 쓸 경우 예외처리
+        workSpaceUserRepository
+                .findByUserAndWorkSpaceId(userDetails.getUser(),workSpaceId)
+                .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404));
 
         Document document = Document.builder()
                         .title(documentRequestDto.getTitle())
                         .content(documentRequestDto.getContent())
-//                        .imageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl()))) // 리턴 타입이 byte[]
                         .workSpace(findWorkSpace)
                         .user(userDetails.getUser())
                         .build();
@@ -69,8 +68,8 @@ public class DocumentService {
     }
 
     // 문서 전체조회
-    @Transactional
-    public ResponseDto<?> getDocumentList(Long workSpaceId) {
+    @Transactional(readOnly = true)
+    public ResponseDto<List<DocumentListResponseDto>> getDocumentList(Long workSpaceId) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
         if(findWorkSpace == null) {
             throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
@@ -94,8 +93,8 @@ public class DocumentService {
     }
 
     // 문서 상세조회
-    @Transactional
-    public ResponseDto<?> getDocument(Long workSpaceId, Long id) {
+    @Transactional(readOnly = true)
+    public ResponseDto<DocumentResponseDto> getDocument(Long workSpaceId, Long id) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
         if(findWorkSpace == null) {
@@ -106,7 +105,6 @@ public class DocumentService {
         if(document == null) {
             throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
         }
-//        document.setWorkSpace(findworkSpace); // 할 팔요 없을 듯
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
@@ -124,7 +122,7 @@ public class DocumentService {
 
     // 문서 수정 -> 작성자가 아니면 수정 할 수 없도록? 아니면 아무나 수정하고 수정한 사람 이름이 나오게? 그러면 워크스페이스에 있는 사용자인지 확인해야함 이런 개씨발
     @Transactional
-    public ResponseDto<?> updateDocument(Long workSpaceId,
+    public ResponseDto<DocumentResponseDto> updateDocument(Long workSpaceId,
                                                 Long id,
                                                 DocumentRequestDto documentRequestDto) {
 
@@ -133,13 +131,8 @@ public class DocumentService {
             throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
         }
 
-        // 바뀌기 전의 사진파일을 s3에서 삭제
-//        s3UploaderService.deleteImage(document.getImageUrl());
-
         document.setTitle(documentRequestDto.getTitle());
         document.setContent(documentRequestDto.getContent());
-//        document.setImageUrl(Arrays.toString(s3UploaderService.decodeBase64(documentRequestDto.getImageUrl())));
-//        document.setWorkSpace(workSpace);// 할 필요 없을듯
 
         documentRepository.save(document);
 
@@ -159,7 +152,8 @@ public class DocumentService {
 
     // 문서 삭제 -> 작성자가 아니면 삭제할 수 없도록? 아니면 롤을 가진사람이나 본인?
     @Transactional
-    public ResponseDto<?> deleteDocument(Long workSpaceId, Long id) {
+    public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
+
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
         if(findWorkSpace == null) {
             throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
