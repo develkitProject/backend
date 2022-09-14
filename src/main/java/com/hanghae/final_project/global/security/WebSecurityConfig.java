@@ -62,23 +62,15 @@ public class WebSecurityConfig {
     public WebSecurityCustomizer webSecurityCustomizer() {
         return (web) -> web
                 .ignoring()
-                .antMatchers( //Swagger 문서 읽기위한 요청허용
+                .antMatchers(
                         "/swagger-ui/**",
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-resources/**",
                         "/swagger/**",
                         "/h2-console/**",
-                        //"/ws/**",
-                        //"/chat/**",
-                        //"/resources/**",
-                        //"/ws-stomp/**"
-                        //"/pub/**",
-                        //"/sub/**"
                         "/stomp/chat/**"
         );
-        //이건 무슨의미인가요?
-//                .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
 
     }
 
@@ -177,6 +169,7 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://d-velkit.com");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
         configuration.setAllowCredentials(true);

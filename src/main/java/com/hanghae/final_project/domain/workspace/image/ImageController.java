@@ -1,9 +1,11 @@
 package com.hanghae.final_project.domain.workspace.image;
 
+import com.hanghae.final_project.domain.workspace.dto.response.ImageUploadResponseDto;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,14 +17,14 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class ImageController {
 
     private final FormDataImageService formDataImageService;
 
     @PostMapping("/api/images")
-    public ResponseEntity<ResponseDto> upload(
+    public ResponseEntity<ResponseDto<ImageUploadResponseDto>> upload(
             @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
-
 
         return formDataImageService.uploadFiles(images,"image");
     }

@@ -1,6 +1,5 @@
 package com.hanghae.final_project.global.exception;
 
-import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
