@@ -67,7 +67,8 @@ public class WebSecurityConfig {
                         "/swagger-resources/**",
                         "/swagger/**",
                         "/h2-console/**",
-                        "/stomp/chat/**"
+                        "/stomp/chat/**",
+                        "/actuator/**"
         );
 
     }

@@ -46,6 +46,7 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
+
         // 최초 소켓 연결
         if (StompCommand.CONNECT == accessor.getCommand()) {
             log.info("token 확인");
@@ -77,6 +78,7 @@ public class StompHandler implements ChannelInterceptor {
 
             //redis에  key(roomId) :  Value( sessionId , nickname ) 저장
             chatRoomService.enterChatRoom(roomId, sessionId, username);
+
 
             //list 주기
             redisPublisher.publish(topic,
