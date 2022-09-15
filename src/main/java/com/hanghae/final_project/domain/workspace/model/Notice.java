@@ -29,7 +29,8 @@ public class Notice extends Timestamped {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Lob
+    @Column
     private String content;
 
     @JsonIgnore
