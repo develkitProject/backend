@@ -13,23 +13,18 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RedisSubscriber implements MessageListener {
+public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
-    private final RedisTemplate redisTemplate;
-
     private final SimpMessageSendingOperations messagingTemplate;
 
 
-    @Override
-    public void onMessage(Message message, byte[] pattern) {
-        log.info("Subscribe on message()");
+    public void sendMessage(String publishMessage){
+        log.info("Subscribe on message() 여기 들어옴");
         try{
             //redis에서 발행된 데이터를 받아 deserialize
-            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-
-            //ChatMessage 객체로 맵핑
             ChatMessageDto roomMessage = objectMapper.readValue(publishMessage,ChatMessageDto.class);
+
 
             log.info("writer"+roomMessage.getWriter());
             log.info("roomID"+roomMessage.getRoomId());
@@ -38,5 +33,6 @@ public class RedisSubscriber implements MessageListener {
         }catch (Exception e){
             log.error(e.getMessage());
         }
+
     }
 }

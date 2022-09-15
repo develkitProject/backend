@@ -20,9 +20,6 @@ import java.util.Random;
 public class RoomController {
     private final ChatRoomRepository chatRoomRepository;
 
-    private final JwtDecoder jwtDecoder;
-
-
     //모든 채팅방 목록 조회
     @GetMapping("/chat/rooms")
     public ModelAndView rooms(){
@@ -32,14 +29,6 @@ public class RoomController {
         return mv;
     }
 
-
-    //채팅방 생성
-    @PostMapping("/chat/room")
-    public void createRoom(@RequestParam String name, RedirectAttributes rttr){
-//        log.info("# Create Chat Room, name : "+name);
-//        rttr.addFlashAttribute("roomName",chatRoomRepository.createChatRoom(name));
-//        return "redirect:/chat/rooms";
-    }
 
     //채팅방 조회
     @GetMapping("/chat/room")
