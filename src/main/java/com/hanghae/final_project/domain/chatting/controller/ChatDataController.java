@@ -1,6 +1,7 @@
 package com.hanghae.final_project.domain.chatting.controller;
 
 import com.hanghae.final_project.domain.chatting.dto.request.ChatPagingDto;
+
 import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

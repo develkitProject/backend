@@ -1,13 +1,13 @@
-package com.hanghae.final_project.global.security.jwt;
+package com.hanghae.final_project.global.config.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 
 
 import java.util.Date;
 
-import static com.hanghae.final_project.global.security.jwt.JwtDecoder.JWT_SECRET;
+import static com.hanghae.final_project.global.config.security.jwt.JwtDecoder.JWT_SECRET;
 
 
 public final class JwtTokenUtils {

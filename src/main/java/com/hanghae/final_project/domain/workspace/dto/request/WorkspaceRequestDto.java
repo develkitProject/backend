@@ -8,7 +8,8 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@Setter @NoArgsConstructor
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class WorkspaceRequestDto {
 
@@ -18,5 +19,5 @@ public class WorkspaceRequestDto {
     @NotNull(message = "소개는 필수 입력 값입니다")
     private String content;
 
-    private String image = "";
+    private String image;
 }

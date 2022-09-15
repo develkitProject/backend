@@ -1,8 +1,8 @@
-package com.hanghae.final_project.global.security.filter;
+package com.hanghae.final_project.global.config.security.filter;
 
 
 
-import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
+import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

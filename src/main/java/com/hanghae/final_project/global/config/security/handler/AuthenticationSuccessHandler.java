@@ -1,11 +1,11 @@
-package com.hanghae.final_project.global.security.handler;
+package com.hanghae.final_project.global.config.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
-import com.hanghae.final_project.global.security.jwt.JwtTokenUtils;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;

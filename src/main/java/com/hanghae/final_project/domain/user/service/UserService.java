@@ -6,12 +6,11 @@ import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.dto.response.ResProfileDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.domain.workspace.image.S3UploaderService;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.util.image.S3UploaderService;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -95,7 +94,7 @@ public class UserService {
             //기존 이미지 아마존 S3에서 삭제.
             uploaderService.deleteImage(user.getProfileImage(),"user");
             //새로운 이미지 정보를 S3에 올리기
-            String imageUrl=uploaderService.upload(userProfileDto.getProfileImageUrl(),"user");
+            String imageUrl=uploaderService.uploadBase64Image(userProfileDto.getProfileImageUrl(),"user");
             userInfo.updateProfileImage(imageUrl);
         }
         return new ResponseEntity<>(ResponseDto.success(null),HttpStatus.OK);

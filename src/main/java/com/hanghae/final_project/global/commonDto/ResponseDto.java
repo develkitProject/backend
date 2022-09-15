@@ -1,4 +1,4 @@
-package com.hanghae.final_project.global.dto;
+package com.hanghae.final_project.global.commonDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

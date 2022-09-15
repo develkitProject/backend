@@ -1,13 +1,12 @@
 package com.hanghae.final_project.domain.chatting.config;
 
+
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
-import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
-import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
 import com.hanghae.final_project.domain.chatting.service.ChatRoomService;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
-import com.hanghae.final_project.global.security.jwt.HeaderTokenExtractor;
-import com.hanghae.final_project.global.security.jwt.JwtDecoder;
+import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
+import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.listener.ChannelTopic;
@@ -18,7 +17,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+
 import java.util.Optional;
 
 @Component

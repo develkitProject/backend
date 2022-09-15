@@ -1,6 +1,6 @@
-package com.hanghae.final_project.global.security.provider;
+package com.hanghae.final_project.global.config.security.provider;
 
-import com.hanghae.final_project.global.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

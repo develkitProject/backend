@@ -1,11 +1,10 @@
-package com.hanghae.final_project.domain.workspace.image;
+package com.hanghae.final_project.global.util.image;
 
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.exception.ErrorCode;
-import com.hanghae.final_project.global.exception.RequestException;
+import com.hanghae.final_project.domain.workspace.dto.response.ImageUploadResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,15 +14,15 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 @RestController
+@Slf4j
 public class ImageController {
 
-    private final FormDataImageService formDataImageService;
+    private final S3UploaderService s3UploaderService;
 
     @PostMapping("/api/images")
-    public ResponseEntity<ResponseDto> upload(
+    public ResponseEntity<ResponseDto<ImageUploadResponseDto>> upload(
             @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
 
-
-        return formDataImageService.uploadFiles(images,"image");
+        return s3UploaderService.uploadFormDataImage(images,"image");
     }
 }

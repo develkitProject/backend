@@ -1,11 +1,10 @@
-package com.hanghae.final_project.global.security.handler;
+package com.hanghae.final_project.global.config.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.hanghae.final_project.global.dto.ResponseDto;
-import lombok.extern.slf4j.Slf4j;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletException;
@@ -13,16 +12,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Slf4j
+
 @Component
-public class AuthorizationFailureHandler implements AuthenticationFailureHandler {
+public class AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
-        log.error("인증실패");
+
+
         response.setContentType("application/json;charset=UTF-8");
         response.getWriter().println(
                 new ObjectMapper().writeValueAsString(
-                        ResponseDto.fail("AUTHORIZE_FAIL",  exception.getMessage())
+                        ResponseDto.fail("INVALID INFO", "회원정보가 일치하지 않습니다.")
                 )
         );
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

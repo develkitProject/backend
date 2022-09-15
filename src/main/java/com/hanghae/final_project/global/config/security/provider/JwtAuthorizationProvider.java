@@ -1,11 +1,11 @@
-package com.hanghae.final_project.global.security.provider;
+package com.hanghae.final_project.global.config.security.provider;
 
 
 
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
-import com.hanghae.final_project.global.security.jwt.JwtDecoder;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
