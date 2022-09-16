@@ -38,7 +38,7 @@ public class DocumentService {
                                         DocumentRequestDto documentRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
 
         //workspace에 존재하지 않는 유저가 글을 쓸 경우 예외처리
@@ -72,7 +72,7 @@ public class DocumentService {
     @Transactional(readOnly = true)
     public ResponseDto<List<DocumentListResponseDto>> getDocumentList(Long workSpaceId) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
 
 
@@ -98,12 +98,12 @@ public class DocumentService {
     public ResponseDto<DocumentResponseDto> getDocument(Long workSpaceId, Long id) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
 
 
         Document document = documentRepository.findById(id).orElseThrow(
-                ()-> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
         );
 
 
@@ -132,7 +132,7 @@ public class DocumentService {
         );
 
         Document document = documentRepository.findById(id).orElseThrow(
-                ()->new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
         );
 
 
@@ -160,12 +160,12 @@ public class DocumentService {
     public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
-                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
 
 
         Document document = documentRepository.findById(id).orElseThrow(
-                ()->new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+                () -> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
         );
 
 
