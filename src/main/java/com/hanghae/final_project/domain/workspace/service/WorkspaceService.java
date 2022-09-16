@@ -59,7 +59,6 @@ public class WorkspaceService {
         // 이미지가 올라와있지 않다면, workspaceImage를 기본값으로. 변경 x
         // 이미지가 올라와있다면, upload를 통해서
 
-
         String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             imgUrl = s3UploaderService.upload(requestDto.getImage(), "static");
@@ -85,7 +84,10 @@ public class WorkspaceService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
-        List<WorkspaceResponseDto> responseDtos = repositories.stream().map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace())).collect(Collectors.toList());
+
+        List<WorkspaceResponseDto> responseDtos = repositories.stream()
+                .map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace()))
+                .collect(Collectors.toList());
 
         return ResponseDto.success(responseDtos);
     }
@@ -124,7 +126,7 @@ public class WorkspaceService {
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @Transactional
-    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
+    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, UserDetails userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
@@ -136,10 +138,6 @@ public class WorkspaceService {
         // 중복해서 들어오는 경우 예외처리
         if (byUserAndWorkSpaceId.isPresent()) {
             throw new RequestException(ErrorCode.WORKSPACE_DUPLICATION_409);
-        }
-
-        if (!requestDto.getCode().equals(workSpace.getInvite_code())) {
-            throw new RequestException(ErrorCode.WORKSPACE_INVITATION_CODE_NOT_SAME);
         }
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);

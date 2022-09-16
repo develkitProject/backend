@@ -49,6 +49,8 @@ public class MainResponseDto {
         private Long id;
         private String title;
         private String content;
+        private String createdAt;
+        private String modifiedAt;
         private Users user;
 //        private WorkSpace workSpace;
 
@@ -57,6 +59,8 @@ public class MainResponseDto {
             this.title = document.getTitle();
             this.content = document.getContent();
             this.user = new Users(document.getUser());
+            this.createdAt = document.getCreatedAt();
+            this.modifiedAt = document.getModifiedAt();
 //            this.workSpace = document.getWorkSpace();
         }
 

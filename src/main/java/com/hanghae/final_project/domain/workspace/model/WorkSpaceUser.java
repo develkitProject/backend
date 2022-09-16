@@ -21,12 +21,12 @@ public class WorkSpaceUser {
     @Id
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 //    @ManyToOne(fetch = FetchType.LAZY)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 

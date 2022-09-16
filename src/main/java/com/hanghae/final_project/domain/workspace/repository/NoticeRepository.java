@@ -15,4 +15,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     Notice findByWorkSpaceId(Long workSpaceId);
     Optional<Notice> findFirstByWorkSpaceIdOrderByCreatedAtDesc(Long workspaceId);
+
+    Optional<Notice> findAllByWorkSpaceIdOrderByCreatedAtDesc(Long workspaceId);
 }
