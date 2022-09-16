@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
+import com.hanghae.final_project.domain.workspace.dto.request.ScheduleRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.ResSchedulesDto;
 import com.hanghae.final_project.domain.workspace.model.Schedule;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -26,11 +26,11 @@ public class ScheduleService {
     private final WorkSpaceRepository workSpaceRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(ScheduleDto scheduleDto, Long workspaceId) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(ScheduleRequestDto scheduleRequestDto, Long workspaceId) {
 
         WorkSpace workSpace = isWorkspaceExist(workspaceId);
 
-        Schedule schedule = Schedule.of(scheduleDto, workSpace);
+        Schedule schedule = Schedule.of(scheduleRequestDto, workSpace);
 
         scheduleRepository.save(schedule);
 
@@ -61,9 +61,9 @@ public class ScheduleService {
        );
     }
 
-    public ResponseEntity<ResponseDto<ResSchedulesDto>> updateSchedule(Long schedulesId, ScheduleDto scheduleDto) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> updateSchedule(Long schedulesId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule= isScheduleExist(schedulesId);
-        schedule.updateSchedule(scheduleDto);
+        schedule.updateSchedule(scheduleRequestDto);
         return new ResponseEntity<>(ResponseDto.success(ResSchedulesDto.of(schedule)),HttpStatus.OK);
     }
 

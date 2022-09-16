@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
-import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
+import com.hanghae.final_project.domain.workspace.dto.request.ScheduleRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.ResSchedulesDto;
 import com.hanghae.final_project.domain.workspace.service.ScheduleService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
@@ -18,9 +18,9 @@ public class ScheduleController {
 
     //schedule 등록
     @PostMapping("/api/workspaces/{workspaceId}/schedules")
-    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(@RequestBody ScheduleDto scheduleDto,
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(@RequestBody ScheduleRequestDto scheduleRequestDto,
                                                                          @PathVariable Long workspaceId){
-        return scheduleService.registerSchedule(scheduleDto,workspaceId);
+        return scheduleService.registerSchedule(scheduleRequestDto,workspaceId);
     }
 
     //schedule 전체조회
@@ -37,8 +37,8 @@ public class ScheduleController {
 
     @PutMapping("/api/workspaces/{workspaceId}/schedules/{schedulesId}")
     public ResponseEntity<ResponseDto<ResSchedulesDto>> updateSchedule(@PathVariable Long schedulesId,
-                               @RequestBody ScheduleDto scheduleDto){
-        return scheduleService.updateSchedule(schedulesId,scheduleDto);
+                               @RequestBody ScheduleRequestDto scheduleRequestDto){
+        return scheduleService.updateSchedule(schedulesId, scheduleRequestDto);
     }
 
     @DeleteMapping("/api/workspaces/{workspaceId}/schedules/{schedulesId}")
