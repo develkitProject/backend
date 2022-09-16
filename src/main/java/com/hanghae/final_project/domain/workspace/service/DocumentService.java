@@ -37,10 +37,9 @@ public class DocumentService {
     public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
                                         DocumentRequestDto documentRequestDto,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
-        if(findWorkSpace == null) {
-            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
-        }
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+        );
 
         //workspace에 존재하지 않는 유저가 글을 쓸 경우 예외처리
         workSpaceUserRepository
@@ -72,10 +71,10 @@ public class DocumentService {
     // 문서 전체조회
     @Transactional(readOnly = true)
     public ResponseDto<List<DocumentListResponseDto>> getDocumentList(Long workSpaceId) {
-        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
-        if(findWorkSpace == null) {
-            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
-        }
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+        );
+
 
         List<Document> documentList = documentRepository.findAllByWorkSpaceIdOrderByCreatedAtDesc(findWorkSpace.getId());
         List<DocumentListResponseDto> documentResponseDtoList = new ArrayList<>();
@@ -98,22 +97,22 @@ public class DocumentService {
     @Transactional(readOnly = true)
     public ResponseDto<DocumentResponseDto> getDocument(Long workSpaceId, Long id) {
 
-        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
-        if(findWorkSpace == null) {
-            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
-        }
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+        );
 
-        Document document = documentRepository.findById(id).orElse(null);
-        if(document == null) {
-            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
-        }
+
+        Document document = documentRepository.findById(id).orElseThrow(
+                ()-> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+        );
+
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
-                .workSpaceId(workSpaceId)
+                .workSpaceId(findWorkSpace.getId())
                 .createdAt(document.getCreatedAt())
                 .modifiedAt(document.getModifiedAt())
                 .build();
@@ -128,10 +127,14 @@ public class DocumentService {
                                                 Long id,
                                                 DocumentRequestDto documentRequestDto) {
 
-        Document document = documentRepository.findById(id).orElse(null);
-        if(document == null) {
-            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
-        }
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+                () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+        );
+
+        Document document = documentRepository.findById(id).orElseThrow(
+                ()->new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+        );
+
 
         document.setTitle(documentRequestDto.getTitle());
         document.setContent(documentRequestDto.getContent());
@@ -143,7 +146,7 @@ public class DocumentService {
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
-                .workSpaceId(workSpaceId)
+                .workSpaceId(findWorkSpace.getId())
                 .createdAt(document.getCreatedAt())
                 .modifiedAt(document.getModifiedAt())
                 .build();
@@ -156,15 +159,15 @@ public class DocumentService {
     @Transactional
     public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
 
-        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
-        if(findWorkSpace == null) {
-            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
-        }
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
+                ()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
+        );
 
-        Document document = documentRepository.findById(id).orElse(null);
-        if(document == null) {
-            throw new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404);
-        }
+
+        Document document = documentRepository.findById(id).orElseThrow(
+                ()->new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
+        );
+
 
         documentRepository.delete(document);
 
