@@ -104,7 +104,5 @@ public class WorkspaceResponseDto {
                 this.profileImage = user.getProfileImage();
             }
         }
-
     }
-
 }

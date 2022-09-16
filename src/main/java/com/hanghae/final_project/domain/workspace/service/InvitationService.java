@@ -89,14 +89,10 @@ public class InvitationService {
                 .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404));
     }
 
-    public ResponseEntity<ResponseDto<WorkspaceResponseDto>> getWorkSpaceByCode(InviteRequestDto requestDto) {
+    public ResponseDto<WorkspaceResponseDto> getWorkSpaceByCode(InviteRequestDto requestDto) {
         Invitation invitation = invitationRepository.findByInvite(requestDto.getCode())
                 .orElseThrow(()->new RequestException(ErrorCode.NO_INVITATION_CODE_404));
 
-        return  new ResponseEntity<>(
-                ResponseDto.success(WorkspaceResponseDto.createResponseDto( invitation.getWorkSpace()))
-                ,HttpStatus.OK)
-       ;
-
+        return  ResponseDto.success(WorkspaceResponseDto.createResponseDto( invitation.getWorkSpace()));
     }
 }
