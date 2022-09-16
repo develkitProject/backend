@@ -1,12 +1,12 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.workspace.dto.request.ScheduleDto;
+import com.hanghae.final_project.domain.workspace.dto.request.ScheduleRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.ResSchedulesDto;
 import com.hanghae.final_project.domain.workspace.model.Schedule;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.ScheduleRepository;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
@@ -26,11 +26,11 @@ public class ScheduleService {
     private final WorkSpaceRepository workSpaceRepository;
     private final ScheduleRepository scheduleRepository;
 
-    public ResponseEntity<?> registerSchedule(ScheduleDto scheduleDto, Long workspaceId) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> registerSchedule(ScheduleRequestDto scheduleRequestDto, Long workspaceId) {
 
         WorkSpace workSpace = isWorkspaceExist(workspaceId);
 
-        Schedule schedule = Schedule.of(scheduleDto, workSpace);
+        Schedule schedule = Schedule.of(scheduleRequestDto, workSpace);
 
         scheduleRepository.save(schedule);
 
@@ -39,7 +39,7 @@ public class ScheduleService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllSchedules(Long workspaceId) {
+    public ResponseEntity<ResponseDto<List<ResSchedulesDto>>> getAllSchedules(Long workspaceId) {
 
         isWorkspaceExist(workspaceId);
 
@@ -52,7 +52,7 @@ public class ScheduleService {
         return new ResponseEntity<>(ResponseDto.success(schedulesDtoList),HttpStatus.OK);
     }
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSchedule(Long schedulesId) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> getSchedule(Long schedulesId) {
 
         Schedule schedule= isScheduleExist(schedulesId);
        return new ResponseEntity<>(
@@ -61,13 +61,13 @@ public class ScheduleService {
        );
     }
 
-    public ResponseEntity<?> updateSchedule(Long schedulesId, ScheduleDto scheduleDto) {
+    public ResponseEntity<ResponseDto<ResSchedulesDto>> updateSchedule(Long schedulesId, ScheduleRequestDto scheduleRequestDto) {
         Schedule schedule= isScheduleExist(schedulesId);
-        schedule.updateSchedule(scheduleDto);
+        schedule.updateSchedule(scheduleRequestDto);
         return new ResponseEntity<>(ResponseDto.success(ResSchedulesDto.of(schedule)),HttpStatus.OK);
     }
 
-    public ResponseEntity<?> deleteSchedules(Long schedulesId) {
+    public ResponseEntity<ResponseDto<String>> deleteSchedules(Long schedulesId) {
         isScheduleExist(schedulesId);
         scheduleRepository.deleteById(schedulesId);
         return new ResponseEntity<>(ResponseDto.success(null),HttpStatus.OK);

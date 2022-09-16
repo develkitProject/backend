@@ -9,9 +9,9 @@ import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
-import com.hanghae.final_project.global.dto.ResponseDto;
-import com.hanghae.final_project.global.security.UserDetailsImpl;
-import com.hanghae.final_project.global.security.jwt.JwtTokenUtils;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.*;
@@ -26,8 +26,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.UUID;
 
-import static com.hanghae.final_project.global.security.handler.AuthenticationSuccessHandler.AUTH_HEADER;
-import static com.hanghae.final_project.global.security.handler.AuthenticationSuccessHandler.TOKEN_TYPE;
+import static com.hanghae.final_project.global.config.security.handler.AuthenticationSuccessHandler.AUTH_HEADER;
+import static com.hanghae.final_project.global.config.security.handler.AuthenticationSuccessHandler.TOKEN_TYPE;
 
 @Slf4j
 @Service
@@ -106,11 +106,12 @@ public class KakaoUserService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
+        log.info("kakao_login_code : "+code);
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", "c8cf862f6090965a35b740904db575b1");
-        body.add("redirect_uri", "http://localhost:3000/kakao");
+        body.add("redirect_uri", "https://d-velkit.com/kakao");
         body.add("code", code);
 
         // HTTP 요청 보내기
