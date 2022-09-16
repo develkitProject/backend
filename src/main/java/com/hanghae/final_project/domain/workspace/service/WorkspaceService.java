@@ -77,8 +77,8 @@ public class WorkspaceService {
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
         List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
-        List<WorkspaceResponseDto> responseDtos = repositories
-                .stream()
+
+        List<WorkspaceResponseDto> responseDtos = repositories.stream()
                 .map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace()))
                 .collect(Collectors.toList());
 
@@ -121,7 +121,7 @@ public class WorkspaceService {
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @Transactional
-    public ResponseDto<WorkspaceResponseDto> joinMemberInWorkspace(Long workspaceId, WorkspaceJoinRequestDto requestDto, UserDetails userDetails) {
+    public ResponseDto<?> joinMemberInWorkspace(Long workspaceId, UserDetails userDetails) {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
         WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
@@ -133,10 +133,6 @@ public class WorkspaceService {
         // 중복해서 들어오는 경우 예외처리
         if (byUserAndWorkSpaceId.isPresent()) {
             throw new RequestException(ErrorCode.WORKSPACE_DUPLICATION_409);
-        }
-
-        if (!requestDto.getCode().equals(workSpace.getInvite_code())) {
-            throw new RequestException(ErrorCode.WORKSPACE_INVITATION_CODE_NOT_SAME);
         }
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);

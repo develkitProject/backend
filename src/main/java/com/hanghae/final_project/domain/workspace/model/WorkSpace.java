@@ -42,6 +42,10 @@ public class WorkSpace extends Timestamped implements Serializable {
     @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<WorkSpaceUser> workSpaceUsers = new ArrayList<>();
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "workSpace", fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.REMOVE)
+    private List<Notice> notices = new ArrayList<>();
+
     // workspace를 만든 사람의 정보
     @JoinColumn(name = "createdByUser_id")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -58,6 +62,7 @@ public class WorkSpace extends Timestamped implements Serializable {
                 .createdBy(user)
                 .imageUrl(imageUrl)
                 .invite_code(UUID.randomUUID().toString())
+                .notices(new ArrayList<>())
                 .build();
     }
 

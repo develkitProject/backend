@@ -71,15 +71,10 @@ public class WorkspaceController {
 
     //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
     @PostMapping("/join/{workspaceId}")
-    public ResponseDto<WorkspaceResponseDto> joinMemberInWorkspace(@PathVariable Long workspaceId,
-                                                @Valid @RequestBody WorkspaceJoinRequestDto requestDto,
-                                                Errors errors,
+    public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
-        if (errors.hasErrors()) {
-            throw new RequestException(ErrorCode.WORKSPACE_INVITATION_CODE_DOES_NOT_EXIST, errors.getAllErrors().get(0).getDefaultMessage());
-        }
         log.info("요청 메소드 [POST] /api/workspaces/join/" + workspaceId);
-        return workspaceService.joinMemberInWorkspace(workspaceId, requestDto, userDetails);
+        return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
     }
 
     //워크스페이스 내 회원 조회
@@ -113,5 +108,6 @@ public class WorkspaceController {
     public ResponseDto<MainResponseDto> getMain(@PathVariable Long workspaceId) {
         return workspaceService.getMain(workspaceId);
     }
+
 
 }
