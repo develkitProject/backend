@@ -24,7 +24,7 @@ public class InvitationController {
     }
 
     @PostMapping("/api/invitation/codes")
-    public ResponseEntity<ResponseDto<WorkspaceResponseDto>> getWorkSpaceByCode(@RequestBody InviteRequestDto requestDto){
+    public ResponseDto<WorkspaceResponseDto> getWorkSpaceByCode(@RequestBody InviteRequestDto requestDto){
        return invitationService.getWorkSpaceByCode(requestDto);
     }
 }
