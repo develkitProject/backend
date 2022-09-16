@@ -4,6 +4,8 @@ plugins {
 	id 'java'
 }
 
+apply plugin: 'io.spring.dependency-management'
+
 group = 'com.hanghae'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
@@ -18,16 +20,70 @@ repositories {
 	mavenCentral()
 }
 
+ext {
+	set('springBootAdminVersion', "2.7.4")
+}
+
 dependencies {
+	// Springboot Web,DataJpa,Security,Lombok,Mysql
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	//Junit Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// slf4j for test
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	//JWT
+	implementation 'com.auth0:java-jwt:3.19.2'
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+	implementation 'commons-codec:commons-codec:1.5'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+	compileOnly 'com.auth0:java-jwt:3.19.2'
+
+	// for websocket, stomp
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation group: 'org.webjars', name: 'stomp-websocket', version: '2.3.3-1'
+
+	// validation
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// aws
+	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
+
+
+	//actuator
+	implementation 'de.codecentric:spring-boot-admin-starter-client'
+
+}
+
+
+dependencyManagement {
+	imports {
+		mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
+	}
+}
+
+
+jar{
+	enabled=false
 }
 
 tasks.named('test') {
+	useJUnitPlatform()
+}
+
+test {
 	useJUnitPlatform()
 }

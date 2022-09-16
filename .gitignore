@@ -1,5 +1,6 @@
 application.properties
 application.yml
+
 HELP.md
 .gradle
 build/
@@ -14,6 +15,12 @@ build/
 .project
 .settings
 .springBeans
+
+caches/**
+wrapper/**
+daemon/**
+native/**
+.tmp/**
 .sts4-cache
 bin/
 !**/src/main/**/bin/
@@ -37,3 +44,13 @@ out/
 
 ### VS Code ###
 .vscode/
+
+application-secret.yml
+application.yml
+src/main/resources/templates/*
+src/test/**
+caches/**
+wrapper/**
+daemon/**
+native/**
+.tmp/**
