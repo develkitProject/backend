@@ -8,4 +8,5 @@ import java.util.Optional;
 public interface InvitationRepository extends JpaRepository<Invitation,Long> {
 
     Optional<Invitation> findByWorkSpace_Id(Long workspaceId);
+    Optional<Invitation> findByInvite(String invite);
 }

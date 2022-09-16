@@ -40,7 +40,6 @@ public class WorkspaceResponseDto {
             this.title = workSpace.getTitle();
             this.content = workSpace.getContent();
             this.imageUrl = workSpace.getImageUrl();
-            this.invite_code = workSpace.getInvite_code();
             this.createdBy = new Users(workSpace.getCreatedBy());
         }
 
