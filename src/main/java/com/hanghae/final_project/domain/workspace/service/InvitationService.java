@@ -1,6 +1,8 @@
 package com.hanghae.final_project.domain.workspace.service;
 
+import com.hanghae.final_project.domain.workspace.dto.request.InviteRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.ResInvitationDto;
+import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Invitation;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
@@ -87,4 +89,14 @@ public class InvitationService {
                 .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404));
     }
 
+    public ResponseEntity<ResponseDto<WorkspaceResponseDto>> getWorkSpaceByCode(InviteRequestDto requestDto) {
+        Invitation invitation = invitationRepository.findByInvite(requestDto.getCode())
+                .orElseThrow(()->new RequestException(ErrorCode.NO_INVITATION_CODE_404));
+
+        return  new ResponseEntity<>(
+                ResponseDto.success(WorkspaceResponseDto.createResponseDto( invitation.getWorkSpace()))
+                ,HttpStatus.OK)
+       ;
+
+    }
 }
