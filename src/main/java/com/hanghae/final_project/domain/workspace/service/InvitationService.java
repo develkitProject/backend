@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.service;
 
 import com.hanghae.final_project.domain.workspace.dto.request.InviteRequestDto;
-import com.hanghae.final_project.domain.workspace.dto.response.ResInvitationDto;
+import com.hanghae.final_project.domain.workspace.dto.response.InvitationResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Invitation;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -33,24 +33,24 @@ public class InvitationService {
 
     private final WorkSpaceRepository workSpaceRepository;
 
-    public ResponseEntity<ResponseDto<ResInvitationDto>> getCode(Long workspaceId, UserDetailsImpl userDetails) {
+    public ResponseEntity<ResponseDto<InvitationResponseDto>> getCode(Long workspaceId, UserDetailsImpl userDetails) {
 
         //Workspace 가 존재하는지 확인
         WorkSpace workSpace=  checkWorkspace(workspaceId);
 
         //해당 워크스페이스에 존재하는 유저인지 확인
-        WorkSpaceUser workSpaceUser = validateUser(workspaceId, userDetails);
+        validateUser(workspaceId, userDetails);
 
         //code 만들기
         String invitationCode = makeCode(workspaceId,workSpace);
 
         //dto 생성
-        ResInvitationDto resInvitationDto =ResInvitationDto.of(
-                workSpaceUser.getWorkSpace().getId(),
+        InvitationResponseDto invitationResponseDto = InvitationResponseDto.of(
+                workSpace,
                 invitationCode
         );
 
-        return new ResponseEntity<>(ResponseDto.success(resInvitationDto), HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(invitationResponseDto), HttpStatus.OK);
     }
 
     //해당 workspace 에 포함된 유저가 요청을 보낸것인지 확인하는 과정

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class ScheduleDto {
+public class ScheduleRequestDto {
     private String content;
     private String eventDate;
 }

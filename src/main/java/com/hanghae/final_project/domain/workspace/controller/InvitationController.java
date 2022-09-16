@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
 import com.hanghae.final_project.domain.workspace.dto.request.InviteRequestDto;
-import com.hanghae.final_project.domain.workspace.dto.response.ResInvitationDto;
+import com.hanghae.final_project.domain.workspace.dto.response.InvitationResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.service.InvitationService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
@@ -18,8 +18,8 @@ public class InvitationController {
     private final InvitationService invitationService;
 
     @GetMapping("/api/invitation/{workspaceId}")
-    public ResponseEntity<ResponseDto<ResInvitationDto>> getInvitationCode(@PathVariable Long workspaceId,
-                                                                           @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public ResponseEntity<ResponseDto<InvitationResponseDto>> getInvitationCode(@PathVariable Long workspaceId,
+                                                                                @AuthenticationPrincipal UserDetailsImpl userDetails){
         return invitationService.getCode(workspaceId,userDetails);
     }
 
