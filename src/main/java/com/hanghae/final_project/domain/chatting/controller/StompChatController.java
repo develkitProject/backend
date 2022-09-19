@@ -15,6 +15,9 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 @Slf4j
 @RequiredArgsConstructor
 @Controller
@@ -31,24 +34,13 @@ public class StompChatController {
     /*
      * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      * */
-    @MessageMapping("/chat/enter")
-    public void enter(ChatMessageDto message, @Header("token") String token) {
-
-//        String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
-//
-//        //message.setWriter(nickname);
-//        //message.setMessage(nickname+"님이 채팅방에 참여하였습니다");
-//        //chatRoomRepository.enterChatRoom(message.getRoomId());
-//        //log.info( "log Info "+chatRoomRepository.getTopic(message.getRoomId()).toString());
-//        //redisPublisher.publish(chatRoomRepository.getTopic(message.getRoomId()),message);
-
-    }
 
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto message,@Header("token") String token){
         String nickname = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
         message.setWriter(nickname);
         message.setType(ChatMessageDto.MessageType.TALK);
+        message.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
         redisPublisher.publish(channelTopic,message);
         chatRedisCacheService.addChat(message);
     }

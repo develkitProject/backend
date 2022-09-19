@@ -12,4 +12,5 @@ public interface ChatRepository extends JpaRepository<Chat,Long> {
 
     Slice<Chat> findAllByCreatedAtBeforeAndWorkSpace_IdOrderByCreatedAtDesc(String cursorCreatedAt,Long workspaceId, Pageable pageable);
 
+    List<Chat> findAllByCreatedAtAfterOrderByCreatedAtDesc(String cursorCreatedAt);
 }
