@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.chatting.controller;
 
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
+import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
