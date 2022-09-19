@@ -65,7 +65,6 @@ public class WebSecurityConfig {
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-resources/**",
-                        "/swagger/**",
                         "/h2-console/**",
                         "/stomp/chat/**",
                         "/actuator/**"
