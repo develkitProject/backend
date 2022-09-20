@@ -92,6 +92,7 @@ public class ChatRoomRepository {
                     .message(chat.getMessage())
                     .createdAt(chat.getCreatedAt())
                     .writer(chat.getUsers())
+                    .type(ChatMessageDto.MessageType.TALK)
                     .roomId(chat.getWorkSpace().getId().toString())
                     .build();
             zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));

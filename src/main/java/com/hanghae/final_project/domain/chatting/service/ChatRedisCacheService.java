@@ -115,6 +115,7 @@ public class ChatRedisCacheService {
 
         //마지막 채팅을 기준으로 redis의 Sorted set에 몇번째 항목인지 파악
         ChatMessageDto cursorDto = ChatMessageDto.builder()
+                .type(ChatMessageDto.MessageType.TALK)
                 .roomId(workSpaceId.toString())
                 .createdAt(chatPagingDto.getCursor())
                 .message(chatPagingDto.getMessage())
@@ -124,6 +125,7 @@ public class ChatRedisCacheService {
         //Range 범위 구하기 위해서, 마지막 채팅 데이터를 넣고 최신에서 몇번째인지 값 구하기
         Long rank = zSetOperations.reverseRank(CHAT_SORTED_SET_ + workSpaceId, cursorDto);
 
+        log.info("cursor rank {}",rank);
         //만약 맨처음 paging일 경우 마지막 채팅이 없기 때문에, 0~10번까지의 채팅을 내보낸다.
         if (rank == null)
             rank = 0L;
