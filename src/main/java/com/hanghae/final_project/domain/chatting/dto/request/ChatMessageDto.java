@@ -25,8 +25,9 @@ public class ChatMessageDto {
 
     public static ChatMessageDto of (Chat chat){
         return ChatMessageDto.builder()
+                .type(MessageType.TALK)
                 .roomId(chat.getWorkSpace().getId().toString())
-                .writer(chat.getMessage())
+                .writer(chat.getUsers())
                 .createdAt(chat.getCreatedAt())
                 .message(chat.getMessage())
                 .build();

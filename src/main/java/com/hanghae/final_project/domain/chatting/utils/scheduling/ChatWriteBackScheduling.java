@@ -1,4 +1,4 @@
-package com.hanghae.final_project.domain.chatting.utils;
+package com.hanghae.final_project.domain.chatting.utils.scheduling;
 
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;

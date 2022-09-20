@@ -4,6 +4,7 @@ import com.hanghae.final_project.domain.chatting.dto.ChatRoomDto;
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
 import com.hanghae.final_project.domain.chatting.redis.RedisSubscriber;
+import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import lombok.Getter;
@@ -35,6 +36,7 @@ public class ChatRoomRepository {
 
     private final WorkSpaceRepository workSpaceRepository;
 
+    private final ChatUtils chatUtils;
     private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
 
     private final ChatRepository chatRepository;
@@ -51,6 +53,7 @@ public class ChatRoomRepository {
     public static final String SESSION_ID = "SESSION_ID";
     public static final String CHAT_SORTED_SET_="CHAT_SORTED_SET_";
 
+
     @PostConstruct
     private void init() {
 
@@ -59,44 +62,31 @@ public class ChatRoomRepository {
         opsListChatData = redisTemplate.opsForList();
         zSetOperations = chatRedisTemplate.opsForZSet();
 
-        //서버 시작전, redis 에 데이터 적재시키기.
-        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
-        LocalDateTime x = current.minusDays(30);
+        chatUtils.cachingDataInRedisFromDB();
 
-        Double milliseconds = ((Long) x.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
-
-        log.info("milliseconds {}", milliseconds);
-        LocalDateTime backToCurrent = Instant.ofEpochMilli(milliseconds.longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-        ;
-
-        log.info("변환확인 {}", backToCurrent.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
-        System.out.println("=======================");
-
-        String cursor = x.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
-        log.info("7일전 날짜 : {}", cursor);
-
-        //7일전 데이터 전부가져와서, redis에 적재
-        List<Chat> chatList = chatRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(cursor);
-
-//        ChatMessageDto testDto = ChatMessageDto.builder()
-//                .message(chatList.get(0).getMessage())
-//                .createdAt(chatList.get(0).getCreatedAt())
-//                .writer(chatList.get(0).getUsers())
-//                .roomId(chatList.get(0).getWorkSpace().getId().toString())
-//                .build();
-
-//        Long rank = zSetOperations.rank("chatSortedSet",testDto);
-
-        for (Chat chat : chatList) {
-            ChatMessageDto chatMessageDto = ChatMessageDto.builder()
-                    .message(chat.getMessage())
-                    .createdAt(chat.getCreatedAt())
-                    .writer(chat.getUsers())
-                    .type(ChatMessageDto.MessageType.TALK)
-                    .roomId(chat.getWorkSpace().getId().toString())
-                    .build();
-            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
-        }
+//        //서버 시작전, redis 에 데이터 적재시키기.
+//        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
+//        LocalDateTime x = current.minusDays(7);
+//
+//        Double milliseconds = ((Long) x.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
+//
+//        log.info("milliseconds {}", milliseconds);
+//        LocalDateTime backToCurrent = Instant.ofEpochMilli(milliseconds.longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+//        ;
+//
+//        log.info("변환확인 {}", backToCurrent.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
+//        System.out.println("=======================");
+//
+//        String cursor = x.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
+//        log.info("7일전 날짜 : {}", cursor);
+//
+//        //7일전 데이터 전부가져와서, redis에 적재
+//        List<Chat> chatList = chatRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(cursor);
+//
+//        for (Chat chat : chatList) {
+//            ChatMessageDto chatMessageDto = ChatMessageDto.of(chat);
+//            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
+//        }
 
         //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRangeByLex("chatSortedSet",range.lte(testDto));
         //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRange("chatSortedSet", rank-12L,rank-3L);
@@ -131,9 +121,7 @@ public class ChatRoomRepository {
         //채팅방 - 세션ID - 유저 아이디
         opsHashEnterRoom.put(CHAT_ROOM_ID_ + roomId, sessionId, username);
 
-
     }
-
     //채팅 DisConnect 할 때, WebSocket SessionId 를 통해서 redis에서 삭제
     public String leaveChatRoom(String sessionId) {
         String roomId = opsHashEnterRoom.get(SESSION_ID, sessionId);
@@ -164,11 +152,13 @@ public class ChatRoomRepository {
         return userListInWorkSpace;
     }
 
-    public Double changeLocalDateTimeToDouble(String createdAt) {
+//    public Double changeLocalDateTimeToDouble(String createdAt) {
+//
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
+//        LocalDateTime localDateTime = LocalDateTime.parse(createdAt, formatter);
+//        return ((Long) localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
+//    }
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
-        LocalDateTime localDateTime = LocalDateTime.parse(createdAt, formatter);
-        return ((Long) localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
-    }
+
 
 }

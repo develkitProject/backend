@@ -7,6 +7,7 @@ import com.hanghae.final_project.domain.chatting.dto.response.ResChatPagingDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
 import com.hanghae.final_project.domain.chatting.repository.ChatRepository;
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
+import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
@@ -38,6 +39,8 @@ import static com.hanghae.final_project.domain.chatting.repository.ChatRoomRepos
 @RequiredArgsConstructor
 @Slf4j
 public class ChatRedisCacheService {
+
+    private final ChatUtils chatUtils;
 
     public static final String NEW_CHAT = "NEW_CHAT";
     private final RedisTemplate<String, Object> redisTemplate;
@@ -82,9 +85,9 @@ public class ChatRedisCacheService {
     public void addChat(ChatMessageDto chatMessageDto) {
 
         // writeBack 용 새로운 채팅 데이터 저장
-        redisTemplate.opsForZSet().add(NEW_CHAT, chatMessageDto, chatRoomRepository.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(NEW_CHAT, chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
         // caching 용 데이터 저장
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatRoomRepository.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
 
     }
 
@@ -121,6 +124,7 @@ public class ChatRedisCacheService {
                 .message(chatPagingDto.getMessage())
                 .writer(chatPagingDto.getWriter())
                 .build();
+
 
         //Range 범위 구하기 위해서, 마지막 채팅 데이터를 넣고 최신에서 몇번째인지 값 구하기
         Long rank = zSetOperations.reverseRank(CHAT_SORTED_SET_ + workSpaceId, cursorDto);
@@ -195,7 +199,7 @@ public class ChatRedisCacheService {
 
     public void cachingDBDataToRedis(Chat chat){
         ChatMessageDto chatMessageDto = ChatMessageDto.of(chat);
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatRoomRepository.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
 
     }
 }
