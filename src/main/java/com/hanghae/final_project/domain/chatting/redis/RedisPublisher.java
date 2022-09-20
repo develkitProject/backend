@@ -20,7 +20,6 @@ public class RedisPublisher {
 
     public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
 
-
         redisTemplate.convertAndSend(topic.getTopic(), messageDto);
     }
 }

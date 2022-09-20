@@ -9,6 +9,7 @@ import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -18,89 +19,155 @@ import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Repository
 @Getter
 @Slf4j
 public class ChatRoomRepository {
-    private final RedisTemplate<String,Object> redisTemplate;
-    private final RedisTemplate<String,String> roomRedisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> roomRedisTemplate;
 
     private final WorkSpaceRepository workSpaceRepository;
-    private HashOperations<String,String,String> opsHashEnterRoom;
-    private HashOperations<String,String,ChatRoomDto> opsHashChatRoom;
-    private BoundHashOperations<String, String,String> setOperations;
-    public static final String CHAT_ROOMS = "CHAT_ROOM";
-    public static final String CHAT_ROOM_ID_="CHAT_ROOM_ID_";
 
-    public static final String SESSION_ID="SESSION_ID";
+    private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
+
+    private final ChatRepository chatRepository;
+    private HashOperations<String, String, String> opsHashEnterRoom;
+    private HashOperations<String, String, ChatRoomDto> opsHashChatRoom;
+    private BoundHashOperations<String, String, String> setOperations;
+
+    private ListOperations<String, Object> opsListChatData;
+
+    private ZSetOperations<String, ChatMessageDto> zSetOperations;
+    public static final String CHAT_ROOMS = "CHAT_ROOM";
+    public static final String CHAT_ROOM_ID_ = "CHAT_ROOM_ID_";
+
+    public static final String SESSION_ID = "SESSION_ID";
+    public static final String CHAT_SORTED_SET_="CHAT_SORTED_SET_";
 
     @PostConstruct
-    private void init(){
+    private void init() {
 
-        opsHashEnterRoom=roomRedisTemplate.opsForHash();
-        opsHashChatRoom=redisTemplate.opsForHash();
-       // scanOptions = ScanOptions.scanOptions().build();
+        opsHashEnterRoom = roomRedisTemplate.opsForHash();
+        opsHashChatRoom = redisTemplate.opsForHash();
+        opsListChatData = redisTemplate.opsForList();
+        zSetOperations = chatRedisTemplate.opsForZSet();
+
+        //서버 시작전, redis 에 데이터 적재시키기.
+        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
+        LocalDateTime x = current.minusDays(30);
+
+        Double milliseconds = ((Long) x.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
+
+        log.info("milliseconds {}", milliseconds);
+        LocalDateTime backToCurrent = Instant.ofEpochMilli(milliseconds.longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+        ;
+
+        log.info("변환확인 {}", backToCurrent.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
+        System.out.println("=======================");
+
+        String cursor = x.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
+        log.info("7일전 날짜 : {}", cursor);
+
+        //7일전 데이터 전부가져와서, redis에 적재
+        List<Chat> chatList = chatRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(cursor);
+
+//        ChatMessageDto testDto = ChatMessageDto.builder()
+//                .message(chatList.get(0).getMessage())
+//                .createdAt(chatList.get(0).getCreatedAt())
+//                .writer(chatList.get(0).getUsers())
+//                .roomId(chatList.get(0).getWorkSpace().getId().toString())
+//                .build();
+
+//        Long rank = zSetOperations.rank("chatSortedSet",testDto);
+
+        for (Chat chat : chatList) {
+            ChatMessageDto chatMessageDto = ChatMessageDto.builder()
+                    .message(chat.getMessage())
+                    .createdAt(chat.getCreatedAt())
+                    .writer(chat.getUsers())
+                    .roomId(chat.getWorkSpace().getId().toString())
+                    .build();
+            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
+        }
+
+        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRangeByLex("chatSortedSet",range.lte(testDto));
+        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRange("chatSortedSet", rank-12L,rank-3L);
+
+        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRangeByScore("chatSortedSet", 0.0, 1663554696139.0);
+//        for (ChatMessageDto chatMessageDto : chatMessageDtoSet) {
+//            log.info("message : {}", chatMessageDto.getMessage());
+//            log.info("message : {}", chatMessageDto.getCreatedAt());
+//            log.info("==========================================");
+//        }
     }
 
     //(thymeleaf test용 함수 마지막 refactoring에 제거 예정)
-    public List<ChatRoomDto> findAllRoom(){
+    public List<ChatRoomDto> findAllRoom() {
 
         return opsHashChatRoom.values(CHAT_ROOMS);
 
     }
+
     //(thymeleaf test용 함수 마지막 refactoring에 제거 예정)
-    public ChatRoomDto findRoomById(String id){
-        return opsHashChatRoom.get(CHAT_ROOMS,id);
+    public ChatRoomDto findRoomById(String id) {
+        return opsHashChatRoom.get(CHAT_ROOMS, id);
     }
 
 
     //채팅 SubScribe 할 때, WebSocket SessionId 를 통해서 redis에 저장
-    public void enterChatRoom(String roomId,String sessionId,String username){
+    public void enterChatRoom(String roomId, String sessionId, String username) {
 
         //세션 - 세션ID - 방 번호
-        opsHashEnterRoom.put(SESSION_ID,sessionId,roomId);
+        opsHashEnterRoom.put(SESSION_ID, sessionId, roomId);
 
         //채팅방 - 세션ID - 유저 아이디
-        opsHashEnterRoom.put(CHAT_ROOM_ID_+roomId,sessionId,username);
+        opsHashEnterRoom.put(CHAT_ROOM_ID_ + roomId, sessionId, username);
 
 
     }
 
     //채팅 DisConnect 할 때, WebSocket SessionId 를 통해서 redis에서 삭제
     public String leaveChatRoom(String sessionId) {
-        String roomId=opsHashEnterRoom.get(SESSION_ID,sessionId);
-        opsHashEnterRoom.delete(SESSION_ID,sessionId);
-        opsHashEnterRoom.delete(CHAT_ROOM_ID_+roomId,sessionId);
+        String roomId = opsHashEnterRoom.get(SESSION_ID, sessionId);
+        opsHashEnterRoom.delete(SESSION_ID, sessionId);
+        opsHashEnterRoom.delete(CHAT_ROOM_ID_ + roomId, sessionId);
         return roomId;
     }
 
     public List<String> findUsersInWorkSpace(String roomId, String sessionId) {
 
-        setOperations= roomRedisTemplate.boundHashOps(CHAT_ROOM_ID_+roomId);
+        setOperations = roomRedisTemplate.boundHashOps(CHAT_ROOM_ID_ + roomId);
         ScanOptions scanOptions = ScanOptions.scanOptions().build();
         List<String> userListInWorkSpace = new ArrayList<>();
 
-        try( Cursor<Map.Entry<String,String>> cursor= setOperations.scan(scanOptions) ){
+        try (Cursor<Map.Entry<String, String>> cursor = setOperations.scan(scanOptions)) {
 
-            while(cursor.hasNext()){
+            while (cursor.hasNext()) {
 
-                Map.Entry<String ,String> data =cursor.next();
-                log.info("SessionId : "+data.getKey());
-                log.info("Username : "+data.getValue());
+                Map.Entry<String, String> data = cursor.next();
+                log.info("SessionId : " + data.getKey());
+                log.info("Username : " + data.getValue());
                 userListInWorkSpace.add(data.getValue());
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return userListInWorkSpace;
     }
 
+    public Double changeLocalDateTimeToDouble(String createdAt) {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");
+        LocalDateTime localDateTime = LocalDateTime.parse(createdAt, formatter);
+        return ((Long) localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
+    }
 
 }

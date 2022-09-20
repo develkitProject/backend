@@ -6,9 +6,10 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @Builder
-@Setter
 @AllArgsConstructor
 public class ChatPagingDto {
 
-    private String  Cursor;
+    private String  message;
+    private String  writer;
+    private String  cursor;
 }

@@ -1,10 +1,14 @@
 package com.hanghae.final_project.global.commonDto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ResponseDto<T> {
     private boolean success;
     private T data;
