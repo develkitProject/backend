@@ -4,7 +4,11 @@ import com.hanghae.final_project.domain.chatting.dto.request.ChatPagingDto;
 
 import com.hanghae.final_project.domain.chatting.dto.response.ResChatPagingDto;
 import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
+
 import com.hanghae.final_project.global.commonDto.ResponseDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+
+@Api(tags = "Chat")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -23,7 +29,7 @@ public class ChatDataController {
 
     private final ChatRedisCacheService cacheService;
 
-
+    @ApiOperation(value = "채팅", notes = "수정해주세요")
     @PostMapping("/api/chats/{workSpaceId}")
     public ResponseDto<List<ResChatPagingDto>> getChatting(@PathVariable Long workSpaceId, @RequestBody(required = false) ChatPagingDto chatPagingDto){
 
