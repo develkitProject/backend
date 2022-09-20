@@ -6,20 +6,22 @@ import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseD
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
+@Api(tags = "Document")
 @RequiredArgsConstructor
 @RestController
 public class DocumentController {
 
     private final DocumentService documentService;
 
-    // 문서 생성
+    @ApiOperation(value = "문서 생성", notes = "워크스페이스에 따라 구분")
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<DocumentResponseDto> createDocument(@PathVariable Long workspaceId,
                                                            @RequestBody DocumentRequestDto documentRequestDto,
@@ -27,20 +29,20 @@ public class DocumentController {
         return documentService.createDocument(workspaceId, documentRequestDto, userDetails);
     }
 
-    // 문서 전체조회
+    @ApiOperation(value = "문서 전체 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<List<DocumentListResponseDto>> getDocumentList(@PathVariable Long workspaceId) {
         return documentService.getDocumentList(workspaceId);
     }
 
-    // 문서 상세조회
+    @ApiOperation(value = "문서 상세 조회", notes = "문서에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> getDocument(@PathVariable Long workspaceId, @PathVariable Long docId) {
         return documentService.getDocument(workspaceId, docId);
     }
 
 
-    // 문서 수정
+    @ApiOperation(value = "문서 수정", notes = "문서에 따라 구분")
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
                                          @PathVariable Long docId,
@@ -49,7 +51,7 @@ public class DocumentController {
     }
 
 
-    // 문서 삭제
+    @ApiOperation(value = "문서 삭제", notes = "문서에 따라 구분")
     @DeleteMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<String> deleteDocument(@PathVariable Long workspaceId,
                                         @PathVariable Long docId) {
@@ -57,6 +59,3 @@ public class DocumentController {
     }
 
 }
-
-// 리턴타입 제네릭 바꾸기
-// 리턴 수정

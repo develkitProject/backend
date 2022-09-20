@@ -2,6 +2,8 @@ package com.hanghae.final_project.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hanghae.final_project.domain.user.service.KakaoUserService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+@Api(tags = "KakaoUser Login")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -18,6 +21,7 @@ public class KakaoUserController {
 
     private final KakaoUserService kakaoUserService;
 
+    @ApiOperation(value = "카카오톡 로그인", notes = "카카오톡 로그인")
     @GetMapping("/user/kakao/callback")
     public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException,JsonProcessingException {
         return  kakaoUserService.kakaoLogin(code,response);

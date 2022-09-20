@@ -61,11 +61,10 @@ public class WebSecurityConfig {
         return (web) -> web
                 .ignoring()
                 .antMatchers(
-                        "/swagger-ui/**",
+                        "/swagger-ui.html/**",
                         "/v2/api-docs",
                         "/webjars/**",
                         "/swagger-resources/**",
-                        "/swagger/**",
                         "/h2-console/**",
                         "/stomp/chat/**",
                         "/actuator/**"

@@ -1,6 +1,5 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
-import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
@@ -9,6 +8,8 @@ import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +21,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+@Api(tags = "WorkSpace")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -28,7 +30,7 @@ public class WorkspaceController {
 
     private final WorkspaceService workspaceService;
 
-    // 워크 스페이스 생성
+    @ApiOperation(value = "워크스페이스 생성", notes = "워크스페이스에 따라 구분")
     @PostMapping
     public ResponseDto<WorkspaceResponseDto> createWorkspace(@Valid @RequestBody WorkspaceRequestDto requestDto,
                                                              Errors errors,
@@ -41,14 +43,14 @@ public class WorkspaceController {
         return workspaceService.createWorkspace(requestDto, userDetails);
     }
 
-    // 참여한 모든 workspace 조회
+    @ApiOperation(value = "참여한 모든 WorkSpcae 조회", notes = "사용자에 따라 구분")
     @GetMapping
     public ResponseDto<List<WorkspaceResponseDto>> getWorkspaces(@AuthenticationPrincipal UserDetails userDetails) {
         log.info("요청 메소드 [GET] /api/workspaces");
         return workspaceService.getWorkspaces(userDetails);
     }
 
-    // 워크스페이스 정보 수정
+    @ApiOperation(value = "워크스페이스 정보 수정", notes = "워크스페이스에 따라 구분")
     @PutMapping("/{workspaceId}")
     public ResponseDto<WorkspaceResponseDto> updateWorkspace(@PathVariable Long workspaceId,
                                           @Valid @RequestBody WorkspaceRequestDto requestDto,
@@ -69,7 +71,7 @@ public class WorkspaceController {
         return workspaceService.deleteWorkspace(workspaceId, userDetails);
     }*/
 
-    //워크스페이스 내 회원 등록 (초대받은 멤버가 등록됨)
+    @ApiOperation(value = "워크스페이스 내 회원 등록(초대받은 멤버가 등록됨)", notes = "워크스페이스에 따라 구분")
     @PostMapping("/join/{workspaceId}")
     public ResponseDto<?> joinMemberInWorkspace(@PathVariable Long workspaceId,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
@@ -77,33 +79,33 @@ public class WorkspaceController {
         return workspaceService.joinMemberInWorkspace(workspaceId, userDetails);
     }
 
-    //워크스페이스 내 회원 조회
+    @ApiOperation(value = "워크스페이스 내 회원 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/{workspaceId}")
     public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(@PathVariable Long workspaceId) {
         log.info("요청 메소드 [GET] /api/workspaces/" + workspaceId);
         return workspaceService.getMembersInWorkspace(workspaceId);
     }
 
-    //워크스페이스 나가기
+    @ApiOperation(value = "워크스페이스 나가기", notes = "워크스페이스에 따라 구분")
     @DeleteMapping("/quit/{workspaceId}")
     public ResponseDto<Boolean> quitWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
         log.info("요청 메소드 [DELETE] /api/workspaces/" + workspaceId);
         return workspaceService.quitWorkspace(workspaceId, userDetails);
     }
 
-    // 초대코드가 동일한지 확인하는 controller
+    @ApiOperation(value = "초대 코드 일치여부 확인", notes = "워크스페이스에 따라 구분")
     @DeleteMapping("/{workspaceId}")
     public ResponseDto<Boolean> deleteWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.deleteWorkspace(workspaceId, userDetails);
     }
 
-    //모든 workspace 조회
+    @ApiOperation(value = "모든 워크스페이스 조회", notes = "")
     @GetMapping("/temp")
     public ResponseDto<List<WorkspaceResponseDto>> getAllWorkspaces() {
         return workspaceService.getAllWorkspaces();
     }
 
-    // workspace의 공지사항과 게시글 목록 반환
+    @ApiOperation(value = "워크스페이스의 공지사항과 게시글 목록 반환", notes = "워크스페이스에 따라 구분")
     @GetMapping("/{workspaceId}/main")
     public ResponseDto<MainResponseDto> getMain(@PathVariable Long workspaceId) {
         return workspaceService.getMain(workspaceId);
