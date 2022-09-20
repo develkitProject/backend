@@ -27,7 +27,7 @@ public class ChatWriteBackScheduling {
     private final ChatRepository chatRepository;
     private final WorkSpaceRepository workSpaceRepository;
 
-    //@Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0/30 * * * *")
     @Transactional
     public void writeBack(){
         log.info("Scheduling start");
