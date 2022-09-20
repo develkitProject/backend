@@ -6,8 +6,7 @@ import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseD
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
