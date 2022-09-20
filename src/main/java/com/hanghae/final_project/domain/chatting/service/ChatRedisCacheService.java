@@ -47,14 +47,10 @@ public class ChatRedisCacheService {
 
     private final ChatRepository chatRepository;
 
-    private final ChatRoomRepository chatRoomRepository;
-
     private final WorkSpaceRepository workSpaceRepository;
 
     private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
 
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChatRedisCacheService.class);
 
     private ZSetOperations<String, ChatMessageDto> zSetOperations;
     private HashOperations<String, String, ChatRoomDto> opsHashChatRoom;
@@ -150,21 +146,27 @@ public class ChatRedisCacheService {
         //만약 채팅 데이터가 10개가 아니라면, DB에 데이터가 더 있는지 확인해야함
         if(chatMessageDtoList.size()!=10 ){
             log.info("데이터가 10개가 아닙니다, DB 검색을 시작합니다.");
-            findOtherChatDataInDB(chatMessageDtoList,workSpaceId );
+            findOtherChatDataInDB(chatMessageDtoList,workSpaceId ,chatPagingDto.getCursor());
         }
 
         return ResponseDto.success(chatMessageDtoList);
     }
-    private void findOtherChatDataInDB(List<ResChatPagingDto> chatMessageDtoList,Long workSpaceId ){
+    private void findOtherChatDataInDB(List<ResChatPagingDto> chatMessageDtoList,Long workSpaceId,String cursor ){
 
         String lastCursor;
         // 데이터가 하나도 없을 경우 현재시간을 Cursor로 활용
-        if(chatMessageDtoList.size()==0){
+        if(chatMessageDtoList.size()==0 && cursor==null){
             log.info("redis cache에 해당하는 데이터가 하나도 없습니다. DB 확인을 진행합니다.");
             lastCursor = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
         }
+        //redis 적재된 마지막 데이터를 입력했을 경우.
+        else if(chatMessageDtoList.size()==0 && cursor!=null){
+            lastCursor=cursor;
+        }
         // 데이터가 존재할 경우 CreatedAt을 Cursor로 사용
         else lastCursor = chatMessageDtoList.get(chatMessageDtoList.size()-1).getCreatedAt();
+
+
 
         int dtoListSize = chatMessageDtoList.size();
         Slice<Chat> chatSlice =
