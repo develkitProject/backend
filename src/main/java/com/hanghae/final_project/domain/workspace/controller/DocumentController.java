@@ -3,6 +3,8 @@ package com.hanghae.final_project.domain.workspace.controller;
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
+import com.hanghae.final_project.domain.workspace.model.Document;
+import com.hanghae.final_project.domain.workspace.repository.DocumentQueryRepository;
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
@@ -18,6 +20,7 @@ import java.util.List;
 @RestController
 public class DocumentController {
 
+    private final DocumentQueryRepository documentQueryRepository;
     private final DocumentService documentService;
 
     @ApiOperation(value = "문서 생성", notes = "워크스페이스에 따라 구분")
@@ -55,6 +58,15 @@ public class DocumentController {
     public ResponseDto<String> deleteDocument(@PathVariable Long workspaceId,
                                         @PathVariable Long docId) {
         return documentService.deleteDocument(workspaceId, docId);
+    }
+
+    @GetMapping("/api/workspaces/{workspaceId}/docs/search")
+    public ResponseDto<List<DocumentResponseDto>> searchDocument(@PathVariable Long workspaceId,
+                               @RequestParam String type,
+                               @RequestParam(required = false) String keyword,
+                               @RequestParam(required = false) String writer){
+
+        return documentQueryRepository.searchDocumentByFilter(workspaceId,type,keyword,writer);
     }
 
 }
