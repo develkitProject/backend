@@ -7,6 +7,7 @@ import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinReque
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
+import com.hanghae.final_project.domain.workspace.dto.response.WorkSpaceInfoResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.global.util.image.S3UploaderService;
 import com.hanghae.final_project.domain.workspace.model.Document;
@@ -107,10 +108,10 @@ public class WorkspaceService {
         // 3. 데이터 수정하기
         String imageUrl = workspace.getImageUrl();
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("static"));
+            String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
             s3UploaderService.deleteImage(deleteUrl);
 
-            imageUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "static");
+            imageUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "workspace");
         }
 
         workspace.update(requestDto, imageUrl);
@@ -194,7 +195,7 @@ public class WorkspaceService {
         }
 
         try {
-            String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("static"));
+            String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("workspace"));
             s3UploaderService.deleteImage(deleteUrl);
 
         } catch (IndexOutOfBoundsException e) {
@@ -225,5 +226,19 @@ public class WorkspaceService {
 
         MainResponseDto responseDto = MainResponseDto.createResponseDto(workSpace, documents, firstNotice);
         return ResponseDto.success(responseDto);
+    }
+
+    public ResponseDto<WorkSpaceInfoResponseDto> getWorkspaceInfo(Long workspaceId) {
+
+        WorkSpace workSpace = workspaceRepository.findById(workspaceId).orElse(null);
+
+        if (workSpace == null) {
+            throw new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404);
+        }
+
+        int numInWorkspace = workspaceUserRepository.findAllByWorkSpaceId(workspaceId).size();
+
+        return ResponseDto.success(WorkSpaceInfoResponseDto.of(workSpace,String.valueOf(numInWorkspace)));
+
     }
 }
