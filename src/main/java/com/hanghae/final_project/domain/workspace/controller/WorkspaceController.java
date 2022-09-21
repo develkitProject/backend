@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.workspace.controller;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
+import com.hanghae.final_project.domain.workspace.dto.response.WorkSpaceInfoResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
 import com.hanghae.final_project.domain.workspace.service.WorkspaceService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
@@ -93,7 +94,7 @@ public class WorkspaceController {
         return workspaceService.quitWorkspace(workspaceId, userDetails);
     }
 
-    @ApiOperation(value = "초대 코드 일치여부 확인", notes = "워크스페이스에 따라 구분")
+    @ApiOperation(value = "워크스페이스 삭제", notes = "워크스페이스에 따라 구분")
     @DeleteMapping("/{workspaceId}")
     public ResponseDto<Boolean> deleteWorkspace(@PathVariable Long workspaceId, @AuthenticationPrincipal UserDetails userDetails) {
         return workspaceService.deleteWorkspace(workspaceId, userDetails);
@@ -109,6 +110,12 @@ public class WorkspaceController {
     @GetMapping("/{workspaceId}/main")
     public ResponseDto<MainResponseDto> getMain(@PathVariable Long workspaceId) {
         return workspaceService.getMain(workspaceId);
+    }
+
+    @ApiOperation(value = "워크스페이스 정보 및 인원수 반환", notes = "")
+    @GetMapping("/{workspaceId}/info")
+    public ResponseDto<WorkSpaceInfoResponseDto> getWorkspaceInfo(@PathVariable Long workspaceId){
+        return workspaceService.getWorkspaceInfo(workspaceId);
     }
 
 
