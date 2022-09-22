@@ -1,6 +1,7 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
 import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto;
+import com.hanghae.final_project.domain.workspace.dto.request.SearchDocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Document;
@@ -8,6 +9,7 @@ import com.hanghae.final_project.domain.workspace.repository.DocumentQueryReposi
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.util.annotation.QueryStringArgResolver;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,8 +49,8 @@ public class DocumentController {
     @ApiOperation(value = "문서 수정", notes = "문서에 따라 구분")
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
-                                         @PathVariable Long docId,
-                                         @RequestBody DocumentRequestDto documentRequestDto) {
+                                                           @PathVariable Long docId,
+                                                           @RequestBody DocumentRequestDto documentRequestDto) {
         return documentService.updateDocument(workspaceId, docId, documentRequestDto);
     }
 
@@ -56,17 +58,28 @@ public class DocumentController {
     @ApiOperation(value = "문서 삭제", notes = "문서에 따라 구분")
     @DeleteMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<String> deleteDocument(@PathVariable Long workspaceId,
-                                        @PathVariable Long docId) {
+                                              @PathVariable Long docId) {
         return documentService.deleteDocument(workspaceId, docId);
     }
 
+//    @GetMapping("/api/workspaces/{workspaceId}/docs/search")
+//    public ResponseDto<List<DocumentResponseDto>> searchDocument(@PathVariable Long workspaceId,
+//                                                                 @RequestParam String type,
+//                                                                 @RequestParam(required = false) String keyword,
+//                                                                 @RequestParam(required = false) String writer,
+//                                                                 @RequestParam(required = false) String direction,
+//                                                                 @RequestParam(required = false) Long cursor) {
+//
+//        return documentQueryRepository.searchDocumentByFilter(workspaceId, type, keyword, writer,direction);
+//    }
+
     @GetMapping("/api/workspaces/{workspaceId}/docs/search")
     public ResponseDto<List<DocumentResponseDto>> searchDocument(@PathVariable Long workspaceId,
-                               @RequestParam String type,
-                               @RequestParam(required = false) String keyword,
-                               @RequestParam(required = false) String writer){
+                               @QueryStringArgResolver SearchDocumentRequestDto requestDto) {
 
-        return documentQueryRepository.searchDocumentByFilter(workspaceId,type,keyword,writer);
+
+
+        return documentQueryRepository.searchDocumentByFilter(workspaceId, requestDto);
     }
 
 }
