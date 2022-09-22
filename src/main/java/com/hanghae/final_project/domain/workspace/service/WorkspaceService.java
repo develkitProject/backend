@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.workspace.service;
 import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkSpaceUpdateReqeustDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
@@ -89,7 +90,7 @@ public class WorkspaceService {
     // 워크스페이스 정보 수정
     @Transactional
     public ResponseDto<WorkspaceResponseDto> updateWorkspace(Long workspaceId,
-                                                             WorkspaceRequestDto requestDto,
+                                                             WorkSpaceUpdateReqeustDto requestDto,
                                                              UserDetails userDetails)throws IOException {
         // 1. 유저 가지고오기
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
@@ -108,9 +109,12 @@ public class WorkspaceService {
         // 3. 데이터 수정하기
         String imageUrl = workspace.getImageUrl();
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
-            String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
-            s3UploaderService.deleteImage(deleteUrl);
-
+            try{
+                String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
+                s3UploaderService.deleteImage(deleteUrl);
+            }catch (Exception e){
+                log.error("S3에 해당하는 이미지가 없습니다. ");
+            }
             imageUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "workspace");
         }
 

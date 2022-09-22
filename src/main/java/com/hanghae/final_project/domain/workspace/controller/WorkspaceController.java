@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.controller;
 
+import com.hanghae.final_project.domain.workspace.dto.request.WorkSpaceUpdateReqeustDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
@@ -54,9 +55,9 @@ public class WorkspaceController {
     @ApiOperation(value = "워크스페이스 정보 수정", notes = "워크스페이스에 따라 구분")
     @PutMapping("/{workspaceId}")
     public ResponseDto<WorkspaceResponseDto> updateWorkspace(@PathVariable Long workspaceId,
-                                          @Valid @RequestBody WorkspaceRequestDto requestDto,
-                                          Errors errors,
-                                          @AuthenticationPrincipal UserDetails userDetails) throws IOException {
+                                                             @RequestBody WorkSpaceUpdateReqeustDto requestDto,
+                                                             Errors errors,
+                                                             @AuthenticationPrincipal UserDetails userDetails) throws IOException {
         log.info("요청 메소드 [PUT] /api/workspaces/" + workspaceId);
         if (errors.hasErrors()) {
             log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
@@ -114,7 +115,7 @@ public class WorkspaceController {
 
     @ApiOperation(value = "워크스페이스 정보 및 인원수 반환", notes = "")
     @GetMapping("/{workspaceId}/info")
-    public ResponseDto<WorkSpaceInfoResponseDto> getWorkspaceInfo(@PathVariable Long workspaceId){
+    public ResponseDto<WorkSpaceInfoResponseDto> getWorkspaceInfo(@PathVariable Long workspaceId) {
         return workspaceService.getWorkspaceInfo(workspaceId);
     }
 
