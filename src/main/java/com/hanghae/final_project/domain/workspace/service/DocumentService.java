@@ -76,6 +76,7 @@ public class DocumentService {
         );
 
 
+
         List<Document> documentList = documentRepository.findAllByWorkSpaceIdOrderByCreatedAtDesc(findWorkSpace.getId());
         List<DocumentListResponseDto> documentResponseDtoList = new ArrayList<>();
 
