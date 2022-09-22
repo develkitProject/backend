@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class KakaoSocialDto {
 
+    private Long kakaoId;
     private String username;
     private String nickname;
     private String profileImage;
