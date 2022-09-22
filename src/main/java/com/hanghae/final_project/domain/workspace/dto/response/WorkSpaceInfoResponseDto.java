@@ -16,12 +16,16 @@ public class WorkSpaceInfoResponseDto {
     private String content;
     private String createdAt;
     private String userNumInWorkSpace;
+    private String imageUrl;
+    private String createUserEmail;
 
 
     public static WorkSpaceInfoResponseDto of(WorkSpace workSpace, String userNumInWorkSpace){
 
         return WorkSpaceInfoResponseDto.builder()
+                .createUserEmail(workSpace.getCreatedBy().getUsername())
                 .title(workSpace.getTitle())
+                .imageUrl(workSpace.getImageUrl())
                 .createdAt(workSpace.getCreatedAt())
                 .content(workSpace.getContent())
                 .userNumInWorkSpace(userNumInWorkSpace)
