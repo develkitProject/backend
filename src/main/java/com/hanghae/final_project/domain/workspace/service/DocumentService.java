@@ -15,12 +15,13 @@ import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
+import com.hanghae.final_project.global.util.image.S3UploaderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,14 +35,14 @@ public class DocumentService {
 
     private final WorkSpaceRepository workSpaceRepository;
     private final DocumentRepository documentRepository;
-
+    private final S3UploaderService s3UploaderService;
     private final DocumentUserRepository documentUserRepository;
-
     private final WorkSpaceUserRepository workSpaceUserRepository;
 
     // 문서 생성
     @Transactional
     public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
+                                                           MultipartFile[] multipartFiles,
                                                            DocumentRequestDto documentRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
@@ -62,11 +63,15 @@ public class DocumentService {
 
         documentRepository.save(document);
 
+        // S3에 업로드
+//        s3UploaderService.uploadFormDataFiles();
+
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
+//                .fileUrls()
                 .workSpaceId(findWorkSpace.getId())
                 .createdAt(document.getCreatedAt())
                 .modifiedAt(document.getModifiedAt())
@@ -112,8 +117,9 @@ public class DocumentService {
                 () -> new RequestException(ErrorCode.DOCUMENT_NOT_FOUND_404)
         );
 
+        // 파일 Url 리스트로 가져오기
+//        List<String> urls =
 
-        ;
         //읽음처리 하는 함수 필요
         if(workSpaceUserRepository.findByUserAndWorkSpaceId(userDetails.getUser(),workSpaceId).orElse(null)!=null){
             readDocumentByUser(document, userDetails.getUser());
@@ -147,6 +153,7 @@ public class DocumentService {
     @Transactional
     public ResponseDto<DocumentResponseDto> updateDocument(Long workSpaceId,
                                                            Long id,
+                                                           MultipartFile[] multipartFiles,
                                                            DocumentRequestDto documentRequestDto) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
@@ -177,7 +184,7 @@ public class DocumentService {
     }
 
 
-    // 문서 삭제
+    // 문서 삭제 -> S3 버켓도 같이 삭제
     @Transactional
     public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
 
@@ -219,4 +226,11 @@ public class DocumentService {
     }
 
 }
+
+/*S3 파일 업로드
+생성 -> S3에 올리고, fileRepository.save(String url)
+조회 -> fileRepository.findAllByDocId
+수정 -> S3에 있는거 삭제하고, 다시 생성
+삭제 -> S3 파일, fileRepository 삭제
+ */
 

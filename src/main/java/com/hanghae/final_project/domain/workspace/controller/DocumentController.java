@@ -14,6 +14,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -28,9 +29,10 @@ public class DocumentController {
     @ApiOperation(value = "문서 생성", notes = "워크스페이스에 따라 구분")
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<DocumentResponseDto> createDocument(@PathVariable Long workspaceId,
-                                                           @RequestBody DocumentRequestDto documentRequestDto,
+                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
+                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return documentService.createDocument(workspaceId, documentRequestDto, userDetails);
+        return documentService.createDocument(workspaceId, multipartFiles, documentRequestDto, userDetails);
     }
 
     @ApiOperation(value = "문서 전체 조회", notes = "워크스페이스에 따라 구분")
@@ -52,8 +54,9 @@ public class DocumentController {
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
                                                            @PathVariable Long docId,
-                                                           @RequestBody DocumentRequestDto documentRequestDto) {
-        return documentService.updateDocument(workspaceId, docId, documentRequestDto);
+                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
+                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto) {
+        return documentService.updateDocument(workspaceId, docId, multipartFiles, documentRequestDto);
     }
 
 
