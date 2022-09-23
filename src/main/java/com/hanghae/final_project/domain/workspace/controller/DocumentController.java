@@ -41,8 +41,10 @@ public class DocumentController {
 
     @ApiOperation(value = "문서 상세 조회", notes = "문서에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceId}/docs/{docId}")
-    public ResponseDto<DocumentResponseDto> getDocument(@PathVariable Long workspaceId, @PathVariable Long docId) {
-        return documentService.getDocument(workspaceId, docId);
+    public ResponseDto<DocumentResponseDto> getDocument(@PathVariable Long workspaceId,
+                                                        @PathVariable Long docId,
+                                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return documentService.getDocument(workspaceId, docId,userDetails);
     }
 
 
@@ -62,22 +64,10 @@ public class DocumentController {
         return documentService.deleteDocument(workspaceId, docId);
     }
 
-//    @GetMapping("/api/workspaces/{workspaceId}/docs/search")
-//    public ResponseDto<List<DocumentResponseDto>> searchDocument(@PathVariable Long workspaceId,
-//                                                                 @RequestParam String type,
-//                                                                 @RequestParam(required = false) String keyword,
-//                                                                 @RequestParam(required = false) String writer,
-//                                                                 @RequestParam(required = false) String direction,
-//                                                                 @RequestParam(required = false) Long cursor) {
-//
-//        return documentQueryRepository.searchDocumentByFilter(workspaceId, type, keyword, writer,direction);
-//    }
-
+    @ApiOperation(value="문서 검색", notes = "문서 작성자 or (내용+제목) 으로 검색 가능")
     @GetMapping("/api/workspaces/{workspaceId}/docs/search")
     public ResponseDto<List<DocumentResponseDto>> searchDocument(@PathVariable Long workspaceId,
                                @QueryStringArgResolver SearchDocumentRequestDto requestDto) {
-
-
 
         return documentQueryRepository.searchDocumentByFilter(workspaceId, requestDto);
     }

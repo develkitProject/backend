@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,12 +18,13 @@ public class DocumentResponseDto extends Timestamped {
     private Long id;
     private String title;
     private String content;
-//    private String imageUrl;
+
     private String nickname;
     private Long workSpaceId;
     private String createdAt;
     private String modifiedAt;
-//    private Role role;
+    private List<String> readMember;
+
 
     public static DocumentResponseDto of (Document document){
        return  DocumentResponseDto.builder()

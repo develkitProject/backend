@@ -12,6 +12,7 @@ import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +27,7 @@ import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDA
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -121,10 +123,16 @@ public class UserService {
     }
 
     // 회원탈퇴 진행.
+
     public ResponseDto<Boolean> signOut(User user) {
         //유저의 이미지 데이터 S3로부터 삭제
+
         if (!user.getProfileImage().contains(STANDARD_IMAGE_ROUTE)) {
+            log.info("회원탈퇴시, 기본이미지가 아닐 경우, 해당 이미지 삭제");
             uploaderService.deleteImage(user.getProfileImage(), "user");
+        }
+        else{
+            log.info("회원탈퇴시, 기본이미지 일 경우 이미지 삭제 안함");
         }
         //kakao 유저 끊기
         if (user.getSocial().equals(UserSocialEnum.KAKAO))
