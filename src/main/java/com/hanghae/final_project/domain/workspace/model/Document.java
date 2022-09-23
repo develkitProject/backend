@@ -44,7 +44,6 @@ public class Document extends Timestamped {
     public Document(DocumentRequestDto documentRequestDto) {
         this.title = documentRequestDto.getTitle();
         this.content = documentRequestDto.getContent();
-//        this.imageUrl = documentRequestDto.getImageUrl();
 
     }
 
@@ -52,6 +51,5 @@ public class Document extends Timestamped {
     public void update(DocumentRequestDto documentRequestDto) {
         this.title = documentRequestDto.getTitle();
         this.content = documentRequestDto.getContent();
-//        this.imageUrl = documentRequestDto.getImageUrl();
     }
 }
