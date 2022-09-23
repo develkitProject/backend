@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -44,9 +45,9 @@ public class DocumentService {
     // 문서 생성
     @Transactional
     public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
-                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
-                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
-                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+                                                           MultipartFile[] multipartFiles,
+                                                           DocumentRequestDto documentRequestDto,
+                                                           UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
@@ -65,26 +66,36 @@ public class DocumentService {
 
         documentRepository.save(document);
 
-        // S3에 업로드 -> optional로 아무것도 안올릴 때 적용?
+        // S3에 업로드 -> optional로 아무것도 안올릴 때 적용
+        List<String> fileUrls;
         try {
-            s3UploaderService.uploadFormDataFiles(multipartFiles, "upload");
+            fileUrls = s3UploaderService.uploadFormDataFiles(multipartFiles, "upload");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
-        File file = File.builder()
-                .doc(document)
-                .fileUrl(s3UploaderService.getFileUrl("upload"))
-                .build();
 
-        fileRepository.save(file);
+
+        List<String> filenames = new ArrayList<>();
+        List<File> files = new ArrayList<>();
+        if(fileUrls != null) {
+            for (int i = 0; i < fileUrls.size(); i++) {
+                filenames.add(multipartFiles[i].getOriginalFilename());
+                files.add(File.builder()
+                        .doc(document)
+                        .fileName(multipartFiles[i].getOriginalFilename())
+                        .fileUrl(fileUrls.get(i))
+                        .build());
+            }
+        }
+        fileRepository.saveAll(files);
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
-                .fileUrls(Collections.singletonList(file.getFileUrl()))
+                .fileNames(filenames)
+                .fileUrls(fileUrls)
                 .workSpaceId(findWorkSpace.getId())
                 .createdAt(document.getCreatedAt())
                 .modifiedAt(document.getModifiedAt())
@@ -169,8 +180,8 @@ public class DocumentService {
     @Transactional
     public ResponseDto<DocumentResponseDto> updateDocument(Long workSpaceId,
                                                            Long id,
-                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
-                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto) {
+                                                           MultipartFile[] multipartFiles,
+                                                           DocumentRequestDto documentRequestDto) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
@@ -201,6 +212,7 @@ public class DocumentService {
 
 
     // 문서 삭제 -> S3 버켓도 같이 삭제
+    //
     @Transactional
     public ResponseDto<String> deleteDocument(Long workSpaceId, Long id) {
 

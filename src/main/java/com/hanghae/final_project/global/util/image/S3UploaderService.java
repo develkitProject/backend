@@ -68,7 +68,7 @@ public class S3UploaderService {
     public List<String> uploadFormDataFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
 
         if (multipartFiles == null || multipartFiles[0].getOriginalFilename().equals("")) {
-            throw new RequestException(ErrorCode.NO_IMAGE_FILE);
+            return null;
         }
 
         List<File> uploadFiles = convertFormDataFiles(multipartFiles)

@@ -29,7 +29,7 @@ public class DocumentController {
     @ApiOperation(value = "문서 생성", notes = "워크스페이스에 따라 구분")
     @PostMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<DocumentResponseDto> createDocument(@PathVariable Long workspaceId,
-                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
+                                                           @RequestPart(value = "files", required = false) MultipartFile[] multipartFiles,
                                                            @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return documentService.createDocument(workspaceId, multipartFiles, documentRequestDto, userDetails);
@@ -54,7 +54,7 @@ public class DocumentController {
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
                                                            @PathVariable Long docId,
-                                                           @RequestPart(value = "files") MultipartFile[] multipartFiles,
+                                                           @RequestPart(value = "files", required = false) MultipartFile[] multipartFiles,
                                                            @RequestPart(value = "data") DocumentRequestDto documentRequestDto) {
         return documentService.updateDocument(workspaceId, docId, multipartFiles, documentRequestDto);
     }

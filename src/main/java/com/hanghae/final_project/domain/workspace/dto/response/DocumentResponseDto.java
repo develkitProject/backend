@@ -18,6 +18,7 @@ public class DocumentResponseDto extends Timestamped {
     private Long id;
     private String title;
     private String content;
+    private List<String> fileNames;
     private List<String> fileUrls;
     private String nickname;
     private Long workSpaceId;
