@@ -13,4 +13,10 @@ public class ImageUploadResponseDto {
 
     private List<String> images;
 
+
+    public static ImageUploadResponseDto of(List<String> imagesList){
+       return  ImageUploadResponseDto.builder()
+               .images(imagesList)
+               .build();
+    }
 }
