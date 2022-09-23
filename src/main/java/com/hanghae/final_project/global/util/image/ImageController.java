@@ -24,9 +24,10 @@ public class ImageController {
 
     @ApiOperation(value = "이미지 저장", notes = "S3 버켓에 저장")
     @PostMapping("/api/images")
-    public ResponseEntity<ResponseDto<ImageUploadResponseDto>> upload(
+    public ResponseDto<ImageUploadResponseDto> upload(
             @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
 
-        return s3UploaderService.uploadFormDataImage(images,"image");
+        return ResponseDto.success(ImageUploadResponseDto.of(s3UploaderService.uploadFormDataFiles(images,"image")));
+
     }
 }

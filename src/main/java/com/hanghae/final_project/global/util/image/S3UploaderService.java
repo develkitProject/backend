@@ -69,38 +69,39 @@ public class S3UploaderService {
     }
 
     //Formdata로 넘어온 이미지 S3에 올리기
-    public ResponseEntity<ResponseDto<ImageUploadResponseDto>> uploadFormDataImage(MultipartFile[] multipartFiles, String dirName) throws IOException {
+    public List<String> uploadFormDataFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
 
-        if(multipartFiles==null ||multipartFiles[0].getOriginalFilename().equals("")){
+        if (multipartFiles == null || multipartFiles[0].getOriginalFilename().equals("")) {
             throw new RequestException(ErrorCode.NO_IMAGE_FILE);
         }
 
-        List<File> uploadFiles = convertFormDataImage(multipartFiles)
+        List<File> uploadFiles = convertFormDataFiles(multipartFiles)
                 .orElseThrow(() -> new RequestException(ErrorCode.COMMON_INTERNAL_ERROR_500));
 
-        return new ResponseEntity<>(
-                ResponseDto.success(ImageUploadResponseDto
-                        .builder()
-                        .images(
-                                uploadFiles
-                                        .stream()
-                                        .map(f -> this.uploadFormDataImage(f, dirName))
-                                        .collect(Collectors.toList()))
-                        .build()),
-                HttpStatus.OK
-        );
+        return uploadFiles
+                .stream()
+                .map(f -> this.uploadFormDataFiles(f, dirName))
+                .collect(Collectors.toList());
+
     }
 
     //Formdata로 넘어온 이미지 S3에 올리기
     //로컬에 파일 업로드하기
-    private Optional<ArrayList<File>> convertFormDataImage(MultipartFile[] files) throws IOException {
+    private Optional<ArrayList<File>> convertFormDataFiles(MultipartFile[] files) throws IOException {
 
         ArrayList<File> fileList = new ArrayList<>();
 
         //이미지 파일 여러개면 여러개 돌면서 fileList에 담기
         for (MultipartFile file : files) {
+
+            String fileOriginalFilename = file.getOriginalFilename();
+            String fileExtension = fileOriginalFilename.substring(file.getOriginalFilename().lastIndexOf("."));
+
+            log.info("파일 original name {}", file.getOriginalFilename());
+            log.info("확장자 {}", fileExtension);
+
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            File convertFile = new File(System.getProperty("user.dir") + "/" + UUID.randomUUID() + "_" + now + ".png");
+            File convertFile = new File(System.getProperty("user.dir") + "/" + UUID.randomUUID() + "_" + now + fileExtension);
 
             if (convertFile.createNewFile()) {
                 try (FileOutputStream fos = new FileOutputStream(convertFile)) {
@@ -114,7 +115,8 @@ public class S3UploaderService {
         }
         return Optional.of(fileList);
     }
-    private String uploadFormDataImage(File uploadFile, String filepath) {
+
+    private String uploadFormDataFiles(File uploadFile, String filepath) {
         String fileName = filepath + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
@@ -124,10 +126,11 @@ public class S3UploaderService {
     public void deleteImage(String fileName) {
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
-    public void deleteImage(String fileName , String dir){
+
+    public void deleteImage(String fileName, String dir) {
         //filename이 존재하는지 확인
-        if(fileName==null || !fileName.contains("amazonaws.com")||fileName.contains(STANDARD_IMAGE_ROUTE)) return;
-        fileName=fileName.substring(fileName.indexOf(dir));
+        if (fileName == null || !fileName.contains("amazonaws.com") || fileName.contains(STANDARD_IMAGE_ROUTE)) return;
+        fileName = fileName.substring(fileName.indexOf(dir));
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
