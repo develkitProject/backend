@@ -68,16 +68,19 @@ public class S3UploaderService {
         return uploadImageUrl;
     }
 
-    //Formdata로 넘어온 이미지 S3에 올리기
+    //Formdata로 넘어온 파일 S3에 올리기
     public List<String> uploadFormDataFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
 
+        //전달받은 파일 존재하는지 확인
         if (multipartFiles == null || multipartFiles[0].getOriginalFilename().equals("")) {
             throw new RequestException(ErrorCode.NO_IMAGE_FILE);
         }
 
+        // 전달받은 파일 Local에 저장하고 list 형태로 받기
         List<File> uploadFiles = convertFormDataFiles(multipartFiles)
                 .orElseThrow(() -> new RequestException(ErrorCode.COMMON_INTERNAL_ERROR_500));
 
+        //S3업로드하고, 업로드에 접근할 수 있는 경로를 받고 그 결과값을 리턴
         return uploadFiles
                 .stream()
                 .map(f -> this.uploadFormDataFiles(f, dirName))
@@ -97,6 +100,8 @@ public class S3UploaderService {
             String fileOriginalFilename = file.getOriginalFilename();
             String fileExtension = fileOriginalFilename.substring(file.getOriginalFilename().lastIndexOf("."));
 
+            //확장자검사
+
             log.info("파일 original name {}", file.getOriginalFilename());
             log.info("확장자 {}", fileExtension);
 
@@ -111,12 +116,14 @@ public class S3UploaderService {
                     throw new RequestException(ErrorCode.COMMON_INTERNAL_ERROR_500);
                 }
             }
+
             fileList.add(convertFile);
         }
         return Optional.of(fileList);
     }
 
     private String uploadFormDataFiles(File uploadFile, String filepath) {
+
         String fileName = filepath + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
