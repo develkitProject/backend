@@ -159,6 +159,10 @@ public class DocumentService {
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
+                .fileNames(files
+                        .stream()
+                        .map(f -> f.getFileName())
+                        .collect(Collectors.toList()))
                 .fileUrls(files
                         .stream()
                         .map(f -> f.getFileUrl())
