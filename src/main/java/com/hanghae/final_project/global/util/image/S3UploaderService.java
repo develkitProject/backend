@@ -24,6 +24,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -124,7 +126,7 @@ public class S3UploaderService {
     }
     public void deleteImage(String fileName , String dir){
         //filename이 존재하는지 확인
-        if(fileName==null || !fileName.contains("amazonaws.com")) return;
+        if(fileName==null || !fileName.contains("amazonaws.com")||fileName.contains(STANDARD_IMAGE_ROUTE)) return;
         fileName=fileName.substring(fileName.indexOf(dir));
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
