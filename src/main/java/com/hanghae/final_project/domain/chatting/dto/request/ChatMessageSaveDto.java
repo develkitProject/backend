@@ -33,4 +33,15 @@ public class ChatMessageSaveDto {
                 .message(chat.getMessage())
                 .build();
     }
+
+    public static ChatMessageSaveDto createChatMessageSaveDto(ChatMessageSaveDto saveDto){
+        return ChatMessageSaveDto.builder()
+                .type(MessageType.TALK)
+                .roomId(saveDto.getRoomId())
+                .writer(saveDto.getWriter())
+                .createdAt(saveDto.getCreatedAt())
+                .message(saveDto.getMessage())
+                .build();
+    }
+
 }

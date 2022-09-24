@@ -82,11 +82,11 @@ public class ChatRedisCacheService {
     public void addChat(ChatMessageSaveDto chatMessageSaveDto) {
 
         //닉네임 변경이 가능하기 때문에, 저장 따로진행 x
-        chatMessageSaveDto.setNickname(null);
+       ChatMessageSaveDto savedData = ChatMessageSaveDto.createChatMessageSaveDto(chatMessageSaveDto);
         // writeBack 용 새로운 채팅 데이터 저장
-        redisTemplate.opsForZSet().add(NEW_CHAT, chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(NEW_CHAT, savedData, chatUtils.changeLocalDateTimeToDouble(savedData.getCreatedAt()));
         // caching 용 데이터 저장
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageSaveDto.getRoomId(), chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + savedData.getRoomId(), savedData, chatUtils.changeLocalDateTimeToDouble(savedData.getCreatedAt()));
 
     }
 
