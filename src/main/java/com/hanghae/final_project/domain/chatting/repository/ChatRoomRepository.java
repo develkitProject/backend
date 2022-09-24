@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.chatting.repository;
 
 import com.hanghae.final_project.domain.chatting.dto.ChatRoomDto;
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
+import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class ChatRoomRepository {
 
     private final WorkSpaceRepository workSpaceRepository;
 
+    private final ChatRedisCacheService chatRedisCacheService;
+
     private final ChatUtils chatUtils;
     private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
@@ -43,47 +46,12 @@ public class ChatRoomRepository {
 
     @PostConstruct
     private void init() {
-
         opsHashEnterRoom = roomRedisTemplate.opsForHash();
         opsHashChatRoom = redisTemplate.opsForHash();
         opsListChatData = redisTemplate.opsForList();
         zSetOperations = chatRedisTemplate.opsForZSet();
 
         chatUtils.cachingDataToRedisFromDB();
-
-//        //서버 시작전, redis 에 데이터 적재시키기.
-//        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
-//        LocalDateTime x = current.minusDays(7);
-//
-//        Double milliseconds = ((Long) x.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
-//
-//        log.info("milliseconds {}", milliseconds);
-//        LocalDateTime backToCurrent = Instant.ofEpochMilli(milliseconds.longValue()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-//        ;
-//
-//        log.info("변환확인 {}", backToCurrent.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
-//        System.out.println("=======================");
-//
-//        String cursor = x.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
-//        log.info("7일전 날짜 : {}", cursor);
-//
-//        //7일전 데이터 전부가져와서, redis에 적재
-//        List<Chat> chatList = chatRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(cursor);
-//
-//        for (Chat chat : chatList) {
-//            ChatMessageDto chatMessageDto = ChatMessageDto.of(chat);
-//            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
-//        }
-
-        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRangeByLex("chatSortedSet",range.lte(testDto));
-        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRange("chatSortedSet", rank-12L,rank-3L);
-
-        //Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRangeByScore("chatSortedSet", 0.0, 1663554696139.0);
-//        for (ChatMessageDto chatMessageDto : chatMessageDtoSet) {
-//            log.info("message : {}", chatMessageDto.getMessage());
-//            log.info("message : {}", chatMessageDto.getCreatedAt());
-//            log.info("==========================================");
-//        }
     }
 
     //(thymeleaf test용 함수 마지막 refactoring에 제거 예정)
@@ -130,7 +98,7 @@ public class ChatRoomRepository {
                 Map.Entry<String, String> data = cursor.next();
                 log.info("SessionId : " + data.getKey());
                 log.info("Username : " + data.getValue());
-                userListInWorkSpace.add(data.getValue());
+                userListInWorkSpace.add(chatRedisCacheService.findUserNicknameByUsername(data.getValue()));
             }
 
         } catch (Exception e) {
