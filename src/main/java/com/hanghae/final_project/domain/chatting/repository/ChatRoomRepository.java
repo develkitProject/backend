@@ -1,29 +1,16 @@
 package com.hanghae.final_project.domain.chatting.repository;
 
 import com.hanghae.final_project.domain.chatting.dto.ChatRoomDto;
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
-import com.hanghae.final_project.domain.chatting.model.Chat;
-import com.hanghae.final_project.domain.chatting.redis.RedisSubscriber;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
-import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.RedisZSetCommands;
 import org.springframework.data.redis.core.*;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
-import java.nio.charset.StandardCharsets;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -37,7 +24,7 @@ public class ChatRoomRepository {
     private final WorkSpaceRepository workSpaceRepository;
 
     private final ChatUtils chatUtils;
-    private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     private final ChatRepository chatRepository;
     private HashOperations<String, String, String> opsHashEnterRoom;
@@ -46,7 +33,7 @@ public class ChatRoomRepository {
 
     private ListOperations<String, Object> opsListChatData;
 
-    private ZSetOperations<String, ChatMessageDto> zSetOperations;
+    private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
     public static final String CHAT_ROOMS = "CHAT_ROOM";
     public static final String CHAT_ROOM_ID_ = "CHAT_ROOM_ID_";
 
@@ -62,7 +49,7 @@ public class ChatRoomRepository {
         opsListChatData = redisTemplate.opsForList();
         zSetOperations = chatRedisTemplate.opsForZSet();
 
-        chatUtils.cachingDataInRedisFromDB();
+        chatUtils.cachingDataToRedisFromDB();
 
 //        //서버 시작전, redis 에 데이터 적재시키기.
 //        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
