@@ -1,15 +1,13 @@
 package com.hanghae.final_project.domain.chatting.dto.response;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor
 @Builder
+@Setter
 @AllArgsConstructor
 public class ResChatPagingDto {
 
@@ -17,6 +15,7 @@ public class ResChatPagingDto {
     private String writer;
     private String message;
     private String createdAt;
+    private String nickname;
 
     public static ResChatPagingDto of(Chat chat){
         return ResChatPagingDto.builder()
@@ -27,12 +26,12 @@ public class ResChatPagingDto {
                 .build();
     }
 
-    public static ResChatPagingDto byChatMessageDto(ChatMessageDto chatMessageDto){
+    public static ResChatPagingDto byChatMessageDto(ChatMessageSaveDto chatMessageSaveDto){
         return ResChatPagingDto.builder()
-                .writer(chatMessageDto.getWriter())
-                .createdAt(chatMessageDto.getCreatedAt())
-                .workSpaceId(Long.parseLong(chatMessageDto.getRoomId()))
-                .message(chatMessageDto.getMessage())
+                .writer(chatMessageSaveDto.getWriter())
+                .createdAt(chatMessageSaveDto.getCreatedAt())
+                .workSpaceId(Long.parseLong(chatMessageSaveDto.getRoomId()))
+                .message(chatMessageSaveDto.getMessage())
                 .build();
     }
 }

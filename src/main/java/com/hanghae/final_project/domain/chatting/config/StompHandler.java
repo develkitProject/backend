@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.config;
 
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
 import com.hanghae.final_project.domain.chatting.service.ChatRoomService;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
@@ -81,8 +81,8 @@ public class StompHandler implements ChannelInterceptor {
 
             //list 주기
             redisPublisher.publish(topic,
-                    ChatMessageDto.builder()
-                            .type(ChatMessageDto.MessageType.ENTER)
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.ENTER)
                             .roomId(roomId)
                             .message("회원들어옴")
                             .userList(chatRoomService.findUser(roomId, sessionId))
@@ -107,8 +107,8 @@ public class StompHandler implements ChannelInterceptor {
 
             //list 주기
             redisPublisher.publish(topic,
-                    ChatMessageDto.builder()
-                            .type(ChatMessageDto.MessageType.QUIT)
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.QUIT)
                             .roomId(roomId)
                             .message("회원나감")
                             .userList(chatRoomService.findUser(roomId, sessionId))

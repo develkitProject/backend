@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.repository;
 
 import com.hanghae.final_project.domain.chatting.dto.ChatRoomDto;
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
 import lombok.Getter;
@@ -24,7 +24,7 @@ public class ChatRoomRepository {
     private final WorkSpaceRepository workSpaceRepository;
 
     private final ChatUtils chatUtils;
-    private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     private final ChatRepository chatRepository;
     private HashOperations<String, String, String> opsHashEnterRoom;
@@ -33,7 +33,7 @@ public class ChatRoomRepository {
 
     private ListOperations<String, Object> opsListChatData;
 
-    private ZSetOperations<String, ChatMessageDto> zSetOperations;
+    private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
     public static final String CHAT_ROOMS = "CHAT_ROOM";
     public static final String CHAT_ROOM_ID_ = "CHAT_ROOM_ID_";
 

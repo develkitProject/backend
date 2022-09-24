@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatMessageDto {
+public class ChatMessageSaveDto {
 
     public enum MessageType{
         ENTER,TALK,QUIT
@@ -19,13 +19,13 @@ public class ChatMessageDto {
     private MessageType type;
     private String roomId;
     private String writer;
-    private String username;
+    private String nickname;
     private String message;
     private String createdAt;
     private List<String> userList;
 
-    public static ChatMessageDto of (Chat chat){
-        return ChatMessageDto.builder()
+    public static ChatMessageSaveDto of (Chat chat){
+        return ChatMessageSaveDto.builder()
                 .type(MessageType.TALK)
                 .roomId(chat.getWorkSpace().getId().toString())
                 .writer(chat.getUsers())

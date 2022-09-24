@@ -1,12 +1,10 @@
 package com.hanghae.final_project.domain.chatting.controller;
 
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
-import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 
 import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
-import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import com.hanghae.final_project.global.config.security.jwt.UserInfo;
@@ -40,11 +38,12 @@ public class StompChatController {
      * */
 
     @MessageMapping("/chat/message")
-    public void message(ChatMessageDto message,@Header("token") String token){
+    public void message(ChatMessageSaveDto message, @Header("token") String token){
         UserInfo userInfo = jwtDecoder.decodeUsername(headerTokenExtractor.extract(token));
 
+        message.setNickname(userInfo.getNickname());
         message.setWriter(userInfo.getUsername());
-        message.setType(ChatMessageDto.MessageType.TALK);
+        message.setType(ChatMessageSaveDto.MessageType.TALK);
         message.setCreatedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")));
 
         redisPublisher.publish(channelTopic,message);

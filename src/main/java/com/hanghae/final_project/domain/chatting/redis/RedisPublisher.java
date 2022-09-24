@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.redis;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,7 +18,7 @@ public class RedisPublisher {
      * */
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, ChatMessageDto messageDto) {
+    public void publish(ChannelTopic topic, ChatMessageSaveDto messageDto) {
 
         redisTemplate.convertAndSend(topic.getTopic(), messageDto);
     }

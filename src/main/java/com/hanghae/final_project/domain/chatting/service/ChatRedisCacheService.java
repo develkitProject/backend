@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.service;
 
 import com.hanghae.final_project.domain.chatting.dto.ChatRoomDto;
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.dto.request.ChatPagingDto;
 import com.hanghae.final_project.domain.chatting.dto.response.ResChatPagingDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
@@ -50,11 +50,11 @@ public class ChatRedisCacheService {
 
     private final UserRepository userRepository;
 
-    private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     private final RedisTemplate<String,String> roomRedisTemplate;
 
-    private ZSetOperations<String, ChatMessageDto> zSetOperations;
+    private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
     private HashOperations<String, String, ChatRoomDto> opsHashChatRoom;
 
 
@@ -79,12 +79,14 @@ public class ChatRedisCacheService {
     }
 
     //채팅 메시지가 왔을 때, redis에 적재해놓기
-    public void addChat(ChatMessageDto chatMessageDto) {
+    public void addChat(ChatMessageSaveDto chatMessageSaveDto) {
 
+        //닉네임 변경이 가능하기 때문에, 저장 따로진행 x
+        chatMessageSaveDto.setNickname(null);
         // writeBack 용 새로운 채팅 데이터 저장
-        redisTemplate.opsForZSet().add(NEW_CHAT, chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(NEW_CHAT, chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
         // caching 용 데이터 저장
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageSaveDto.getRoomId(), chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
 
     }
 
@@ -114,8 +116,8 @@ public class ChatRedisCacheService {
     public ResponseDto<List<ResChatPagingDto> > getChatsFromRedis(Long workSpaceId, ChatPagingDto chatPagingDto) {
 
         //마지막 채팅을 기준으로 redis의 Sorted set에 몇번째 항목인지 파악
-        ChatMessageDto cursorDto = ChatMessageDto.builder()
-                .type(ChatMessageDto.MessageType.TALK)
+        ChatMessageSaveDto cursorDto = ChatMessageSaveDto.builder()
+                .type(ChatMessageSaveDto.MessageType.TALK)
                 .roomId(workSpaceId.toString())
                 .createdAt(chatPagingDto.getCursor())
                 .message(chatPagingDto.getMessage())
@@ -133,13 +135,12 @@ public class ChatRedisCacheService {
         else rank = rank + 1;
 
         //sorted set으로부터 채팅 순서대로 불러오기
-        Set<ChatMessageDto> chatMessageDtoSet = zSetOperations.reverseRange(CHAT_SORTED_SET_ + workSpaceId, rank, rank + 10);
-
+        Set<ChatMessageSaveDto> chatMessageSaveDtoSet = zSetOperations.reverseRange(CHAT_SORTED_SET_ + workSpaceId, rank, rank + 10);
 
         //Stream을 사용해서 List로 변환 후 ,
         //이 변환이 필요할까에 대해서는 나중에 좀 더 생각해보자.
         List<ResChatPagingDto> chatMessageDtoList =
-                chatMessageDtoSet
+                chatMessageSaveDtoSet
                         .stream()
                         .map(ResChatPagingDto::byChatMessageDto)
                         .collect(Collectors.toList());
@@ -148,6 +149,11 @@ public class ChatRedisCacheService {
         if(chatMessageDtoList.size()!=10 ){
             log.info("데이터가 10개가 아닙니다, DB 검색을 시작합니다.");
             findOtherChatDataInMysql(chatMessageDtoList,workSpaceId ,chatPagingDto.getCursor());
+        }
+
+        for(ResChatPagingDto resChatPagingDto : chatMessageDtoList){
+            resChatPagingDto.setNickname( findUserNicknameByUsername(resChatPagingDto.getWriter()) );
+
         }
 
         return ResponseDto.success(chatMessageDtoList);
@@ -200,8 +206,8 @@ public class ChatRedisCacheService {
         }
     }
     public void cachingDBDataToRedis(Chat chat){
-        ChatMessageDto chatMessageDto = ChatMessageDto.of(chat);
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageDto.getRoomId(), chatMessageDto, chatUtils.changeLocalDateTimeToDouble(chatMessageDto.getCreatedAt()));
+        ChatMessageSaveDto chatMessageSaveDto = ChatMessageSaveDto.of(chat);
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageSaveDto.getRoomId(), chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
 
     }
 
@@ -213,9 +219,11 @@ public class ChatRedisCacheService {
         if(nickname!=null)
             return nickname;
 
-        //redis 에  닉네임이 존재하지 않는다면, MYSQL에 작성
+        //redis 에  닉네임이 존재하지 않는다면, MYSQL에서 데이터 불러오기
         User user =userRepository.findByUsername(username)
                 .orElseThrow(()->new RequestException(ErrorCode.USER_NOT_EXIST));
+        // caching 하기
+        roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,user.getNickname());
 
         return user.getNickname();
     }
