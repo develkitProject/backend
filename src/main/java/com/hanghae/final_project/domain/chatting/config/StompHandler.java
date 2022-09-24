@@ -53,8 +53,7 @@ public class StompHandler implements ChannelInterceptor {
             log.info("token : " + accessor.getFirstNativeHeader(TOKEN));
             String headerToken = accessor.getFirstNativeHeader(TOKEN);
             String token = headerTokenExtractor.extract(headerToken);
-            ;
-            log.info(jwtDecoder.decodeUsername(token));
+            log.info(jwtDecoder.decodeUsername(token).getUsername());
 
         }
         // 소켓 연결 후 ,SUBSCRIBE 등록
@@ -64,7 +63,7 @@ public class StompHandler implements ChannelInterceptor {
 
             String headerToken = accessor.getFirstNativeHeader(TOKEN);
             String token = headerTokenExtractor.extract(headerToken);
-            String username = jwtDecoder.decodeUsername(token);
+            String username = jwtDecoder.decodeUsername(token).getUsername();
 
             String destination = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_DESTINATION)

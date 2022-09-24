@@ -43,7 +43,7 @@ public class ChatCachingInRedisScheduling {
         }
 
         //redis caching 데이터 1주일치 , 적재하기
-        chatUtils.cachingDataInRedisFromDB();
+        chatUtils.cachingDataToRedisFromDB();
 
     }
 }

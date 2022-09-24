@@ -36,7 +36,7 @@ public class ChatUtils {
             return "";
     }
 
-    public void cachingDataInRedisFromDB(){
+    public void cachingDataToRedisFromDB(){
 
         zSetOperations = chatRedisTemplate.opsForZSet();
         //서버 시작전, redis 에 데이터 적재시키기.
@@ -60,4 +60,6 @@ public class ChatUtils {
         LocalDateTime localDateTime = LocalDateTime.parse(createdAt, formatter);
         return ((Long) localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
     }
+
+
 }
