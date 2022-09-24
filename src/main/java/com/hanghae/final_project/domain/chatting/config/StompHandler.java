@@ -84,7 +84,6 @@ public class StompHandler implements ChannelInterceptor {
                     ChatMessageSaveDto.builder()
                             .type(ChatMessageSaveDto.MessageType.ENTER)
                             .roomId(roomId)
-                            .message("회원들어옴")
                             .userList(chatRoomService.findUser(roomId, sessionId))
                             .build()
             );
@@ -110,7 +109,6 @@ public class StompHandler implements ChannelInterceptor {
                     ChatMessageSaveDto.builder()
                             .type(ChatMessageSaveDto.MessageType.QUIT)
                             .roomId(roomId)
-                            .message("회원나감")
                             .userList(chatRoomService.findUser(roomId, sessionId))
                             .build()
             );
