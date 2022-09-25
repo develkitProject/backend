@@ -158,6 +158,34 @@ public class ChatRedisCacheService {
 
         return ResponseDto.success(chatMessageDtoList);
     }
+
+    public void cachingDBDataToRedis(Chat chat){
+        ChatMessageSaveDto chatMessageSaveDto = ChatMessageSaveDto.of(chat);
+        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageSaveDto.getRoomId(), chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
+
+    }
+
+    public String findUserNicknameByUsername(String username){
+
+        //redis 에 닉네임이 존재하는지 확인,
+        String nickname = (String)roomRedisTemplate.opsForHash().get(USERNAME_NICKNAME,username);
+
+        if(nickname!=null)
+            return nickname;
+
+        //redis 에  닉네임이 존재하지 않는다면, MYSQL에서 데이터 불러오기
+        User user =userRepository.findByUsername(username)
+                .orElseThrow(()->new RequestException(ErrorCode.USER_NOT_EXIST));
+        // caching 하기
+        roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,user.getNickname());
+
+        return user.getNickname();
+    }
+
+    public void changeUserCachingNickname(String username,String changedNickname){
+        roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,changedNickname);
+    }
+
     private void findOtherChatDataInMysql(List<ResChatPagingDto> chatMessageDtoList, Long workSpaceId, String cursor ){
 
         String lastCursor;
@@ -204,27 +232,5 @@ public class ChatRedisCacheService {
                 return;
             }
         }
-    }
-    public void cachingDBDataToRedis(Chat chat){
-        ChatMessageSaveDto chatMessageSaveDto = ChatMessageSaveDto.of(chat);
-        redisTemplate.opsForZSet().add(CHAT_SORTED_SET_ + chatMessageSaveDto.getRoomId(), chatMessageSaveDto, chatUtils.changeLocalDateTimeToDouble(chatMessageSaveDto.getCreatedAt()));
-
-    }
-
-    public String findUserNicknameByUsername(String username){
-
-        //redis 에 닉네임이 존재하는지 확인,
-        String nickname = (String)roomRedisTemplate.opsForHash().get(USERNAME_NICKNAME,username);
-
-        if(nickname!=null)
-            return nickname;
-
-        //redis 에  닉네임이 존재하지 않는다면, MYSQL에서 데이터 불러오기
-        User user =userRepository.findByUsername(username)
-                .orElseThrow(()->new RequestException(ErrorCode.USER_NOT_EXIST));
-        // caching 하기
-        roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,user.getNickname());
-
-        return user.getNickname();
     }
 }
