@@ -89,18 +89,40 @@ public class StompHandler implements ChannelInterceptor {
             );
 
         }
-        //소켓 연결 후 , 소켓 연결 해제 시
-        else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            log.info("Disconnect destination : " + message.getHeaders().get(SIMP_DESTINATION));
-            log.info("Disconnect sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+
+        else if(StompCommand.UNSUBSCRIBE==accessor.getCommand()){
+            //진행해야할 것
             //reids SubScribe 해제
-            //Session_Id를 통해서
+            log.info("UNSUBSCRIBE sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+            log.info("UNSUBSCRIBE destination : " + message.getHeaders().get(SIMP_DESTINATION));
 
             String sessionId = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_SESSION_ID)
             ).orElse(null);
 
             String roomId = chatRoomService.leaveChatRoom(sessionId);
+
+            log.info("Socket 연결 끊어진 RoomId : "+roomId);
+
+            //list 주기
+            redisPublisher.publish(topic,
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.QUIT)
+                            .roomId(roomId)
+                            .userList(chatRoomService.findUser(roomId, sessionId))
+                            .build()
+            );
+        }
+        //소켓 연결 후 , 소켓 연결 해제 시
+        else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info("Disconnect sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+
+            //Session_Id를 통해서
+            String sessionId = Optional.ofNullable(
+                    (String) message.getHeaders().get(SIMP_SESSION_ID)
+            ).orElse(null);
+
+            String roomId = chatRoomService.disconnectWebsocket(sessionId);
 
             log.info("Socket 연결 끊어진 RoomId : "+roomId);
 

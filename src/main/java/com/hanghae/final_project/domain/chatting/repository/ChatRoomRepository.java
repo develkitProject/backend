@@ -78,9 +78,16 @@ public class ChatRoomRepository {
 
     }
     //채팅 DisConnect 할 때, WebSocket SessionId 를 통해서 redis에서 삭제
-    public String leaveChatRoom(String sessionId) {
+    public String disconnectWebsocket(String sessionId) {
         String roomId = opsHashEnterRoom.get(SESSION_ID, sessionId);
+        opsHashEnterRoom.delete(CHAT_ROOM_ID_ + roomId, sessionId);
         opsHashEnterRoom.delete(SESSION_ID, sessionId);
+        return roomId;
+    }
+
+    //채팅 unsubscribe 할떄 ,
+    public String leaveChatRoom(String sessionId){
+        String roomId = opsHashEnterRoom.get(SESSION_ID, sessionId);
         opsHashEnterRoom.delete(CHAT_ROOM_ID_ + roomId, sessionId);
         return roomId;
     }
