@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.utils.scheduling;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
 import com.hanghae.final_project.domain.chatting.repository.ChatRepository;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
@@ -22,7 +22,7 @@ public class ChatWriteBackScheduling {
 
     private final RedisTemplate<String,Object> redisTemplate;
 
-    private final RedisTemplate<String,ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     private final ChatRepository chatRepository;
     private final WorkSpaceRepository workSpaceRepository;
@@ -32,15 +32,15 @@ public class ChatWriteBackScheduling {
     public void writeBack(){
         log.info("Scheduling start");
         //여기서부터 읽어오는 과정.
-        BoundZSetOperations<String, ChatMessageDto> setOperations = chatRedisTemplate.boundZSetOps("NEW_CHAT");
+        BoundZSetOperations<String, ChatMessageSaveDto> setOperations = chatRedisTemplate.boundZSetOps("NEW_CHAT");
 
         ScanOptions scanOptions = ScanOptions.scanOptions().build();
 
         List<Chat> chatList = new ArrayList<>();
-        try(Cursor<ZSetOperations.TypedTuple<ChatMessageDto>> cursor= setOperations.scan(scanOptions)){
+        try(Cursor<ZSetOperations.TypedTuple<ChatMessageSaveDto>> cursor= setOperations.scan(scanOptions)){
 
             while(cursor.hasNext()){
-                ZSetOperations.TypedTuple<ChatMessageDto> chatMessageDto =cursor.next();
+                ZSetOperations.TypedTuple<ChatMessageSaveDto> chatMessageDto =cursor.next();
 
                 WorkSpace workSpace= workSpaceRepository
                         .findById(Long.parseLong(chatMessageDto.getValue().getRoomId()))

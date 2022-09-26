@@ -1,19 +1,16 @@
-package com.hanghae.final_project.domain.user.dto.response;
-
+package com.hanghae.final_project.global.config.security.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class KakaoSocialDto {
+public class UserInfo {
 
-    private Long kakaoId;
     private String username;
     private String nickname;
-    private String profileImage;
 }

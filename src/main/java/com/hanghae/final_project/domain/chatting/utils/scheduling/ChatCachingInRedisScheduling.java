@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.utils.scheduling;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class ChatCachingInRedisScheduling {
     private final ChatUtils chatUtils;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    private final RedisTemplate<String,ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     @Scheduled(cron = "0 0 2 * * *")
     @Transactional
@@ -43,7 +43,7 @@ public class ChatCachingInRedisScheduling {
         }
 
         //redis caching 데이터 1주일치 , 적재하기
-        chatUtils.cachingDataInRedisFromDB();
+        chatUtils.cachingDataToRedisFromDB();
 
     }
 }

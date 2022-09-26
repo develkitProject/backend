@@ -35,13 +35,14 @@ import static com.hanghae.final_project.global.config.security.handler.Authentic
 @Transactional
 public class KakaoUserService {
 
+    public static final String APP_ADMIN_KEY="c2689db3cf597442ae264f72db1a1904";
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder;
 
 
 
-    public ResponseEntity<?> kakaoLogin(String code, HttpServletResponse response) throws IOException,JsonProcessingException {
+    public ResponseEntity<?> kakaoLogin(String code, HttpServletResponse response) throws IOException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -84,6 +85,7 @@ public class KakaoUserService {
             String password = UUID.randomUUID().toString();
 
             kakaoUser = User.builder()
+                    .kakaoId(kakaoSocialDto.getKakaoId())
                     .nickname(kakaoSocialDto.getNickname())
                     .password(encoder.encode(password))
                     .username(kakaoSocialDto.getUsername())
@@ -134,8 +136,7 @@ public class KakaoUserService {
         return jsonNode.get("access_token").asText();
     }
 
-    private KakaoSocialDto getKakaoUserInfo(String accessToken) throws IOException,JsonProcessingException {
-
+    private KakaoSocialDto getKakaoUserInfo(String accessToken) throws IOException {
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -159,6 +160,8 @@ public class KakaoUserService {
         JsonNode jsonNode = objectMapper
                 .readTree(responseBody);
 
+        Long kakaoId=jsonNode.get("id").asLong();
+
         String nickname = jsonNode
                 .get("properties")
                 .get("nickname").asText();
@@ -178,9 +181,30 @@ public class KakaoUserService {
                 .username(email)
                 .nickname(nickname)
                 .profileImage(profileImage)
+                .kakaoId(kakaoId)
                 .build();
-
     }
 
+    //카카오 회원일 경우, application 연결 끊기 과정 진행
+    public void signOutKakaoUser(User user) {
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "KakaoAK " + APP_ADMIN_KEY);
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("target_id_type", "user_id");
+        body.add("target_id", user.getKakaoId().toString());
+
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body,headers);
+        RestTemplate rt = new RestTemplate();
+
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v1/user/unlink",
+                HttpMethod.POST,
+                kakaoUserInfoRequest,
+                String.class
+        );
+        log.info("회원탈퇴 한 유저의 kakaoId : {}",response.getBody());
+    }
 }

@@ -6,6 +6,7 @@ import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
+import com.hanghae.final_project.global.config.security.jwt.UserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -31,9 +32,9 @@ public class JwtAuthorizationProvider implements AuthenticationProvider {
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
 
         String token = (String) authentication.getPrincipal();
-        String username = jwtDecoder.decodeUsername(token);
+        UserInfo userInfo = jwtDecoder.decodeUsername(token);
 
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsername(userInfo.getUsername())
                 .orElseThrow(()->new AuthenticationCredentialsNotFoundException("해당 회원정보가 없습니다."));
         UserDetailsImpl userDetails = new UserDetailsImpl(user);
 

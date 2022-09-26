@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.workspace.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hanghae.final_project.domain.user.model.User;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkSpaceUpdateReqeustDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import lombok.*;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -66,9 +67,16 @@ public class WorkSpace extends Timestamped implements Serializable {
                 .build();
     }
 
-    public void update(WorkspaceRequestDto requestDto, String imageUrl) {
-        this.title = requestDto.getTitle();
-        this.content = requestDto.getContent();
+    public void update(WorkSpaceUpdateReqeustDto requestDto, String imageUrl) {
+
+        if(requestDto.getContent()!=null){
+            this.content = requestDto.getContent();
+        }
+
+        if(requestDto.getTitle()!=null){
+            this.title = requestDto.getTitle();
+        }
+
         this.imageUrl = imageUrl;
     }
 }

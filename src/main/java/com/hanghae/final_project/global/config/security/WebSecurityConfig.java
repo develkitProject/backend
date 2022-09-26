@@ -11,6 +11,7 @@ import com.hanghae.final_project.global.config.security.handler.AuthorizationFai
 import com.hanghae.final_project.global.config.security.jwt.HeaderTokenExtractor;
 import com.hanghae.final_project.global.config.security.provider.JwtAuthenticationProvider;
 import com.hanghae.final_project.global.config.security.provider.JwtAuthorizationProvider;
+import com.hanghae.final_project.global.util.annotation.QueryStringArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -49,6 +50,7 @@ public class WebSecurityConfig {
     private final AccessDeniedHandler accessDeniedHandler;
 
     private final AuthorizationFailureHandler authorizationFailureHandler;
+
 
 
     @Bean

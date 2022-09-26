@@ -3,6 +3,7 @@ package com.hanghae.final_project.domain.user.controller;
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.service.UserService;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
@@ -56,6 +57,13 @@ public class userController {
                                   @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         return userService.changeProfile(userDetails.getUser(),userprofileDto);
+    }
+
+    @ApiOperation(value = "회원탈퇴 ", notes ="회원탈퇴")
+    @DeleteMapping("/api/members/signout")
+    public ResponseDto<Boolean> signOutMember(@AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        return  userService.signOut(userDetails.getUser());
     }
 
 
