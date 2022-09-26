@@ -3,10 +3,11 @@ package com.hanghae.final_project.domain.user.service;
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
-import com.hanghae.final_project.domain.user.dto.response.ResProfileDto;
+import com.hanghae.final_project.domain.user.dto.response.ProfileResponseDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
 import com.hanghae.final_project.global.util.image.S3UploaderService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
@@ -37,6 +38,8 @@ public class UserService {
 
     private final KakaoUserService kakaoUserService;
     private final BCryptPasswordEncoder passwordEncoder;
+
+    private final DocumentRepository documentRepository;
 
     //일반회원 (not social) 회원가입
     public ResponseEntity<?> standardSignup(SignupDto signupDto) {
@@ -74,7 +77,8 @@ public class UserService {
     public ResponseEntity<?> getProfile(User user) {
 
         checkUsername(user.getUsername());
-        return new ResponseEntity<>(ResponseDto.success(ResProfileDto.of(user)), HttpStatus.OK);
+
+        return new ResponseEntity<>(ResponseDto.success(ProfileResponseDto.of(user,documentRepository.countDocumentByUser(user))), HttpStatus.OK);
 
     }
 
