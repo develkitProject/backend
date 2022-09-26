@@ -170,9 +170,12 @@ public class WorkspaceService {
 
         List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
 
+
         List<UserResponseDto> userResponseDtos = users
                 .stream()
-                .map(user -> UserResponseDto.createResponseDto(user))
+                .map(user -> UserResponseDto.createResponseDto(
+                        user,
+                        workSpaceUsers.get(0).getWorkSpace().getCreatedBy().getUsername()))
                 .collect(Collectors.toList());
 
         return ResponseDto.success(userResponseDtos);

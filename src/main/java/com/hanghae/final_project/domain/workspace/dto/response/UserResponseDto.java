@@ -10,8 +10,8 @@ import lombok.Getter;
 public class UserResponseDto {
     private Users user;
 
-    public static UserResponseDto createResponseDto(User user) {
-        return new UserResponseDto(new Users(user));
+    public static UserResponseDto createResponseDto(User user,String workspaceCreator) {
+        return new UserResponseDto(new Users(user,workspaceCreator));
     }
 
     @Getter
@@ -23,8 +23,11 @@ public class UserResponseDto {
         private String profileImage;
         private UserSocialEnum social;
 
-        public Users(User user) {
+        private String workspaceCreator;
+
+        public Users(User user,String workspaceCreator) {
             this.id = user.getId();
+            this.workspaceCreator=workspaceCreator;
             this.username = user.getUsername();
             this.nickname = user.getNickname();
             this.profileImage = user.getProfileImage();
