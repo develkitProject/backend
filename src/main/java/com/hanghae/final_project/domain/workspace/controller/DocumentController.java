@@ -54,8 +54,9 @@ public class DocumentController {
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
                                                            @PathVariable Long docId,
                                                            @RequestPart(value = "files", required = false) MultipartFile[] multipartFiles,
-                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto) {
-        return documentService.updateDocument(workspaceId, docId, multipartFiles, documentRequestDto);
+                                                           @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
+                                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return documentService.updateDocument(workspaceId, docId, multipartFiles, documentRequestDto,userDetails.getUser());
     }
 
 

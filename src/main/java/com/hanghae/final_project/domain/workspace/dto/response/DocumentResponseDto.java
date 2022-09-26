@@ -25,6 +25,7 @@ public class DocumentResponseDto extends Timestamped {
     private String createdAt;
     private String modifiedAt;
     private List<String> readMember;
+    private String modifyMember;
 
 
     public static DocumentResponseDto of (Document document){

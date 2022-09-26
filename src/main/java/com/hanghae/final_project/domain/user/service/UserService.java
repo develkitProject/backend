@@ -106,7 +106,7 @@ public class UserService {
         //이미지 변경할 경우
         if (userProfileDto.getProfileImageUrl() != null) {
             //기존 이미지 아마존 S3에서 삭제.
-            uploaderService.deleteImage(user.getProfileImage(), "user");
+            uploaderService.deleteFiles(user.getProfileImage(), "user");
             //새로운 이미지 정보를 S3에 올리기
             String imageUrl = uploaderService.uploadBase64Image(userProfileDto.getProfileImageUrl(), "user");
             userInfo.updateProfileImage(imageUrl);
@@ -137,7 +137,7 @@ public class UserService {
 
         if (!user.getProfileImage().contains(STANDARD_IMAGE_ROUTE)) {
             log.info("회원탈퇴시, 기본이미지가 아닐 경우, 해당 이미지 삭제");
-            uploaderService.deleteImage(user.getProfileImage(), "user");
+            uploaderService.deleteFiles(user.getProfileImage(), "user");
         }
         else{
             log.info("회원탈퇴시, 기본이미지 일 경우 이미지 삭제 안함");

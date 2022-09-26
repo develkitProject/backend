@@ -27,6 +27,7 @@ public class ImageController {
     public ResponseDto<ImageUploadResponseDto> upload(
             @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
 
+        log.info("여기 api/images");
         return ResponseDto.success(ImageUploadResponseDto.of(s3UploaderService.uploadFormDataFiles(images,"image")));
 
     }

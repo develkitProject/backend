@@ -5,7 +5,6 @@ import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkSpaceUpdateReqeustDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceFindRecentData;
-import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
@@ -123,7 +122,7 @@ public class WorkspaceService {
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             try {
                 String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
-                s3UploaderService.deleteImage(deleteUrl);
+                s3UploaderService.deleteFiles(deleteUrl);
             } catch (Exception e) {
                 log.error("S3에 해당하는 이미지가 없습니다. ");
             }
@@ -215,7 +214,7 @@ public class WorkspaceService {
 
         try {
             String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("workspace"));
-            s3UploaderService.deleteImage(deleteUrl);
+            s3UploaderService.deleteFiles(deleteUrl);
 
         } catch (IndexOutOfBoundsException e) {
             log.info("기본 이미지");
