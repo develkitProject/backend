@@ -32,7 +32,6 @@ public abstract class Timestamped {
 
     @PreUpdate
     public void onPreUpdate(){
-        System.out.println("실행 언제됨?");
         this.modifiedAt = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
     }
 }

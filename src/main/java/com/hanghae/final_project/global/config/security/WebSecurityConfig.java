@@ -137,6 +137,7 @@ public class WebSecurityConfig {
         skipPathList.add("POST,/api/members/signup");
         skipPathList.add("POST,/api/members/email");
         skipPathList.add("GET,/user/kakao/callback/**");
+        skipPathList.add("GET,/api/members/guest");
 
 
         //WebSocket 관련 -> Filter 역할 Intercepter로 대신함.

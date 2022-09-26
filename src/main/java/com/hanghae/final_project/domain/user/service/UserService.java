@@ -8,7 +8,11 @@ import com.hanghae.final_project.domain.user.dto.response.ProfileResponseDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.workspace.model.WorkSpace;
+import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
 import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.util.image.S3UploaderService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
@@ -35,6 +39,7 @@ public class UserService {
     private final UserRepository userRepository;
 //    private final SignupValidator signupValidator;
 
+    private final WorkSpaceRepository workSpaceRepository;
     private final S3UploaderService uploaderService;
 
     private final ChatRedisCacheService chatRedisCacheService;
@@ -43,11 +48,10 @@ public class UserService {
 
     private final DocumentRepository documentRepository;
 
+    private final WorkSpaceUserRepository workSpaceUserRepository;
+
     //일반회원 (not social) 회원가입
-    public ResponseEntity<?> standardSignup(SignupDto signupDto) {
-
-
-//        signupValidator.checkUserInfoValidation(signupDto);
+    public ResponseDto<LoginDto> standardSignup(SignupDto signupDto) {
 
         checkDuplicate(signupDto.getUsername());
 
@@ -55,9 +59,10 @@ public class UserService {
 
         userRepository.save(userInfo);
 
-        return new ResponseEntity<>(ResponseDto.success(LoginDto
-                .builder().username(signupDto.getUsername()).build()),
-                HttpStatus.OK);
+        return ResponseDto.success(LoginDto
+                .builder()
+                .username(signupDto.getUsername())
+                .build());
     }
 
     //이메일 중복체크
@@ -80,7 +85,7 @@ public class UserService {
 
         checkUsername(user.getUsername());
 
-        return new ResponseEntity<>(ResponseDto.success(ProfileResponseDto.of(user,documentRepository.countDocumentByUser(user))), HttpStatus.OK);
+        return new ResponseEntity<>(ResponseDto.success(ProfileResponseDto.of(user, documentRepository.countDocumentByUser(user))), HttpStatus.OK);
 
     }
 
@@ -100,7 +105,7 @@ public class UserService {
         if (userProfileDto.getNickname() != null) {
 
             userInfo.updateNickname(userProfileDto.getNickname());
-            chatRedisCacheService.changeUserCachingNickname(user.getUsername(),userInfo.getNickname());
+            chatRedisCacheService.changeUserCachingNickname(user.getUsername(), userInfo.getNickname());
         }
 
         //이미지 변경할 경우
@@ -138,8 +143,7 @@ public class UserService {
         if (!user.getProfileImage().contains(STANDARD_IMAGE_ROUTE)) {
             log.info("회원탈퇴시, 기본이미지가 아닐 경우, 해당 이미지 삭제");
             uploaderService.deleteFiles(user.getProfileImage(), "user");
-        }
-        else{
+        } else {
             log.info("회원탈퇴시, 기본이미지 일 경우 이미지 삭제 안함");
         }
         //kakao 유저 끊기
@@ -149,5 +153,32 @@ public class UserService {
         // 나의 DB에서 카카오 유저 로그인 삭제제
         userRepository.delete(user);
         return ResponseDto.success(true);
+    }
+
+    public ResponseDto<LoginDto> guestSignup() {
+
+        Long id = userRepository.countAllBy();
+
+        SignupDto signupDto = SignupDto.builder()
+                .username("Guest" + id + "@dvelkit.com")
+                .nickname("Guest" + id)
+                .password("Guest"+id+"!")
+                .build();
+
+        return standardSignup(signupDto);
+    }
+
+    public void setGuestWorkspace(String username) {
+
+        User user = userRepository.findByUsername(username).orElse(null);
+        WorkSpace workSpace= workSpaceRepository.findById(97L).orElse(null);
+
+        WorkSpaceUser workSpaceUser = WorkSpaceUser.builder()
+                .workSpace(workSpace)
+                .user(user)
+                .build();
+
+        workSpaceUserRepository.save(workSpaceUser);
+
     }
 }

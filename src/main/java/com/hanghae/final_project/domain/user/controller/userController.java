@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.user.controller;
 
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
+import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.service.UserService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
@@ -29,7 +30,7 @@ public class userController {
 
     @ApiOperation(value = "회원가입", notes = "일반 회원가입")
     @PostMapping("/api/members/signup")
-    public ResponseEntity<?> registerStandardUser(@Valid @RequestBody SignupDto signupDto, Errors errors){
+    public ResponseDto<LoginDto> registerStandardUser(@Valid @RequestBody SignupDto signupDto, Errors errors){
         if (errors.hasErrors()) {
             log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
             throw new RequestException(ErrorCode.USER_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
@@ -66,6 +67,13 @@ public class userController {
         return  userService.signOut(userDetails.getUser());
     }
 
+    @ApiOperation(value="게스트 자동회원가입",notes="회원가입 및 로그인 처리")
+    @GetMapping("/api/members/guest")
+    public ResponseDto<LoginDto> guestSignupAndSignIn(){
+        ResponseDto<LoginDto> loginDto = userService.guestSignup();
+        userService.setGuestWorkspace(loginDto.getData().getUsername());
+        return loginDto;
+    }
 
 
 }
