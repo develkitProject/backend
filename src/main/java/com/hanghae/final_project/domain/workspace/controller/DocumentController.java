@@ -4,7 +4,6 @@ import com.hanghae.final_project.domain.workspace.dto.request.DocumentRequestDto
 import com.hanghae.final_project.domain.workspace.dto.request.SearchDocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
-import com.hanghae.final_project.domain.workspace.model.Document;
 import com.hanghae.final_project.domain.workspace.repository.DocumentQueryRepository;
 import com.hanghae.final_project.domain.workspace.service.DocumentService;
 import com.hanghae.final_project.global.commonDto.ResponseDto;

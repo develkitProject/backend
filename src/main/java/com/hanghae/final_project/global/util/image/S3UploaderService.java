@@ -71,8 +71,6 @@ public class S3UploaderService {
         if (multipartFiles == null || multipartFiles[0].getOriginalFilename().equals("")) {
             return null;
         }
-
-        // 전달받은 파일 Local에 저장하고 list 형태로 받기
         List<File> uploadFiles = convertFormDataFiles(multipartFiles)
                 .orElseThrow(() -> new RequestException(ErrorCode.COMMON_INTERNAL_ERROR_500));
 
@@ -128,6 +126,12 @@ public class S3UploaderService {
 
     public void deleteImage(String fileName) {
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    }
+
+    public void deleteFiles(List<String> fileNames) {
+        for (int i = 0; i < fileNames.size(); i++) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileNames.get(i)));
+        }
     }
 
     public void deleteImage(String fileName, String dir) {
