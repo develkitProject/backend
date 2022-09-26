@@ -123,8 +123,9 @@ public class S3UploaderService {
     }
 
     public void deleteFiles(List<String> fileNames) {
-        for(int i = 0; i < fileNames.size(); i++)
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileNames.get(i)));
+        for (int i = 0; i < fileNames.size(); i++) {
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileNames.get(i)));
+        }
     }
 
     public void deleteImage(String fileName, String dir) {

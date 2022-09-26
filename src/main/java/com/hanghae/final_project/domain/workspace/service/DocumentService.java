@@ -203,9 +203,11 @@ public class DocumentService {
 
         // 수정 후 파일의 url들과 db에 들어있는 url을 비교해서 없으면 db에서 삭제, 아니면 Dto에 넣어줄 List에 add
         List<String> deleteFileUrls = new ArrayList<>();
+        System.out.println(preFileUrlsDB.size());
         if(documentRequestDto.getPreFileUrls() != null) {
             for (int i = 0; i < preFileUrlsDB.size(); i++) {
                 if (!documentRequestDto.getPreFileUrls().contains(preFileUrlsDB.get(i))) {
+                    System.out.println(preFileUrlsDB.get(i));
                     deleteFileUrls.add(preFileUrlsDB.get(i));
                 } else {
                     fileUrls.add(preFiles.get(i).getFileUrl());
@@ -214,10 +216,13 @@ public class DocumentService {
             }
         }
 
-        System.out.println(fileUrls);
-        s3UploaderService.deleteFiles(deleteFileUrls);
+        System.out.println(deleteFileUrls.size());
+        for(int i = 0; i < deleteFileUrls.size(); i++) {
+            System.out.println(deleteFileUrls.get(i));
+        }
 
         for(int i = 0; i < deleteFileUrls.size(); i++) {
+            s3UploaderService.deleteImage(deleteFileUrls.get(i), "upload");
             fileRepository.deleteByFileUrl(deleteFileUrls.get(i));
         }
 
@@ -230,31 +235,21 @@ public class DocumentService {
         }
 
         // updateFiles -> File 타입으로 fileRepository.save에 사용
-        if(multipartFiles != null) {
+        // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 dto에 넣어줄 name, url 넣으
+        if(multipartFiles != null && multipartFiles[0].getOriginalFilename().equals("") == false) {
             for (int i = 0; i < multipartFiles.length; i++) {
                 updateFiles.add(File.builder()
                         .fileUrl(updateFileUrls.get(i))
                         .doc(document)
                         .fileName(multipartFiles[i].getOriginalFilename())
                         .build());
+                fileNames.add(multipartFiles[i].getOriginalFilename());
+                fileUrls.add(updateFileUrls.get(i));
             }
         }
 
         fileRepository.saveAll(updateFiles);
-
-        // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 dto에 넣어줄 name, url 넣으려고
-       if(multipartFiles != null) {
-           for (int i = 0; i < multipartFiles.length; i++) {
-               fileNames.add(multipartFiles[i].getOriginalFilename());
-               updateFiles.add(File.builder()
-                       .doc(document)
-                       .fileName(multipartFiles[i].getOriginalFilename())
-                       .fileUrl(updateFileUrls.get(i))
-                       .build());
-               fileUrls.add(updateFileUrls.get(i));
-           }
-       }
-
+        
         // fileNames = 삭제 안된것 + 추가된것들 위에서 다 처리함
         // fileUrls = 삭제 안된것 + 추가된것들 -> 추가된 것들을 넣어줘야함
 
