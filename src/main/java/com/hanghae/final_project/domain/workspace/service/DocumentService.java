@@ -201,27 +201,25 @@ public class DocumentService {
             preFileUrlsDB.add(preFile.getFileUrl());
         }
 
-        // 수정 후 파일의 url들과 db에 들어있는 url을 비교해서 없으면 db에서 삭제
+        // 수정 후 파일의 url들과 db에 들어있는 url을 비교해서 없으면 db에서 삭제, 아니면 Dto에 넣어줄 List에 add
         List<String> deleteFileUrls = new ArrayList<>();
         if(documentRequestDto.getPreFileUrls() != null) {
             for (int i = 0; i < preFileUrlsDB.size(); i++) {
                 if (!documentRequestDto.getPreFileUrls().contains(preFileUrlsDB.get(i))) {
                     deleteFileUrls.add(preFileUrlsDB.get(i));
                 } else {
-                    //
-                    fileUrls.add(documentRequestDto.getPreFileUrls().get(i));
+                    fileUrls.add(preFiles.get(i).getFileUrl());
                     fileNames.add(preFiles.get(i).getFileName());
                 }
             }
         }
 
+        System.out.println(fileUrls);
         s3UploaderService.deleteFiles(deleteFileUrls);
 
         for(int i = 0; i < deleteFileUrls.size(); i++) {
             fileRepository.deleteByFileUrl(deleteFileUrls.get(i));
         }
-        // 새로운 파일을 저장 -> 가존 파일의 url을 받고, DB에 없다 ? -> 새로운거 저장
-        // 멀티파트로 받은 fileUrl들을 비교해서 삭제랑 반대로 DB에 없는데
 
         // 멀티파트 파일로 받은 것들이 추가 된거임 -> s3에 올리고, db에도 저장.
         List<String> updateFileUrls;
@@ -233,9 +231,9 @@ public class DocumentService {
 
         // updateFiles -> File 타입으로 fileRepository.save에 사용
         if(multipartFiles != null) {
-            for (int i = 0; i < documentRequestDto.getPreFileUrls().size(); i++) {
+            for (int i = 0; i < multipartFiles.length; i++) {
                 updateFiles.add(File.builder()
-                        .fileUrl(documentRequestDto.getPreFileUrls().get(i))
+                        .fileUrl(updateFileUrls.get(i))
                         .doc(document)
                         .fileName(multipartFiles[i].getOriginalFilename())
                         .build());
@@ -244,7 +242,7 @@ public class DocumentService {
 
         fileRepository.saveAll(updateFiles);
 
-        // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 ? 왜 ?
+        // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 dto에 넣어줄 name, url 넣으려고
        if(multipartFiles != null) {
            for (int i = 0; i < multipartFiles.length; i++) {
                fileNames.add(multipartFiles[i].getOriginalFilename());
