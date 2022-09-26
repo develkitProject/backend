@@ -93,6 +93,6 @@ public class InvitationService {
         Invitation invitation = invitationRepository.findByInvite(requestDto.getCode())
                 .orElseThrow(()->new RequestException(ErrorCode.NO_INVITATION_CODE_404));
 
-        return  ResponseDto.success(WorkspaceResponseDto.createResponseDto( invitation.getWorkSpace()));
+        return  ResponseDto.success(WorkspaceResponseDto.createResponseDto( invitation.getWorkSpace(),null));
     }
 }

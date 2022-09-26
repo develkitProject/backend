@@ -1,7 +1,7 @@
 package com.hanghae.final_project.domain.chatting.config;
 
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.redis.RedisPublisher;
 import com.hanghae.final_project.domain.chatting.service.ChatRoomService;
 import com.hanghae.final_project.domain.chatting.utils.ChatUtils;
@@ -53,8 +53,7 @@ public class StompHandler implements ChannelInterceptor {
             log.info("token : " + accessor.getFirstNativeHeader(TOKEN));
             String headerToken = accessor.getFirstNativeHeader(TOKEN);
             String token = headerTokenExtractor.extract(headerToken);
-            ;
-            log.info(jwtDecoder.decodeUsername(token));
+            log.info(jwtDecoder.decodeUsername(token).getUsername());
 
         }
         // 소켓 연결 후 ,SUBSCRIBE 등록
@@ -64,7 +63,7 @@ public class StompHandler implements ChannelInterceptor {
 
             String headerToken = accessor.getFirstNativeHeader(TOKEN);
             String token = headerTokenExtractor.extract(headerToken);
-            String username = jwtDecoder.decodeUsername(token);
+            String username = jwtDecoder.decodeUsername(token).getUsername();
 
             String destination = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_DESTINATION)
@@ -82,21 +81,20 @@ public class StompHandler implements ChannelInterceptor {
 
             //list 주기
             redisPublisher.publish(topic,
-                    ChatMessageDto.builder()
-                            .type(ChatMessageDto.MessageType.ENTER)
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.ENTER)
                             .roomId(roomId)
-                            .message("회원들어옴")
                             .userList(chatRoomService.findUser(roomId, sessionId))
                             .build()
             );
 
         }
-        //소켓 연결 후 , 소켓 연결 해제 시
-        else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            log.info("Disconnect destination : " + message.getHeaders().get(SIMP_DESTINATION));
-            log.info("Disconnect sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+
+        else if(StompCommand.UNSUBSCRIBE==accessor.getCommand()){
+            //진행해야할 것
             //reids SubScribe 해제
-            //Session_Id를 통해서
+            log.info("UNSUBSCRIBE sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+            log.info("UNSUBSCRIBE destination : " + message.getHeaders().get(SIMP_DESTINATION));
 
             String sessionId = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_SESSION_ID)
@@ -108,10 +106,31 @@ public class StompHandler implements ChannelInterceptor {
 
             //list 주기
             redisPublisher.publish(topic,
-                    ChatMessageDto.builder()
-                            .type(ChatMessageDto.MessageType.QUIT)
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.QUIT)
                             .roomId(roomId)
-                            .message("회원나감")
+                            .userList(chatRoomService.findUser(roomId, sessionId))
+                            .build()
+            );
+        }
+        //소켓 연결 후 , 소켓 연결 해제 시
+        else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info("Disconnect sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
+
+            //Session_Id를 통해서
+            String sessionId = Optional.ofNullable(
+                    (String) message.getHeaders().get(SIMP_SESSION_ID)
+            ).orElse(null);
+
+            String roomId = chatRoomService.disconnectWebsocket(sessionId);
+
+            log.info("Socket 연결 끊어진 RoomId : "+roomId);
+
+            //list 주기
+            redisPublisher.publish(topic,
+                    ChatMessageSaveDto.builder()
+                            .type(ChatMessageSaveDto.MessageType.QUIT)
+                            .roomId(roomId)
                             .userList(chatRoomService.findUser(roomId, sessionId))
                             .build()
             );

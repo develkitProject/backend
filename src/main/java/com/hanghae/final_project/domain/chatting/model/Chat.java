@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.model;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.*;
 
@@ -36,11 +36,11 @@ public class Chat implements Serializable {
     @JoinColumn(name = "workspace_id", nullable = false)
     private WorkSpace workSpace;
 
-    public static Chat of(ChatMessageDto chatMessageDto,WorkSpace workSpace){
+    public static Chat of(ChatMessageSaveDto chatMessageSaveDto, WorkSpace workSpace){
         return Chat.builder()
-                .message(chatMessageDto.getMessage())
-                .createdAt(chatMessageDto.getCreatedAt())
-                .users(chatMessageDto.getWriter())
+                .message(chatMessageSaveDto.getMessage())
+                .createdAt(chatMessageSaveDto.getCreatedAt())
+                .users(chatMessageSaveDto.getWriter())
                 .workSpace(workSpace)
                 .build();
 

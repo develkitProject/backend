@@ -12,6 +12,7 @@ public interface DocumentUserRepository extends JpaRepository<DocumentUser,Long>
 
     Optional<DocumentUser> findByDocumentAndUser(Document document, User user);
 
+    List<DocumentUser> findAllByUser(User user);
     List<DocumentUser> findAllByDocument(Document document);
 
 }

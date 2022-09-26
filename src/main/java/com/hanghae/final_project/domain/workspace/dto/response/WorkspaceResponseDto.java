@@ -2,27 +2,28 @@ package com.hanghae.final_project.domain.workspace.dto.response;
 
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceFindRecentData;
 import com.hanghae.final_project.domain.workspace.model.Notice;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class WorkspaceResponseDto {
+
     private Workspaces workspaces;
     private Notices notices;
 
-/*
-    public static WorkspaceResponseDto createResponseDto (WorkSpace workSpace, User user) {
-        return new WorkspaceResponseDto(new Workspaces(workSpace, user));
-    }*/
+
     // Notice 데이터가 있는 경우 Notice의 데이터를 반환
-    public static WorkspaceResponseDto createResponseDto (WorkSpace workSpace) {
+    public static WorkspaceResponseDto createResponseDto (WorkSpace workSpace, WorkspaceFindRecentData recentData) {
         int size = workSpace.getNotices().size();
         if (size == 0)
-            return new WorkspaceResponseDto(new Workspaces(workSpace), null);
-        return new WorkspaceResponseDto(new Workspaces(workSpace), new Notices(workSpace.getNotices().get(size - 1)));
+            return new WorkspaceResponseDto(new Workspaces(workSpace,recentData), null);
+        return new WorkspaceResponseDto(new Workspaces(workSpace,recentData), new Notices(workSpace.getNotices().get(size - 1)));
     }
 
     @Getter
@@ -32,20 +33,27 @@ public class WorkspaceResponseDto {
         private String title;
         private String content;
         private String imageUrl;
-        private String invite_code;
         private String createdAt;
         private Users createdBy;
 
+        private String documentTitle;
+        private String scheduleContent;
+        private String documentCreatedAt;
+        private String scheduleCreatedAt;
 
 
-        public Workspaces(WorkSpace workSpace) {
+
+        public Workspaces(WorkSpace workSpace,WorkspaceFindRecentData recentData) {
             this.id = workSpace.getId();
             this.title = workSpace.getTitle();
             this.content = workSpace.getContent();
             this.imageUrl = workSpace.getImageUrl();
-            this.invite_code = workSpace.getInvite_code();
             this.createdAt = workSpace.getCreatedAt();
             this.createdBy = new Users(workSpace.getCreatedBy());
+            this.documentTitle= recentData.getDocumentTitle();
+            this.documentCreatedAt=recentData.getDocumentCreatedAt();
+            this.scheduleContent=recentData.getScheduleContent();
+            this.scheduleCreatedAt=recentData.getScheduleCreatedAt();
         }
 
         @Getter

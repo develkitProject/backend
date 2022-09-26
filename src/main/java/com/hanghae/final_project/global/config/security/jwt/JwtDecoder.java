@@ -28,7 +28,7 @@ public class JwtDecoder {
         this.JWT_SECRET = JWT_SECRET;
     }
 
-    public String decodeUsername(String token){
+    public UserInfo decodeUsername(String token){
         DecodedJWT decodedJWT = isValidToken(token).orElseThrow(()->new AuthenticationServiceException("토큰이 유효하지 않습니다"));
         Date expiredDate = decodedJWT.getClaim(CLAIM_EXPIRED_DATE).asDate();
 
@@ -37,11 +37,22 @@ public class JwtDecoder {
         if(expiredDate.before(now)){
             throw new AuthenticationServiceException("유효시간이 지난 토큰입니다 ");
         }
+
         String username = decodedJWT
                 .getClaim(CLAIM_USER_NAME)
                 .asString();
-        return username;
+
+        String nickname = decodedJWT
+                .getClaim(CLAIM_USER_NICKNAME)
+                .asString();
+
+
+        return UserInfo.builder()
+                .username(username)
+                .nickname(nickname)
+                .build();
     }
+
 
     private Optional<DecodedJWT> isValidToken(String token){
 

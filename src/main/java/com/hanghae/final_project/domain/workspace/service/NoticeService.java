@@ -28,12 +28,14 @@ public class NoticeService {
     private final WorkSpaceRepository workSpaceRepository;
 
     //공지사항 생성
-
     @Transactional
     public ResponseEntity<ResponseDto<NoticeResponseDto>> createNotice(NoticeRequestDto noticeRequestDto,
                                           Long workSpaceId,
                                           UserDetailsImpl userDetails) {
-        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElse(null);
+
+        WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId)
+                .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404));
+
         Notice notice = Notice.builder()
                 .title(noticeRequestDto.getTitle())
                 .content(noticeRequestDto.getContent())

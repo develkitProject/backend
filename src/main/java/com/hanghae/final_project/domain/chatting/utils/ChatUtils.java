@@ -1,6 +1,6 @@
 package com.hanghae.final_project.domain.chatting.utils;
 
-import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageDto;
+import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
 import com.hanghae.final_project.domain.chatting.repository.ChatRepository;
 
@@ -24,9 +24,9 @@ public class ChatUtils {
 
     private final ChatRepository chatRepository;
 
-    private final RedisTemplate<String, ChatMessageDto> chatRedisTemplate;
+    private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
-    private ZSetOperations<String, ChatMessageDto> zSetOperations;
+    private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
 
     public String getRoodIdFromDestination(String destination){
         int lastIndex = destination.lastIndexOf('/');
@@ -36,7 +36,7 @@ public class ChatUtils {
             return "";
     }
 
-    public void cachingDataInRedisFromDB(){
+    public void cachingDataToRedisFromDB(){
 
         zSetOperations = chatRedisTemplate.opsForZSet();
         //서버 시작전, redis 에 데이터 적재시키기.
@@ -50,8 +50,8 @@ public class ChatUtils {
         List<Chat> chatList = chatRepository.findAllByCreatedAtAfterOrderByCreatedAtDesc(cursor);
 
         for (Chat chat : chatList) {
-            ChatMessageDto chatMessageDto = ChatMessageDto.of(chat);
-            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
+            ChatMessageSaveDto chatMessageSaveDto = ChatMessageSaveDto.of(chat);
+            zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageSaveDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
         }
     }
     public Double changeLocalDateTimeToDouble(String createdAt) {
@@ -60,4 +60,6 @@ public class ChatUtils {
         LocalDateTime localDateTime = LocalDateTime.parse(createdAt, formatter);
         return ((Long) localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()).doubleValue();
     }
+
+
 }

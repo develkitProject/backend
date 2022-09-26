@@ -10,14 +10,18 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResProfileDto {
+public class ProfileResponseDto {
 
     private String username;
     private String profileImageUrl;
     private String nickname;
+    private String createdAt;
+    private String documentNum;
 
-    public static ResProfileDto of(User user) {
-        return ResProfileDto.builder()
+    public static ProfileResponseDto of(User user, Long documentNum) {
+        return ProfileResponseDto.builder()
+                .documentNum(documentNum.toString())
+                .createdAt(user.getCreatedAt())
                 .username(user.getUsername())
                 .nickname(user.getNickname())
                 .profileImageUrl(user.getProfileImage())

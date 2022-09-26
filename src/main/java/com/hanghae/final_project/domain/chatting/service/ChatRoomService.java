@@ -18,6 +18,10 @@ public class ChatRoomService {
         chatRoomRepository.enterChatRoom(roomId,sessionId,username);
     }
 
+    public String disconnectWebsocket(String sessionId){
+        return chatRoomRepository.disconnectWebsocket(sessionId);
+    }
+
     public String leaveChatRoom(String sessionId){
         return chatRoomRepository.leaveChatRoom(sessionId);
     }
