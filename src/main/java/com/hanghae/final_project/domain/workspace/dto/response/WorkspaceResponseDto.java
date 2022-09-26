@@ -50,10 +50,13 @@ public class WorkspaceResponseDto {
             this.imageUrl = workSpace.getImageUrl();
             this.createdAt = workSpace.getCreatedAt();
             this.createdBy = new Users(workSpace.getCreatedBy());
-            this.documentTitle= recentData.getDocumentTitle();
-            this.documentCreatedAt=recentData.getDocumentCreatedAt();
-            this.scheduleContent=recentData.getScheduleContent();
-            this.scheduleCreatedAt=recentData.getScheduleCreatedAt();
+            if(recentData!=null){
+                this.documentTitle= recentData.getDocumentTitle();
+                this.documentCreatedAt=recentData.getDocumentCreatedAt();
+                this.scheduleContent=recentData.getScheduleContent();
+                this.scheduleCreatedAt=recentData.getScheduleCreatedAt();
+            }
+
         }
 
         @Getter
