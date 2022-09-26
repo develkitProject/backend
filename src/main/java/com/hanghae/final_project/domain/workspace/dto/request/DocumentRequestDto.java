@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class DocumentRequestDto {
 
     private String title;
     private String content;
-//    private String imageUrl;
+    private List<String> preFileUrls;
 
 }
 
