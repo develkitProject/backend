@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.user.service;
 
+import com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService;
 import com.hanghae.final_project.domain.user.dto.request.SignupDto;
 import com.hanghae.final_project.domain.user.dto.request.UserProfileDto;
 import com.hanghae.final_project.domain.user.dto.response.LoginDto;
@@ -36,6 +37,7 @@ public class UserService {
 
     private final S3UploaderService uploaderService;
 
+    private final ChatRedisCacheService chatRedisCacheService;
     private final KakaoUserService kakaoUserService;
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -96,7 +98,9 @@ public class UserService {
 
         //nickname 변경할 경우
         if (userProfileDto.getNickname() != null) {
+
             userInfo.updateNickname(userProfileDto.getNickname());
+            chatRedisCacheService.changeUserCachingNickname(user.getUsername(),userInfo.getNickname());
         }
 
         //이미지 변경할 경우
