@@ -4,21 +4,16 @@ import com.hanghae.final_project.domain.chatting.repository.ChatRoomRepository;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkSpaceUpdateReqeustDto;
+import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceFindRecentData;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceJoinRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.UserResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkSpaceInfoResponseDto;
 import com.hanghae.final_project.domain.workspace.dto.response.WorkspaceResponseDto;
+import com.hanghae.final_project.domain.workspace.model.*;
+import com.hanghae.final_project.domain.workspace.repository.*;
 import com.hanghae.final_project.global.util.image.S3UploaderService;
-import com.hanghae.final_project.domain.workspace.model.Document;
-import com.hanghae.final_project.domain.workspace.model.Notice;
-import com.hanghae.final_project.domain.workspace.model.WorkSpace;
-import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
-import com.hanghae.final_project.domain.workspace.repository.DocumentRepository;
-import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
@@ -45,11 +40,13 @@ public class WorkspaceService {
     private final DocumentRepository documentRepository;
     private final NoticeRepository noticeRepository;
 
+    private final ScheduleRepository scheduleRepository;
+
     private final ChatRoomRepository chatRoomRepository;
 
     @Transactional
     public ResponseDto<WorkspaceResponseDto> createWorkspace(WorkspaceRequestDto requestDto,
-                                                             UserDetails userDetails) throws IOException{
+                                                             UserDetails userDetails) throws IOException {
 
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
@@ -68,7 +65,7 @@ public class WorkspaceService {
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, savedWorkspace);
         WorkSpaceUser savedWorkspaceUser = workspaceUserRepository.save(workSpaceUser);
 
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace());
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(savedWorkspaceUser.getWorkSpace(),null);
 
         return ResponseDto.success(responseDto);
     }
@@ -81,17 +78,32 @@ public class WorkspaceService {
         List<WorkSpaceUser> repositories = workspaceUserRepository.findAllByUser(user);
 
         List<WorkspaceResponseDto> responseDtos = repositories.stream()
-                .map(workSpaceUser -> WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace()))
+                .map(workSpaceUser -> WorkspaceResponseDto
+                        .createResponseDto(
+                                workSpaceUser.getWorkSpace(),
+                                findWorkspaceRecent(workSpaceUser.getWorkSpace())))
                 .collect(Collectors.toList());
 
         return ResponseDto.success(responseDtos);
+    }
+
+    private WorkspaceFindRecentData findWorkspaceRecent(WorkSpace workspace) {
+        Document document = documentRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workspace.getId())
+                .orElse(Document.builder()
+                        .title("작성된 문서가 없습니다.")
+                        .build());
+        Schedule schedule = scheduleRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workspace.getId())
+                .orElse(Schedule.builder()
+                        .content("작성된 일정이 없습니다.")
+                        .build());
+        return WorkspaceFindRecentData.of(document, schedule);
     }
 
     // 워크스페이스 정보 수정
     @Transactional
     public ResponseDto<WorkspaceResponseDto> updateWorkspace(Long workspaceId,
                                                              WorkSpaceUpdateReqeustDto requestDto,
-                                                             UserDetails userDetails)throws IOException {
+                                                             UserDetails userDetails) throws IOException {
         // 1. 유저 가지고오기
         User user = userRepository.findByUsername(userDetails.getUsername()).get();
 
@@ -109,17 +121,17 @@ public class WorkspaceService {
         // 3. 데이터 수정하기
         String imageUrl = workspace.getImageUrl();
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
-            try{
+            try {
                 String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
                 s3UploaderService.deleteImage(deleteUrl);
-            }catch (Exception e){
+            } catch (Exception e) {
                 log.error("S3에 해당하는 이미지가 없습니다. ");
             }
             imageUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "workspace");
         }
 
         workspace.update(requestDto, imageUrl);
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workspace);
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workspace,null);
 
         return ResponseDto.success(responseDto);
     }
@@ -143,7 +155,7 @@ public class WorkspaceService {
         WorkSpaceUser workSpaceUser = WorkSpaceUser.of(user, workSpace);
         workspaceUserRepository.save(workSpaceUser);
 
-        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace());
+        WorkspaceResponseDto responseDto = WorkspaceResponseDto.createResponseDto(workSpaceUser.getWorkSpace(),null);
 
         return ResponseDto.success(responseDto);
     }
@@ -158,9 +170,12 @@ public class WorkspaceService {
 
         List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
 
+
         List<UserResponseDto> userResponseDtos = users
                 .stream()
-                .map(user -> UserResponseDto.createResponseDto(user))
+                .map(user -> UserResponseDto.createResponseDto(
+                        user,
+                        workSpaceUsers.get(0).getWorkSpace().getCreatedBy().getUsername()))
                 .collect(Collectors.toList());
 
         return ResponseDto.success(userResponseDtos);
@@ -215,7 +230,7 @@ public class WorkspaceService {
     public ResponseDto<List<WorkspaceResponseDto>> getAllWorkspaces() {
 
         List<WorkSpace> allWorkspaces = workspaceRepository.findAll();
-        List<WorkspaceResponseDto> responseDtos = allWorkspaces.stream().map(workSpace -> WorkspaceResponseDto.createResponseDto(workSpace)).collect(Collectors.toList());
+        List<WorkspaceResponseDto> responseDtos = allWorkspaces.stream().map(workSpace -> WorkspaceResponseDto.createResponseDto(workSpace,null)).collect(Collectors.toList());
         return ResponseDto.success(responseDtos);
     }
 
@@ -242,7 +257,9 @@ public class WorkspaceService {
 
         int numInWorkspace = workspaceUserRepository.findAllByWorkSpaceId(workspaceId).size();
 
-        return ResponseDto.success(WorkSpaceInfoResponseDto.of(workSpace,String.valueOf(numInWorkspace)));
+        return ResponseDto.success(WorkSpaceInfoResponseDto.of(workSpace, String.valueOf(numInWorkspace)));
 
     }
+
+
 }

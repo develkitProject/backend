@@ -38,7 +38,6 @@ public class NoticeServiceTest {
     @Mock
     private NoticeRepository noticeRepository;
 
-    @Test
     public void createNotice() {
         //given
         Long workSpaceId = 1L;

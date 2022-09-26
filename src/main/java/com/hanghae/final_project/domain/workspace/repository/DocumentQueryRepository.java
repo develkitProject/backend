@@ -69,7 +69,7 @@ public class DocumentQueryRepository {
                         cursorIdControl(requestDto.getCursorId(), requestDto.getDirection())
                         )
                 .orderBy(document.createdAt.desc())
-                .limit(5)
+//                .limit(5)
                 .fetch();
     }
 
@@ -79,11 +79,11 @@ public class DocumentQueryRepository {
         log.info("작성자 : {}", requestDto.getWriter());
         return queryFactory
                 .selectFrom(document)
-                .where(document.user.nickname.eq(requestDto.getWriter()),
+                .where(document.user.nickname.contains(requestDto.getWriter()),
                         document.workSpace.id.eq(workspaceId),
                         cursorIdControl(requestDto.getCursorId(), requestDto.getDirection()))
                 .orderBy(document.createdAt.desc())
-                .limit(5)
+//                .limit(5)
                 .fetch();
     }
 
