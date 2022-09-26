@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -92,6 +93,7 @@ public class S3UploaderService {
         for (MultipartFile file : files) {
 
             String fileOriginalFilename = file.getOriginalFilename();
+            String filename= fileOriginalFilename.substring(0,file.getOriginalFilename().lastIndexOf("."));
             String fileExtension = fileOriginalFilename.substring(file.getOriginalFilename().lastIndexOf("."));
 
             //확장자검사
@@ -100,7 +102,7 @@ public class S3UploaderService {
             log.info("확장자 {}", fileExtension);
 
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            File convertFile = new File(System.getProperty("user.dir") + "/" + UUID.randomUUID() + "_" + now + fileExtension);
+            File convertFile = new File(System.getProperty("user.dir") + "/" + filename +"_"+now+ fileExtension);
 
             if (convertFile.createNewFile()) {
                 try (FileOutputStream fos = new FileOutputStream(convertFile)) {
@@ -120,24 +122,22 @@ public class S3UploaderService {
 
         String fileName = filepath + "/" + uploadFile.getName();
         String uploadImageUrl = putS3(uploadFile, fileName);
+
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
 
-    public void deleteImage(String fileName) {
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+    public void deleteFiles(String fileName) {
+
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, decodeUrl(fileName)));
     }
 
-    public void deleteFiles(List<String> fileNames) {
-        for (int i = 0; i < fileNames.size(); i++) {
-            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileNames.get(i)));
-        }
-    }
-
-    public void deleteImage(String fileName, String dir) {
+    public void deleteFiles(String fileName, String dir) {
         //filename이 존재하는지 확인
         if (fileName == null || !fileName.contains("amazonaws.com") || fileName.contains(STANDARD_IMAGE_ROUTE)) return;
+        fileName = decodeUrl(fileName);
         fileName = fileName.substring(fileName.indexOf(dir));
+        log.info("delete key : {}",fileName);
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
     }
 
@@ -163,10 +163,14 @@ public class S3UploaderService {
         Base64.Decoder decoder = Base64.getDecoder();
         return decoder.decode(substring);
     }
-
-    // 파일 불러오기
-    public String getFileUrl(String path) {
-        return amazonS3Client.getUrl(bucket, path).toString();
+    private String decodeUrl(String url) {
+        try{
+          return URLDecoder.decode(url,"UTF-8");
+        }catch (Exception e){
+            log.error("URL TO UTF-8 변환에러");
+            return null;
+        }
     }
+
 
 }

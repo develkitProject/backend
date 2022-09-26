@@ -21,6 +21,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -180,7 +182,8 @@ public class DocumentService {
     public ResponseDto<DocumentResponseDto> updateDocument(Long workSpaceId,
                                                            Long id,
                                                            MultipartFile[] multipartFiles,
-                                                           DocumentRequestDto documentRequestDto) {
+                                                           DocumentRequestDto documentRequestDto,
+                                                           User user) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
@@ -203,11 +206,11 @@ public class DocumentService {
 
         // 수정 후 파일의 url들과 db에 들어있는 url을 비교해서 없으면 db에서 삭제, 아니면 Dto에 넣어줄 List에 add
         List<String> deleteFileUrls = new ArrayList<>();
-        System.out.println(preFileUrlsDB.size());
-        if(documentRequestDto.getPreFileUrls() != null) {
+
+        if (documentRequestDto.getPreFileUrls() != null) {
             for (int i = 0; i < preFileUrlsDB.size(); i++) {
                 if (!documentRequestDto.getPreFileUrls().contains(preFileUrlsDB.get(i))) {
-                    System.out.println(preFileUrlsDB.get(i));
+
                     deleteFileUrls.add(preFileUrlsDB.get(i));
                 } else {
                     fileUrls.add(preFiles.get(i).getFileUrl());
@@ -216,13 +219,8 @@ public class DocumentService {
             }
         }
 
-        System.out.println(deleteFileUrls.size());
-        for(int i = 0; i < deleteFileUrls.size(); i++) {
-            System.out.println(deleteFileUrls.get(i));
-        }
-
-        for(int i = 0; i < deleteFileUrls.size(); i++) {
-            s3UploaderService.deleteImage(deleteFileUrls.get(i), "upload");
+        for (int i = 0; i < deleteFileUrls.size(); i++) {
+            s3UploaderService.deleteFiles(deleteFileUrls.get(i), "upload");
             fileRepository.deleteByFileUrl(deleteFileUrls.get(i));
         }
 
@@ -236,7 +234,7 @@ public class DocumentService {
 
         // updateFiles -> File 타입으로 fileRepository.save에 사용
         // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 dto에 넣어줄 name, url 넣으
-        if(multipartFiles != null && multipartFiles[0].getOriginalFilename().equals("") == false) {
+        if (multipartFiles != null && multipartFiles[0].getOriginalFilename().equals("") == false) {
             for (int i = 0; i < multipartFiles.length; i++) {
                 updateFiles.add(File.builder()
                         .fileUrl(updateFileUrls.get(i))
@@ -252,27 +250,26 @@ public class DocumentService {
 
         // fileNames = 삭제 안된것 + 추가된것들 위에서 다 처리함
         // fileUrls = 삭제 안된것 + 추가된것들 -> 추가된 것들을 넣어줘야함
+        document.update(documentRequestDto,user);
 
+        log.info(" update time {}",document.getModifiedAt());
+        documentRepository.save(document);
 
-            document.setTitle(documentRequestDto.getTitle());
-            document.setContent(documentRequestDto.getContent());
+        DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
+                .id(document.getId())
+                .title(document.getTitle())
+                .content(document.getContent())
+                .nickname(document.getUser().getNickname())
+                .fileNames(fileNames)
+                .fileUrls(fileUrls)
+                .workSpaceId(findWorkSpace.getId())
+                .createdAt(document.getCreatedAt())
+                .modifiedAt(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm")))
+                .modifyMember(document.getModifyUser().getNickname())
+                .build();
 
-            documentRepository.save(document);
-
-            DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
-                    .id(document.getId())
-                    .title(document.getTitle())
-                    .content(document.getContent())
-                    .nickname(document.getUser().getNickname())
-                    .fileNames(fileNames)
-                    .fileUrls(fileUrls)
-                    .workSpaceId(findWorkSpace.getId())
-                    .createdAt(document.getCreatedAt())
-                    .modifiedAt(document.getModifiedAt())
-                    .build();
-
-            return new ResponseDto<>(true, documentResponseDto, null);
-        }
+        return new ResponseDto<>(true, documentResponseDto, null);
+    }
 
 
     // 문서 삭제 -> db삭제, S3 버켓도 같이 삭제
@@ -293,11 +290,9 @@ public class DocumentService {
             fileUrls.add(file.getFileUrl());
         }
 
-//        for (String fileUrl : fileUrls) {
-//            s3UploaderService.deleteImage(fileUrl, "upload");
-//        }
-
-        s3UploaderService.deleteFiles(fileUrls);
+        for(int i =0 ; i<fileUrls.size();i++){
+            s3UploaderService.deleteFiles(fileUrls.get(i),"upload");
+        }
 
         fileRepository.deleteAll(files);
 
