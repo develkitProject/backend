@@ -150,6 +150,11 @@ public class DocumentService {
         // 파일 Url 리스트로 가져오기
         List<File> files = fileRepository.findAllByDocId(id);
 
+        String modifyMember=null;
+        if(document.getModifyUser()!=null){
+            modifyMember=document.getModifyUser().getNickname();
+        }
+
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
@@ -171,6 +176,7 @@ public class DocumentService {
                         .map(v -> v.getUser().getNickname())
                         .collect(Collectors.toList()))
                 .modifiedAt(document.getModifiedAt())
+                .modifyMember(modifyMember)
                 .build();
 
         return new ResponseDto<>(true, documentResponseDto, null);
