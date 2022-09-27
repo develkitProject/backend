@@ -24,7 +24,7 @@ public class KakaoUserController {
 
     private final KakaoUserService kakaoUserService;
 
-    private UserService userService;
+    private final UserService userService;
 
     @ApiOperation(value = "카카오톡 로그인", notes = "카카오톡 로그인")
     @GetMapping("/user/kakao/callback")
