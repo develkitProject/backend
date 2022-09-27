@@ -38,6 +38,7 @@ public class KakaoUserService {
     public static final String APP_ADMIN_KEY = "c2689db3cf597442ae264f72db1a1904";
     private final UserRepository userRepository;
 
+    private final UserService userService;
     private final BCryptPasswordEncoder encoder;
 
 
@@ -91,6 +92,8 @@ public class KakaoUserService {
                     .social(UserSocialEnum.KAKAO)
                     .profileImage(kakaoSocialDto.getProfileImage())
                     .build();
+
+            userService.setGuestWorkspace(kakaoUser.getUsername());
 
             userRepository.save(kakaoUser);
         }
