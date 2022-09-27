@@ -129,6 +129,7 @@ public class S3UploaderService {
 
     public void deleteFiles(String fileName) {
 
+
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, decodeUrl(fileName)));
     }
 

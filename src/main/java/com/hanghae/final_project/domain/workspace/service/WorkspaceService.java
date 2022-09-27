@@ -121,8 +121,8 @@ public class WorkspaceService {
         String imageUrl = workspace.getImageUrl();
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             try {
-                String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
-                s3UploaderService.deleteFiles(deleteUrl);
+                //String deleteUrl = imageUrl.substring(imageUrl.indexOf("workspace"));
+                s3UploaderService.deleteFiles(imageUrl,"workspace");
             } catch (Exception e) {
                 log.error("S3에 해당하는 이미지가 없습니다. ");
             }
@@ -213,8 +213,8 @@ public class WorkspaceService {
         }
 
         try {
-            String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("workspace"));
-            s3UploaderService.deleteFiles(deleteUrl);
+            //String deleteUrl = workspaceById.getImageUrl().substring(workspaceById.getImageUrl().indexOf("workspace"));
+            s3UploaderService.deleteFiles(workspaceById.getImageUrl(),"workspace");
 
         } catch (IndexOutOfBoundsException e) {
             log.info("기본 이미지");
