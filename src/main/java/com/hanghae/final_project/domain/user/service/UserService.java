@@ -177,14 +177,22 @@ public class UserService {
     public void setGuestWorkspace(String username) {
 
         User user = userRepository.findByUsername(username).orElse(null);
-        WorkSpace workSpace = workSpaceRepository.findById(104L).orElse(null);
+        WorkSpace workSpace1 = workSpaceRepository.findById(104L).orElse(null);
 
-        WorkSpaceUser workSpaceUser = WorkSpaceUser.builder()
-                .workSpace(workSpace)
+        WorkSpaceUser workSpaceUser1 = WorkSpaceUser.builder()
+                .workSpace(workSpace1)
                 .user(user)
                 .build();
 
-        workSpaceUserRepository.save(workSpaceUser);
+        WorkSpace workSpace2= workSpaceRepository.findById(106L).orElse(null);
+
+        WorkSpaceUser workSpaceUser2 = WorkSpaceUser.builder()
+                .workSpace(workSpace2)
+                .user(user)
+                .build();
+
+        workSpaceUserRepository.save(workSpaceUser1);
+        workSpaceUserRepository.save(workSpaceUser2);
 
     }
 }
