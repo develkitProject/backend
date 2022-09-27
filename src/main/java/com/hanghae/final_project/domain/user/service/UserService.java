@@ -26,6 +26,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
@@ -157,12 +159,16 @@ public class UserService {
 
     public ResponseDto<LoginDto> guestSignup() {
 
-        Long id = userRepository.countAllBy();
+        Long id;
+        User user = userRepository.findTopByOrderByIdDesc().orElse(null);
 
+        if (user == null) {
+            id = 1L;
+        } else id = user.getId() + 1;
         SignupDto signupDto = SignupDto.builder()
                 .username("Guest" + id + "@dvelkit.com")
                 .nickname("Guest" + id)
-                .password("Guest"+id+"!")
+                .password("Guest" + id + "!")
                 .build();
 
         return standardSignup(signupDto);
@@ -171,7 +177,7 @@ public class UserService {
     public void setGuestWorkspace(String username) {
 
         User user = userRepository.findByUsername(username).orElse(null);
-        WorkSpace workSpace= workSpaceRepository.findById(97L).orElse(null);
+        WorkSpace workSpace = workSpaceRepository.findById(97L).orElse(null);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.builder()
                 .workSpace(workSpace)

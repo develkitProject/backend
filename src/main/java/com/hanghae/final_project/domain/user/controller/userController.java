@@ -70,6 +70,7 @@ public class userController {
     @ApiOperation(value="게스트 자동회원가입",notes="회원가입 및 로그인 처리")
     @GetMapping("/api/members/guest")
     public ResponseDto<LoginDto> guestSignupAndSignIn(){
+        log.info("게스트 회원가입 진행 ");
         ResponseDto<LoginDto> loginDto = userService.guestSignup();
         userService.setGuestWorkspace(loginDto.getData().getUsername());
         return loginDto;
