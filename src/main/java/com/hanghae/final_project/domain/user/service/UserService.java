@@ -179,28 +179,27 @@ public class UserService {
 
         User user = userRepository.findByUsername(username).orElse(null);
         WorkSpace workSpace1 = workSpaceRepository.findById(104L).orElse(null);
-
-        if (workSpaceUserRepository
+        WorkSpaceUser workSpaceUser = workSpaceUserRepository
                 .findByUserAndWorkSpaceId(user, workSpace1.getId())
-                .orElse(null)
-                != null) {
-            return;
+                .orElse(null);
+
+        if(workSpaceUser==null){
+            WorkSpaceUser workSpaceUser1 = WorkSpaceUser.builder()
+                    .workSpace(workSpace1)
+                    .user(user)
+                    .build();
+
+            WorkSpace workSpace2 = workSpaceRepository.findById(106L).orElse(null);
+
+            WorkSpaceUser workSpaceUser2 = WorkSpaceUser.builder()
+                    .workSpace(workSpace2)
+                    .user(user)
+                    .build();
+
+            workSpaceUserRepository.save(workSpaceUser1);
+            workSpaceUserRepository.save(workSpaceUser2);
         }
 
-        WorkSpaceUser workSpaceUser1 = WorkSpaceUser.builder()
-                .workSpace(workSpace1)
-                .user(user)
-                .build();
-
-        WorkSpace workSpace2 = workSpaceRepository.findById(106L).orElse(null);
-
-        WorkSpaceUser workSpaceUser2 = WorkSpaceUser.builder()
-                .workSpace(workSpace2)
-                .user(user)
-                .build();
-
-        workSpaceUserRepository.save(workSpaceUser1);
-        workSpaceUserRepository.save(workSpaceUser2);
 
     }
 }
