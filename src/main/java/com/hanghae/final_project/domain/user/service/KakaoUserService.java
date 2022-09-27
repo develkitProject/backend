@@ -9,6 +9,10 @@ import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.model.User;
 import com.hanghae.final_project.domain.user.model.UserSocialEnum;
 import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.workspace.model.WorkSpace;
+import com.hanghae.final_project.domain.workspace.model.WorkSpaceUser;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
+import com.hanghae.final_project.domain.workspace.repository.WorkSpaceUserRepository;
 import com.hanghae.final_project.global.commonDto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils;
@@ -38,7 +42,6 @@ public class KakaoUserService {
     public static final String APP_ADMIN_KEY = "c2689db3cf597442ae264f72db1a1904";
     private final UserRepository userRepository;
 
-    private final UserService userService;
     private final BCryptPasswordEncoder encoder;
 
 
@@ -57,14 +60,13 @@ public class KakaoUserService {
 
         log.info("카카오 로그인 완료 : {}", kakaoUser.getUsername());
 
-        return
-                ResponseDto.success(
+        return ResponseDto.success(
                         LoginDto.builder()
                                 .username(kakaoUser.getUsername())
                                 .profileImage(kakaoUser.getProfileImage())
                                 .build()
                 );
-        //response.addHeader("Authorization", "BEARER eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJFWFBJUkVEX0RBVEUiOjE2NjE0NzkxNTgsImlzcyI6IklTUyIsIlVTRVJfTkFNRSI6IndpbnNvbWVkMzIifQ.Ma3yRP88ORqs4FUZBdRf-telMnm7o_lnKKJG2rc0qLo");
+
     }
 
     private void kakaoLoginAccess(User kakaoUser, HttpServletResponse response) {
@@ -93,14 +95,14 @@ public class KakaoUserService {
                     .profileImage(kakaoSocialDto.getProfileImage())
                     .build();
 
-            userService.setGuestWorkspace(kakaoUser.getUsername());
-
             userRepository.save(kakaoUser);
         }
 
         return kakaoUser;
 
     }
+
+
 
 
     private String getAccessToken(String code) throws JsonProcessingException {
