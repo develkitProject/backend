@@ -43,6 +43,8 @@ public class WorkspaceService {
 
     private final ChatRoomRepository chatRoomRepository;
 
+    public static final String WORKSPACE_STANDARD_IMG="https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
+
     @Transactional
     public ResponseDto<WorkspaceResponseDto> createWorkspace(WorkspaceRequestDto requestDto,
                                                              UserDetails userDetails) throws IOException {
@@ -54,7 +56,7 @@ public class WorkspaceService {
         // 이미지가 올라와있지 않다면, workspaceImage를 기본값으로. 변경 x
         // 이미지가 올라와있다면, upload를 통해서
 
-        String imgUrl = "https://hosunghan.s3.ap-northeast-2.amazonaws.com/workspace/workspaceimg.png";
+        String imgUrl = WORKSPACE_STANDARD_IMG;
         if (requestDto.getImage() != null && !requestDto.getImage().equals("")) {
             imgUrl = s3UploaderService.uploadBase64Image(requestDto.getImage(), "workspace");
         }

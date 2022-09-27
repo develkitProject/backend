@@ -20,14 +20,11 @@ public class RedisSubscriber {
 
 
     public void sendMessage(String publishMessage){
-        log.info("Subscribe on message() 여기 들어옴");
+
         try{
             //redis에서 발행된 데이터를 받아 deserialize
             ChatMessageSaveDto roomMessage = objectMapper.readValue(publishMessage, ChatMessageSaveDto.class);
 
-
-            log.info("writer"+roomMessage.getWriter());
-            log.info("roomID"+roomMessage.getRoomId());
             //WebSocket 구독자에게 채팅 메시지 Send
             messagingTemplate.convertAndSend("/sub/chat/room/"+roomMessage.getRoomId(),roomMessage);
         }catch (Exception e){
