@@ -29,8 +29,7 @@ public class KakaoUserController {
     @ApiOperation(value = "카카오톡 로그인", notes = "카카오톡 로그인")
     @GetMapping("/user/kakao/callback")
     public ResponseDto<LoginDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException, JsonProcessingException {
-        ResponseDto<LoginDto> loginDto = kakaoUserService.kakaoLogin(code, response);
-        userService.setGuestWorkspace(loginDto.getData().getUsername());
-        return loginDto;
+
+        return  kakaoUserService.kakaoLogin(code, response);
     }
 }
