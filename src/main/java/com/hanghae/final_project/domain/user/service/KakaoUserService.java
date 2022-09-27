@@ -35,14 +35,13 @@ import static com.hanghae.final_project.global.config.security.handler.Authentic
 @Transactional
 public class KakaoUserService {
 
-    public static final String APP_ADMIN_KEY="c2689db3cf597442ae264f72db1a1904";
+    public static final String APP_ADMIN_KEY = "c2689db3cf597442ae264f72db1a1904";
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder;
 
 
-
-    public ResponseEntity<?> kakaoLogin(String code, HttpServletResponse response) throws IOException {
+    public ResponseDto<LoginDto> kakaoLogin(String code, HttpServletResponse response) throws IOException {
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -50,28 +49,28 @@ public class KakaoUserService {
         KakaoSocialDto kakaoSocialDto = getKakaoUserInfo(accessToken);
 
         // 3. 필요시에 회원가입
-        User kakaoUser=registerKakaoUser(kakaoSocialDto);
+        User kakaoUser = registerKakaoUser(kakaoSocialDto);
 
         // 4. 토큰 발급
-        kakaoLoginAccess(kakaoUser,response);
+        kakaoLoginAccess(kakaoUser, response);
 
-        log.info("카카오 로그인 완료 : {}",kakaoUser.getUsername());
+        log.info("카카오 로그인 완료 : {}", kakaoUser.getUsername());
 
-        return new ResponseEntity<>(
+        return
                 ResponseDto.success(
                         LoginDto.builder()
                                 .username(kakaoUser.getUsername())
                                 .profileImage(kakaoUser.getProfileImage())
                                 .build()
-                ), HttpStatus.OK);
+                );
         //response.addHeader("Authorization", "BEARER eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJFWFBJUkVEX0RBVEUiOjE2NjE0NzkxNTgsImlzcyI6IklTUyIsIlVTRVJfTkFNRSI6IndpbnNvbWVkMzIifQ.Ma3yRP88ORqs4FUZBdRf-telMnm7o_lnKKJG2rc0qLo");
     }
 
     private void kakaoLoginAccess(User kakaoUser, HttpServletResponse response) {
 
         UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
-        String token= JwtTokenUtils.generateJwtToken(userDetails);
-        response.addHeader(AUTH_HEADER,TOKEN_TYPE+" "+token);
+        String token = JwtTokenUtils.generateJwtToken(userDetails);
+        response.addHeader(AUTH_HEADER, TOKEN_TYPE + " " + token);
 
     }
 
@@ -108,7 +107,7 @@ public class KakaoUserService {
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
 
-        log.info("kakao_login_code : "+code);
+        log.info("kakao_login_code : " + code);
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -160,7 +159,7 @@ public class KakaoUserService {
         JsonNode jsonNode = objectMapper
                 .readTree(responseBody);
 
-        Long kakaoId=jsonNode.get("id").asLong();
+        Long kakaoId = jsonNode.get("id").asLong();
 
         String nickname = jsonNode
                 .get("properties")
@@ -196,7 +195,7 @@ public class KakaoUserService {
         body.add("target_id_type", "user_id");
         body.add("target_id", user.getKakaoId().toString());
 
-        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body,headers);
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(body, headers);
         RestTemplate rt = new RestTemplate();
 
         ResponseEntity<String> response = rt.exchange(
@@ -205,6 +204,6 @@ public class KakaoUserService {
                 kakaoUserInfoRequest,
                 String.class
         );
-        log.info("회원탈퇴 한 유저의 kakaoId : {}",response.getBody());
+        log.info("회원탈퇴 한 유저의 kakaoId : {}", response.getBody());
     }
 }

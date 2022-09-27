@@ -1,7 +1,10 @@
 package com.hanghae.final_project.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hanghae.final_project.domain.user.dto.response.LoginDto;
 import com.hanghae.final_project.domain.user.service.KakaoUserService;
+import com.hanghae.final_project.domain.user.service.UserService;
+import com.hanghae.final_project.global.commonDto.ResponseDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -21,9 +24,13 @@ public class KakaoUserController {
 
     private final KakaoUserService kakaoUserService;
 
+    private final UserService userService;
+
     @ApiOperation(value = "카카오톡 로그인", notes = "카카오톡 로그인")
     @GetMapping("/user/kakao/callback")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException,JsonProcessingException {
-        return  kakaoUserService.kakaoLogin(code,response);
+    public ResponseDto<LoginDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException, JsonProcessingException {
+        ResponseDto<LoginDto> loginDto = kakaoUserService.kakaoLogin(code, response);
+        userService.setGuestWorkspace(loginDto.getData().getUsername());
+        return loginDto;
     }
 }
