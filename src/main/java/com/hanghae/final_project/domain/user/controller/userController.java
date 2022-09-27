@@ -36,7 +36,9 @@ public class userController {
             throw new RequestException(ErrorCode.USER_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
         }
         log.info("요청 메소드 [POST] /api/members/signup");
-        return userService.standardSignup(signupDto);
+        ResponseDto<LoginDto> loginDto=userService.standardSignup(signupDto);
+        userService.setGuestWorkspace(loginDto.getData().getUsername());
+        return loginDto;
     }
 
     @ApiOperation(value = "이메일 중복체크", notes = "닉네임은 중복 허용")
