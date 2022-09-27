@@ -22,6 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
+import static com.hanghae.final_project.domain.workspace.service.WorkspaceService.WORKSPACE_STANDARD_IMG;
 
 @Slf4j
 @Component
@@ -135,7 +136,7 @@ public class S3UploaderService {
 
     public void deleteFiles(String fileName, String dir) {
         //filename이 존재하는지 확인
-        if (fileName == null || !fileName.contains("amazonaws.com") || fileName.contains(STANDARD_IMAGE_ROUTE)) return;
+        if (fileName == null || !fileName.contains("amazonaws.com") || fileName.contains(STANDARD_IMAGE_ROUTE) ||fileName.contains(WORKSPACE_STANDARD_IMG)) return;
         fileName = decodeUrl(fileName);
         fileName = fileName.substring(fileName.indexOf(dir));
         log.info("delete key : {}",fileName);

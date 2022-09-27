@@ -177,7 +177,7 @@ public class UserService {
     public void setGuestWorkspace(String username) {
 
         User user = userRepository.findByUsername(username).orElse(null);
-        WorkSpace workSpace = workSpaceRepository.findById(97L).orElse(null);
+        WorkSpace workSpace = workSpaceRepository.findById(104L).orElse(null);
 
         WorkSpaceUser workSpaceUser = WorkSpaceUser.builder()
                 .workSpace(workSpace)
