@@ -19,6 +19,7 @@ import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+import static com.hanghae.final_project.domain.chatting.service.ChatRedisCacheService.USERNAME_NICKNAME;
 import static com.hanghae.final_project.domain.user.dto.request.SignupDto.STANDARD_IMAGE_ROUTE;
 
 @Service
@@ -152,7 +154,10 @@ public class UserService {
         if (user.getSocial().equals(UserSocialEnum.KAKAO))
             kakaoUserService.signOutKakaoUser(user);
 
-        // 나의 DB에서 카카오 유저 로그인 삭제제
+        //Redis 닉네임 정보 삭제
+        chatRedisCacheService.deleteUserCahchingNickname(user.getUsername());
+
+        // DB에서 USER 제거
         userRepository.delete(user);
         return ResponseDto.success(true);
     }

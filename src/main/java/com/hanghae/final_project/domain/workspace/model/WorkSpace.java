@@ -79,4 +79,6 @@ public class WorkSpace extends Timestamped implements Serializable {
 
         this.imageUrl = imageUrl;
     }
+
+
 }
