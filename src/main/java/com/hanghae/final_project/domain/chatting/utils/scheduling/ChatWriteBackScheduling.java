@@ -27,7 +27,7 @@ public class ChatWriteBackScheduling {
     private final ChatRepository chatRepository;
     private final WorkSpaceRepository workSpaceRepository;
 
-    @Scheduled(cron = "0 0/30 * * * *")
+    //@Scheduled(cron = "0 0/15 * * * *")
     @Transactional
     public void writeBack(){
         log.info("Scheduling start");
@@ -45,11 +45,16 @@ public class ChatWriteBackScheduling {
                 WorkSpace workSpace= workSpaceRepository
                         .findById(Long.parseLong(chatMessageDto.getValue().getRoomId()))
                         .orElse(null);
+
+                if(workSpace==null) {
+                    log.info("삭제된 워크스페이스 : {}, ",Long.parseLong(chatMessageDto.getValue().getRoomId()));
+                    continue;
+                }
+
                 chatList.add( Chat.of(chatMessageDto.getValue(),workSpace));
-                log.info(" chat " +chatMessageDto.getValue().getMessage());
             }
-            redisTemplate.delete("NEW_CHAT");
             chatRepository.saveAll(chatList);
+            redisTemplate.delete("NEW_CHAT");
 
         }catch (Exception e){
             e.printStackTrace();

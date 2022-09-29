@@ -41,6 +41,7 @@ public class ChatRedisCacheService {
 
     public static final String NEW_CHAT = "NEW_CHAT";
 
+    public static final String OUT_USER ="탈퇴한 회원";
     public static final String USERNAME_NICKNAME = "USERNAME_NICKNAME";
     private final RedisTemplate<String, Object> redisTemplate;
 
@@ -175,7 +176,9 @@ public class ChatRedisCacheService {
 
         //redis 에  닉네임이 존재하지 않는다면, MYSQL에서 데이터 불러오기
         User user =userRepository.findByUsername(username)
-                .orElseThrow(()->new RequestException(ErrorCode.USER_NOT_EXIST));
+                .orElse(null);
+
+        if(user==null) return OUT_USER;
         // caching 하기
         roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,user.getNickname());
 
@@ -184,6 +187,10 @@ public class ChatRedisCacheService {
 
     public void changeUserCachingNickname(String username,String changedNickname){
         roomRedisTemplate.opsForHash().put(USERNAME_NICKNAME,username,changedNickname);
+    }
+
+    public void deleteUserCahchingNickname(String username){
+        roomRedisTemplate.opsForHash().delete(USERNAME_NICKNAME,username);
     }
 
     private void findOtherChatDataInMysql(List<ResChatPagingDto> chatMessageDtoList, Long workSpaceId, String cursor ){

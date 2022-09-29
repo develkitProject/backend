@@ -37,6 +37,7 @@ public class Chat implements Serializable {
     private WorkSpace workSpace;
 
     public static Chat of(ChatMessageSaveDto chatMessageSaveDto, WorkSpace workSpace){
+
         return Chat.builder()
                 .message(chatMessageSaveDto.getMessage())
                 .createdAt(chatMessageSaveDto.getCreatedAt())
