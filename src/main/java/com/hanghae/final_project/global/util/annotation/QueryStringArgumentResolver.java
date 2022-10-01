@@ -28,11 +28,18 @@ public class QueryStringArgumentResolver implements HandlerMethodArgumentResolve
                                   ModelAndViewContainer mavContainer,
                                   NativeWebRequest webRequest,
                                   WebDataBinderFactory binderFactory) throws Exception {
-        final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
-        String decodedQueryString = URLDecoder.decode(request.getQueryString(),"UTF-8");
-        final String json = qs2json(decodedQueryString);
-        final Object a = mapper.readValue(json, parameter.getParameterType());
-        return a;
+
+        try{
+            final HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+            String decodedQueryString = URLDecoder.decode(request.getQueryString(),"UTF-8");
+            final String json = qs2json(decodedQueryString);
+            final Object a = mapper.readValue(json, parameter.getParameterType());
+            return a;
+        }catch (Exception e){
+
+        }
+
+        return null;
     }
 
     private String qs2json(String a) {

@@ -1,5 +1,6 @@
 package com.hanghae.final_project.domain.workspace.repository;
 
+import com.hanghae.final_project.domain.workspace.dto.request.PagingDocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.request.SearchDocumentRequestDto;
 import com.hanghae.final_project.domain.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.workspace.model.Document;
@@ -12,8 +13,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.hanghae.final_project.domain.workspace.model.QDocument.document;
 
@@ -28,7 +31,43 @@ public class DocumentQueryRepository {
     public static final String PREVIOUS = "Previous";
 
     public static final String RECENT = "Recent";
+
+    public static final Integer PAGING_SIZE = 10;
     private final JPAQueryFactory queryFactory;
+
+
+    public ResponseDto<List<DocumentResponseDto>> getDocumentWithPaging(Long workspaceId, PagingDocumentRequestDto requestDto) {
+
+
+        if (requestDto == null || requestDto.getDirection()==null)
+            requestDto = PagingDocumentRequestDto.builder()
+                    .direction(RECENT)
+                    .build();
+
+        List<Document> documentList = getDocumentWithCursorPagination(workspaceId, requestDto);
+
+
+        if (requestDto.getDirection().equals(RECENT) && documentList.size() != PAGING_SIZE && documentList.size() != 0) {
+
+            PagingDocumentRequestDto addRequestDto = PagingDocumentRequestDto.builder()
+                    .direction(PREVIOUS)
+                    .cursorId(documentList.get(documentList.size() - 1).getId())
+                    .build();
+
+            List<Document> addList = getDocumentWithCursorPagination(workspaceId, addRequestDto, documentList.size());
+
+            documentList = Stream.of(documentList, addList)
+                    .flatMap(Collection::stream)
+                    .collect(Collectors.toList());
+
+        }
+        return ResponseDto.success(
+                documentList.stream()
+                        .map(DocumentResponseDto::of)
+                        .collect(Collectors.toList()));
+
+    }
+
 
     public ResponseDto<List<DocumentResponseDto>> searchDocumentByFilter(Long workspaceId,
                                                                          SearchDocumentRequestDto requestDto) {
@@ -37,7 +76,7 @@ public class DocumentQueryRepository {
         if (requestDto.getType().equals(CONTENT_TITLE)) {
 
             List<DocumentResponseDto> documentResponseDtos =
-                    searchDocumentByKeyword(workspaceId,requestDto)
+                    searchDocumentByKeyword(workspaceId, requestDto)
                             .stream()
                             .map(DocumentResponseDto::of)
                             .collect(Collectors.toList());
@@ -58,16 +97,38 @@ public class DocumentQueryRepository {
         throw new RequestException(ErrorCode.SEARCH_TYPE_BAD_REQUEST);
     }
 
+
+    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto) {
+
+        return queryFactory
+                .selectFrom(document)
+                .where(document.workSpace.id.eq(workspaceId),
+                        cursorIdControl(requestDto.getCursorId(), requestDto.getDirection()))
+                .orderBy(document.createdAt.desc())
+                .limit(PAGING_SIZE)
+                .fetch();
+    }
+
+    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto, int documentSize) {
+
+        return queryFactory.selectFrom(document)
+                .where(document.workSpace.id.eq(workspaceId),
+                        cursorIdControl(requestDto.getCursorId(), PREVIOUS))
+                .orderBy(document.createdAt.desc())
+                .limit(PAGING_SIZE - documentSize)
+                .fetch();
+    }
+
     private List<Document> searchDocumentByKeyword(Long workspaceId, SearchDocumentRequestDto requestDto) {
 
         log.info("내용 및 제목을 통해 문서 검색 시작");
         log.info("검색어 : {}", requestDto.getKeyword());
         return queryFactory
                 .selectFrom(document)
-                .where(document.title.contains(requestDto.getKeyword()).or( document.content.contains(requestDto.getKeyword())),
+                .where(document.title.contains(requestDto.getKeyword()).or(document.content.contains(requestDto.getKeyword())),
                         document.workSpace.id.eq(workspaceId),
                         cursorIdControl(requestDto.getCursorId(), requestDto.getDirection())
-                        )
+                )
                 .orderBy(document.createdAt.desc())
 //                .limit(5)
                 .fetch();
@@ -91,7 +152,7 @@ public class DocumentQueryRepository {
     private BooleanExpression cursorIdControl(Long cursorId, String direction) {
 
         // CusorId 가 없는 경우, 가장 최신일 경우.
-        if (cursorId == null)
+        if (cursorId == null || direction==null)
             return null;
 
         // CusorId 기준 이전 정보들을 가져올 경우.
