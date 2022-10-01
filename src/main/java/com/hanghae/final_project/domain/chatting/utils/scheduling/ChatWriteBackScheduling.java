@@ -2,6 +2,7 @@ package com.hanghae.final_project.domain.chatting.utils.scheduling;
 
 import com.hanghae.final_project.domain.chatting.dto.request.ChatMessageSaveDto;
 import com.hanghae.final_project.domain.chatting.model.Chat;
+import com.hanghae.final_project.domain.chatting.repository.ChatJdbcRepositoryImpl;
 import com.hanghae.final_project.domain.chatting.repository.ChatRepository;
 import com.hanghae.final_project.domain.workspace.model.WorkSpace;
 import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
@@ -25,9 +26,11 @@ public class ChatWriteBackScheduling {
     private final RedisTemplate<String, ChatMessageSaveDto> chatRedisTemplate;
 
     private final ChatRepository chatRepository;
+
+    private final ChatJdbcRepositoryImpl chatJdbcRepository;
     private final WorkSpaceRepository workSpaceRepository;
 
-    //@Scheduled(cron = "0 0/15 * * * *")
+    @Scheduled(cron = "0 0 0/1 * * *")
     @Transactional
     public void writeBack(){
         log.info("Scheduling start");
@@ -53,7 +56,8 @@ public class ChatWriteBackScheduling {
 
                 chatList.add( Chat.of(chatMessageDto.getValue(),workSpace));
             }
-            chatRepository.saveAll(chatList);
+            chatJdbcRepository.batchInsertRoomInventories(chatList);
+//            chatRepository.saveAll(chatList);
             redisTemplate.delete("NEW_CHAT");
 
         }catch (Exception e){
