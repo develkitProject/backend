@@ -2,7 +2,7 @@ package com.hanghae.final_project.global.config.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.global.dto.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;

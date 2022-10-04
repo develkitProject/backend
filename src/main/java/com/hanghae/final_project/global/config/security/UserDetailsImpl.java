@@ -2,7 +2,7 @@ package com.hanghae.final_project.global.config.security;
 
 
 
-import com.hanghae.final_project.domain.user.model.User;
+import com.hanghae.final_project.domain.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
