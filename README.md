@@ -55,7 +55,7 @@
 
 
 ## 🖥 서버
-<img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=Swagger&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat-square&logo=Swagger&logoColor=white"/>
+<img src="https://img.shields.io/badge/NGINX-009639?style=flat-square&logo=NGINX&logoColor=white"/> <img src="https://img.shields.io/badge/AmazonEC2-FF9900?style=flat-square&logo=AmazonEC2&logoColor=white"/>
 
 
 ## 🧱 ERD
@@ -132,88 +132,83 @@
 
 
 ## ⚡ 트러블슈팅
+
 <details>
-<summary>Redis 를 활용한 채팅데이터 읽기,쓰기 전략 수립 및 속도 개선 </summary>
+<summary>Redis 를 활용한 채팅데이터 쓰기 전략 수립 및 속도 개선</summary>
 <div markdown="1">
 
-  <details>
-  <summary>데이터 쓰기</summary>
-  <div markdown="1">
+(1) 문제상황
 
-  (1) 문제상황
+Websocket으로 들어오는 채팅내역들을 들어올 때 마다, MYSQL에 Insert 를 해야함. 계속해서 MYSQL Connection을 만들어서 쓰기 작업을 하는것은 비효율적이라고 판단. Redis에 caching 시킨 후 MYSQL에 일괄 저장하는 방법을 고민하기로함
 
-  Websocket으로 들어오는 채팅내역들을 들어올 때 마다, MYSQL에 Insert 를 해야함. 계속해서 MYSQL Connection을 만들어서 쓰기 작업을 하는것은 비효율적이라고 판단. Redis에 caching 시킨 후 MYSQL에 일괄 저장하는 방법을 고민하기로함
+(2) 해결방안 검토
 
-  (2) 해결방안 검토
+1. Spring Data JDBC 를 이용한 batchUpdate()  / Entity Generation Type: Identity  
 
-  1. Spring Data JDBC 를 이용한 batchUpdate()  / Entity Generation Type: Identity  
+    → Batch insert 가능
 
-      → Batch insert 가능
+2. Spring Data JPA를 이용한 SaveAll()  / Entity Generation Type: Identity 
 
-  2. Spring Data JPA를 이용한 SaveAll()  / Entity Generation Type: Identity 
+    →  Batch insert 불가능 (Hibernate Flush 방식 Transactional Write Behind에 위배됨으로 사용 못함)
 
-      →  Batch insert 불가능 (Hibernate Flush 방식 Transactional Write Behind에 위배됨으로 사용 못함)
+3. Spring Data JPA를 이용한 SaveAll() /Entity Generation Type: Table
 
-  3. Spring Data JPA를 이용한 SaveAll() /Entity Generation Type: Table
-
-      → Batch insert 가능
+    → Batch insert 가능
 
 
-  (3) 의견결정 (Test 통해 결정)
+(3) 의견결정 (Test 통해 결정)
 
-  **Test 환경**
+**Test 환경**
 
-  - **Java Version : 11**
-  - **Spring Boot : 2.7.3**
-  - **Test Libaray : Junit5**
-  - **RDBS : mysql 8.0**
-  - 데이터 읽기
-  - 채팅 데이터 읽기 쓰기 전략 간단 모식도
+- **Java Version : 11**
+- **Spring Boot : 2.7.3**
+- **Test Libaray : Junit5**
+- **RDBS : mysql 8.0**
+- 데이터 읽기
+- 채팅 데이터 읽기 쓰기 전략 간단 모식도
 
-    **Test 결과**
+  **Test 결과**
 
-  ![쓰기테스트결과](https://user-images.githubusercontent.com/70882917/193656447-637825ce-7f50-4d64-bc59-f9cecd9435a2.png)
+![쓰기테스트결과](https://user-images.githubusercontent.com/70882917/193656447-637825ce-7f50-4d64-bc59-f9cecd9435a2.png)
 
 
-  **의견결정**
+**의견결정**
 
-  Spring Data JDBC 를 이용한 batchUpdate() 로 redis에 caching 되어 있는 데이터들을 writeback 방식으로 mysql 저장하는 방식 선택
+Spring Data JDBC 를 이용한 batchUpdate() 로 redis에 caching 되어 있는 데이터들을 writeback 방식으로 mysql 저장하는 방식 선택
 
-  </div>
-  </details>
-
-  <details>
-  <summary>데이터 읽기(Caching)</summary>
-  <div markdown="1">
-  (1) 문제상황
-
-  MYSQL 에 저장되어 있는 기존의 채팅 데이터를 Redis에 어느 기준으로 caching 시켜놓아야 효율적인 관리가 될 수 있을지 고민하기로 함
-
-  (2) 해결방안 검토
-
-  1. redis에 채팅 데이터를 caching 시켜놓지 않고, 사용자가 채팅 데이터를 요청할 경우, 해당 데이터를 mysql로 부터 읽어들이고 해당 내용을 caching 하는 방법
-  2. redis에 매일 새벽 채팅 데이터 7일치를 최신 caching 해놓는 방법 &
-  최근 7일 이전 데이터를 요청할 경우, Mysql로부터 데이터를 끌어와 redis에 caching 해놓는 방법 
-
-  (3) 의견결정
-
-  1. 서비스 특성상, 채팅 데이터를 최신순으로 읽어오고, 프로젝트 페이지로 넘어올 때, 채팅이 자동 렌더링 되면서 데이터를 조회하기 때문에 , 최신 7일치 데이터를 caching 해놓는 방법 선택
-  2. Redis에 데이터 저장할 수 있는 용량이 제한이 있어서, User Test(100~150명)를 통해 최신 7일치 데이터를 caching 해도 무리없겠다고 판단.
-
-  </div>
-  </details>
-
-  <details>
-  <summary>채팅 데이터 읽기 쓰기 전략 간단 모식도</summary>
-  <div markdown="1">
-
-  ![레디스 모식도](https://user-images.githubusercontent.com/70882917/193656866-fd14d8ad-7e51-40e9-a4f0-8fe1cd087f69.png)
-
-  </div>
-  </details>
-  
 </div>
 </details>
+
+<details>
+<summary>Redis 를 활용한 채팅데이터 읽기 전략 수립 및 속도 개선(Caching)</summary>
+<div markdown="1">
+(1) 문제상황
+
+MYSQL 에 저장되어 있는 기존의 채팅 데이터를 Redis에 어느 기준으로 caching 시켜놓아야 효율적인 관리가 될 수 있을지 고민하기로 함
+
+(2) 해결방안 검토
+
+1. redis에 채팅 데이터를 caching 시켜놓지 않고, 사용자가 채팅 데이터를 요청할 경우, 해당 데이터를 mysql로 부터 읽어들이고 해당 내용을 caching 하는 방법
+2. redis에 매일 새벽 채팅 데이터 7일치를 최신 caching 해놓는 방법 &
+최근 7일 이전 데이터를 요청할 경우, Mysql로부터 데이터를 끌어와 redis에 caching 해놓는 방법 
+
+(3) 의견결정
+
+1. 서비스 특성상, 채팅 데이터를 최신순으로 읽어오고, 프로젝트 페이지로 넘어올 때, 채팅이 자동 렌더링 되면서 데이터를 조회하기 때문에 , 최신 7일치 데이터를 caching 해놓는 방법 선택
+2. Redis에 데이터 저장할 수 있는 용량이 제한이 있어서, User Test(100~150명)를 통해 최신 7일치 데이터를 caching 해도 무리없겠다고 판단.
+
+</div>
+</details>
+
+<details>
+<summary>채팅 데이터 읽기 쓰기 전략 간단 모식도</summary>
+<div markdown="1">
+
+![레디스 모식도](https://user-images.githubusercontent.com/70882917/193656866-fd14d8ad-7e51-40e9-a4f0-8fe1cd087f69.png)
+
+</div>
+</details>
+  
 
 <details>
 <summary>Cursor Pagination 을 통해 채팅 데이터 읽기</summary>
