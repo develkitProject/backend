@@ -206,8 +206,6 @@ public class ChatRedisCacheService {
         // 데이터가 존재할 경우 CreatedAt을 Cursor로 사용
         else lastCursor = chatMessageDtoList.get(chatMessageDtoList.size()-1).getCreatedAt();
 
-
-
         int dtoListSize = chatMessageDtoList.size();
         Slice<Chat> chatSlice =
                 chatRepository

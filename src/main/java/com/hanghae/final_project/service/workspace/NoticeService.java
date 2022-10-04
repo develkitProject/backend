@@ -1,7 +1,9 @@
 package com.hanghae.final_project.service.workspace;
 
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.NoticeResponseDto;
 import com.hanghae.final_project.api.workspace.dto.request.NoticeRequestDto;
+import com.hanghae.final_project.domain.model.Chat;
 import com.hanghae.final_project.domain.model.Notice;
 import com.hanghae.final_project.domain.model.WorkSpace;
 import com.hanghae.final_project.domain.repository.workspace.NoticeRepository;
@@ -11,17 +13,23 @@ import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
 @Transactional
+@Slf4j
 public class NoticeService {
     //db에 연결했으면 직접 갚넣고
     private final NoticeRepository noticeRepository;
@@ -51,15 +59,31 @@ public class NoticeService {
 
     //공지사항 조회
     @Transactional(readOnly = true)
-    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(Long workSpaceId) {
+    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(Long workSpaceId, PagingRequestDto requestDto) {
 
         isWorkspaceExist(workSpaceId);
+        Long cursor;
+        if(requestDto==null){
+            noticeRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workSpaceId).orElse(null);
+        }
+        else cursor = requestDto.getCursorId();
 
-        List<Notice> noticeList = noticeRepository.findAllByWorkSpace_IdOrderByCreatedAtDesc(workSpaceId);
+        //List<Notice> noticeList = noticeRepository.findAllByWorkSpace_IdOrderByCreatedAtDesc(workSpaceId);
+
+        Slice<Notice> noticeSlice =
+                noticeRepository
+                        .findAllByIdBeforeAndWorkSpace_IdOrderByCreatedAtDesc(
+                                cursor,
+                                workSpaceId,
+                                PageRequest.of(0, 5)
+                        );
+
+
         List<NoticeResponseDto> noticeDtoList =
-                noticeList.stream()
+                noticeSlice.stream()
                         .map(NoticeResponseDto::of)
                         .collect(Collectors.toList());
+
         return new ResponseEntity<>(ResponseDto.success(noticeDtoList), HttpStatus.OK);
     }
 

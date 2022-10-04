@@ -1,22 +1,16 @@
 package com.hanghae.final_project.domain.repository.workspace;
 
-import com.hanghae.final_project.api.workspace.dto.request.PagingDocumentRequestDto;
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.request.SearchDocumentRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.model.Document;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.ComparableExpression;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
@@ -44,21 +38,19 @@ public class DocumentQueryRepository {
     private final JPAQueryFactory queryFactory;
 
 
-    public ResponseDto<List<DocumentResponseDto>> getDocumentWithPaging(Long workspaceId, PagingDocumentRequestDto requestDto) {
+    public ResponseDto<List<DocumentResponseDto>> getDocumentWithPaging(Long workspaceId, PagingRequestDto requestDto) {
 
 
         if (requestDto == null || requestDto.getDirection() == null)
-            requestDto = PagingDocumentRequestDto.builder()
+            requestDto = PagingRequestDto.builder()
                     .direction(PREVIOUS)
                     .build();
 
-
         List<Document> documentList = getDocumentWithCursorPagination(workspaceId, requestDto);
-
 
         if (requestDto.getDirection().equals(RECENT) && documentList.size() != PAGING_SIZE && documentList.size() != 0) {
 
-            PagingDocumentRequestDto addRequestDto = PagingDocumentRequestDto.builder()
+            PagingRequestDto addRequestDto = PagingRequestDto.builder()
                     .direction(PREVIOUS)
                     .cursorId(documentList.get(documentList.size() - 1).getId())
                     .build();
@@ -107,7 +99,7 @@ public class DocumentQueryRepository {
     }
 
 
-    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto) {
+    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingRequestDto requestDto) {
 
 
         if (requestDto.getDirection().equals(RECENT)){
@@ -133,7 +125,7 @@ public class DocumentQueryRepository {
 
     }
 
-    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto, int documentSize) {
+    private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingRequestDto requestDto, int documentSize) {
 
         return queryFactory.selectFrom(document)
                 .where(document.workSpace.id.eq(workspaceId),

@@ -1,7 +1,7 @@
 package com.hanghae.final_project.api.workspace;
 
 import com.hanghae.final_project.api.workspace.dto.request.DocumentRequestDto;
-import com.hanghae.final_project.api.workspace.dto.request.PagingDocumentRequestDto;
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.request.SearchDocumentRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.repository.workspace.DocumentQueryRepository;
@@ -37,7 +37,7 @@ public class DocumentController {
     @ApiOperation(value = "문서 전체 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<List<DocumentResponseDto>> getDocumentList(@PathVariable Long workspaceId,
-                                                                      @QueryStringArgResolver PagingDocumentRequestDto requestDto) {
+                                                                      @QueryStringArgResolver PagingRequestDto requestDto) {
 
 
         return documentQueryRepository.getDocumentWithPaging(workspaceId,requestDto);
