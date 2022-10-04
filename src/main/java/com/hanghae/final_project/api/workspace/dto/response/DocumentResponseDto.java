@@ -31,7 +31,7 @@ public class DocumentResponseDto extends Timestamped {
     public static DocumentResponseDto of (Document document){
        return  DocumentResponseDto.builder()
                 .id(document.getId())
-                .createdAt(document.getModifiedAt())
+                .createdAt(document.getCreatedAt())
                 .title(document.getTitle())
                 .nickname(document.getUser().getNickname())
                 .modifiedAt(document.getModifiedAt())
