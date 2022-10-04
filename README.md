@@ -16,6 +16,7 @@
 ## 🚀👩‍🚀👨‍🚀 팀원
 |이름|깃헙주소|담당|
 |:---:|:---:|:---:|
+|FE|[https://github.com/LuisKlopp](https://github.com/develkitProject/frontend)|FE/React|
 |한호성L|[https://github.com/hosunghan-0821](https://github.com/hosunghan-0821)|BE/Spring|
 |황인권|[https://github.com/ingwon97](https://github.com/ingwon97)|BE/Spring|
 |이재헌|[https://github.com/romeo92s](https://github.com/romeo92s)|BE/Spring|
@@ -40,7 +41,7 @@
 <img src="https://img.shields.io/badge/Stomp-000000?style=flat-square&logo=Stomp&logoColor=white"/>
 <img src="https://img.shields.io/badge/Sock.JS-000000?style=flat-square&logo=Sock.JS&logoColor=white"/>
 <img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=flat-square&logo=GitHub Actions&logoColor=white"/>
-https(?)
+
 
 ## 🔧 사용 툴
 <img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=GitHub&logoColor=white"/> <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=Git&logoColor=white"/>
@@ -58,7 +59,8 @@ https(?)
 
 
 ## 🧱 ERD
-<img width="986" alt="develkitERD" src="https://user-images.githubusercontent.com/70882917/193648079-6dd87b6e-c256-49fc-aea9-1b649e7de5fc.png">
+<img width="960" alt="erd 최종" src="https://user-images.githubusercontent.com/70882917/193749206-4beff896-43a8-40ff-b38a-b7bea6b0713d.png">
+
 
 
 ## ⇆ 서비스 아키텍쳐
@@ -70,12 +72,54 @@ https(?)
 
 
 ## ⚙ 주요기능
-- 게스트 로그인
-- 워크스페이스
-- 채팅
-- 문서
-- 공지사항
-- 일정관리
+<details>
+<summary>게스트 로그인</summary>
+<div markdown="1">
+
+**(1) 목적:** 회원가입/로그인 절차를 부담스럽게 생각하는 사용자를 고려하여, 우선적으로 사용자가 서비스를 체험해보도록 게스트로그인 기능을 추가하였습니다.
+
+**(2) 특징:** 메인화면에서 “임시계정으로 체험하기” 버튼을 클릭하면 자동으로 아이디가 생성되어 회원가입 및 로그인이 완료됩니다.
+
+</div>
+</details>
+
+<details>
+<summary>문서</summary>
+<div markdown="1">
+
+**(1) 목적:** 협업툴 사이트라는 목적에 맞게 문서, 이미지, 파일을 쉽게 공유하고 수정하도록 하였습니다.
+
+**(2) 특징**
+
+1. 자유로운 파일공유: 전체 30MB내에서 파일 공유를 가능하도록 하였습니다.
+2. 자유로운 수정기능: 다른 팀원이 올린 글에 내용만 살짝 수정하거나 혹은 파일을 새로 추가하는 경우를 고려하여, 삭제는 작성자만 가능하지만 수정은 프로젝트 내 모든 회원이 가능합니다. 단 최정 수정자가 게시글 하단에 기재됩니다.
+3. 문서 읽은 사람 명단을 표시할 수 있도록 구현 하였습니다.
+
+</div>
+</details>
+
+<details>
+<summary>실시간 채팅</summary>
+<div markdown="1">
+
+**(1) 목적:** 프로젝트 협업을 위해서 각 프로젝트마다 채팅을할 수 있도록 하였습니다.
+
+**(2) 특징:** 추후에 프로젝트에 합류하는 사람들도 전체적인 프로젝트 진행상황을 알 수 있도록 기존 채팅 내역 불러오기 기능을 무한스크롤로 구현하였습니다.
+
+</div>
+</details>
+
+<details>
+<summary>일정관리 캘린더</summary>
+<div markdown="1">
+
+**(1) 목적:** 프로젝트내 모든 사람들이 일정을 확인하고 공유 하도록 하였습니다.
+
+**(2) 특징:** 캘린더를 사용하여 일정추가/일정확인/삭제 기능 구현하였습니다.
+
+</div>
+</details>
+
 
 
 ## 🧑‍💻 기술적 의사 결정
