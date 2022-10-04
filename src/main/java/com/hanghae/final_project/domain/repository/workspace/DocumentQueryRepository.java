@@ -49,7 +49,7 @@ public class DocumentQueryRepository {
 
         if (requestDto == null || requestDto.getDirection() == null)
             requestDto = PagingDocumentRequestDto.builder()
-                    .direction(RECENT)
+                    .direction(PREVIOUS)
                     .build();
 
 
@@ -130,7 +130,6 @@ public class DocumentQueryRepository {
                 .limit(PAGING_SIZE)
                 .orderBy(document.id.desc())
                 .fetch();
-
 
     }
 
