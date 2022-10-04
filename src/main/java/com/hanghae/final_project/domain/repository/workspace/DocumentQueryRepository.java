@@ -7,13 +7,20 @@ import com.hanghae.final_project.domain.model.Document;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.ComparableExpression;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -40,10 +47,11 @@ public class DocumentQueryRepository {
     public ResponseDto<List<DocumentResponseDto>> getDocumentWithPaging(Long workspaceId, PagingDocumentRequestDto requestDto) {
 
 
-        if (requestDto == null || requestDto.getDirection()==null)
+        if (requestDto == null || requestDto.getDirection() == null)
             requestDto = PagingDocumentRequestDto.builder()
                     .direction(RECENT)
                     .build();
+
 
         List<Document> documentList = getDocumentWithCursorPagination(workspaceId, requestDto);
 
@@ -102,13 +110,28 @@ public class DocumentQueryRepository {
     private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto) {
 
 
+        if (requestDto.getDirection().equals(RECENT)){
+
+            final Comparator<Document> comparator = Comparator.comparingLong(Document::getId).reversed();
+
+            return queryFactory
+                    .selectFrom(document)
+                    .where(document.workSpace.id.eq(workspaceId),
+                            cursorIdControl(requestDto.getCursorId(), requestDto.getDirection()))
+                    .limit(PAGING_SIZE)
+                    .orderBy(document.id.asc())
+                    .fetch().stream().sorted(comparator).collect(Collectors.toList());
+        }
+
         return queryFactory
                 .selectFrom(document)
                 .where(document.workSpace.id.eq(workspaceId),
                         cursorIdControl(requestDto.getCursorId(), requestDto.getDirection()))
-                .orderBy(document.createdAt.desc())
                 .limit(PAGING_SIZE)
+                .orderBy(document.id.desc())
                 .fetch();
+
+
     }
 
     private List<Document> getDocumentWithCursorPagination(Long workspaceId, PagingDocumentRequestDto requestDto, int documentSize) {
@@ -154,7 +177,7 @@ public class DocumentQueryRepository {
     private BooleanExpression cursorIdControl(Long cursorId, String direction) {
 
         // CusorId 가 없는 경우, 가장 최신일 경우.
-        if (cursorId == null || direction==null)
+        if (cursorId == null || direction == null)
             return null;
 
         // CusorId 기준 이전 정보들을 가져올 경우.
