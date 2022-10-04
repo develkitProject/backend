@@ -2,8 +2,8 @@ package com.hanghae.final_project.global.config.security.provider;
 
 
 
-import com.hanghae.final_project.domain.user.model.User;
-import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.model.User;
+import com.hanghae.final_project.domain.repository.user.UserRepository;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import com.hanghae.final_project.global.config.security.jwt.UserInfo;

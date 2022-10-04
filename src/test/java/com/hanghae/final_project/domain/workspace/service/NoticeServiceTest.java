@@ -1,24 +1,19 @@
 package com.hanghae.final_project.domain.workspace.service;
 
-import com.hanghae.final_project.domain.user.model.User;
-import com.hanghae.final_project.domain.workspace.dto.request.NoticeRequestDto;
-import com.hanghae.final_project.domain.workspace.dto.response.NoticeResponseDto;
-import com.hanghae.final_project.domain.workspace.model.Notice;
-import com.hanghae.final_project.domain.workspace.repository.NoticeRepository;
-import com.hanghae.final_project.domain.workspace.repository.WorkSpaceRepository;
-import com.hanghae.final_project.global.commonDto.ResponseDto;
+import com.hanghae.final_project.domain.model.User;
+import com.hanghae.final_project.api.workspace.dto.request.NoticeRequestDto;
+import com.hanghae.final_project.api.workspace.dto.response.NoticeResponseDto;
+import com.hanghae.final_project.domain.repository.workspace.NoticeRepository;
+import com.hanghae.final_project.domain.repository.workspace.WorkSpaceRepository;
+import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
-import org.junit.jupiter.api.Test;
+import com.hanghae.final_project.service.workspace.NoticeService;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
