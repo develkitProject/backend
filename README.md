@@ -27,7 +27,7 @@
 
 
 ## 🎬 시연영상
-받아서 넣어라
+[](https://www.youtube.com/watch?v=KBnkppEY78I)
 
 
 ## 📚 기술스택
@@ -68,7 +68,7 @@
 
 
 ## 📜 API
-[🗒 <-](https://www.notion.so/379722be5a5f4ff4a4a61a0b5e72d244?v=7ebf5e46885447629e6cd31fab990a9d)
+[🗒 명세서 ](https://www.notion.so/379722be5a5f4ff4a4a61a0b5e72d244?v=7ebf5e46885447629e6cd31fab990a9d)
 
 
 ## ⚙ 주요기능
