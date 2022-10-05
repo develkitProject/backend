@@ -26,8 +26,8 @@
 |김소정|[https://github.com/kimsojeong01](https://github.com/kimsojeong01)|Designer|
 
 
-## 🎬 시연영상
-[](https://www.youtube.com/watch?v=KBnkppEY78I)
+## 🎬 시연 및 소개영상
+[시연 및 소개영상](https://www.youtube.com/watch?v=KBnkppEY78I)
 
 
 ## 📚 기술스택
