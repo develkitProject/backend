@@ -175,14 +175,13 @@ public class WorkspaceService {
 
         if(requestDto==null){
             cursor=workspaceUserRepository.findByUserAndWorkSpaceId(workSpace.getCreatedBy(),workspaceId)
-                    .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404)).getId();
+                    .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404)).getId()-1L;
         }
         else cursor = workspaceUserRepository.findByUserIdAndWorkSpaceId(requestDto.getCursorId(), workspaceId)
                 .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404)).getId();
 
         Slice<WorkSpaceUser> workSpaceUsers = workspaceUserRepository
                 .findAllByIdAfterAndWorkSpace_IdOrderByIdAsc(cursor,workspaceId, PageRequest.of(0,10));
-
 
         List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
 
