@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class PagingRequestDto {
-    private String cursorDate;
     private String direction;
     private Long cursorId;
 }

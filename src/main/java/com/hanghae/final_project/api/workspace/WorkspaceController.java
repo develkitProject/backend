@@ -1,11 +1,13 @@
 package com.hanghae.final_project.api.workspace;
 
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.request.WorkSpaceUpdateReqeustDto;
 import com.hanghae.final_project.api.workspace.dto.request.WorkspaceRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.MainResponseDto;
 import com.hanghae.final_project.api.workspace.dto.response.UserResponseDto;
 import com.hanghae.final_project.api.workspace.dto.response.WorkSpaceInfoResponseDto;
 import com.hanghae.final_project.api.workspace.dto.response.WorkspaceResponseDto;
+import com.hanghae.final_project.global.util.annotation.QueryStringArgResolver;
 import com.hanghae.final_project.service.workspace.WorkspaceService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.exception.ErrorCode;
@@ -83,9 +85,10 @@ public class WorkspaceController {
 
     @ApiOperation(value = "워크스페이스 내 회원 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/{workspaceId}")
-    public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(@PathVariable Long workspaceId) {
+    public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(@PathVariable Long workspaceId,
+                                                                    @QueryStringArgResolver PagingRequestDto requestDto) {
         log.info("요청 메소드 [GET] /api/workspaces/" + workspaceId);
-        return workspaceService.getMembersInWorkspace(workspaceId);
+        return workspaceService.getMembersInWorkspace(workspaceId,requestDto);
     }
 
     @ApiOperation(value = "워크스페이스 나가기", notes = "워크스페이스에 따라 구분")

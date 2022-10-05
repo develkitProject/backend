@@ -34,9 +34,9 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceid}/notice")
-    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(@PathVariable Long workspaceid,
-                                                                             @QueryStringArgResolver PagingRequestDto requestDto){
-        return noticeService.getAllNotice(workspaceid,requestDto);
+    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getNoticeWithPagination(@PathVariable Long workspaceid,
+                                                                                        @QueryStringArgResolver PagingRequestDto requestDto){
+        return noticeService.getNoticeWithPagination(workspaceid,requestDto);
     }
 
     @ApiOperation(value = "공지사항 수정", notes = "공지사항에 따라 구분")

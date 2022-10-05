@@ -1,5 +1,6 @@
 package com.hanghae.final_project.service.workspace;
 
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.domain.repository.chat.ChatRoomRepository;
 import com.hanghae.final_project.domain.model.*;
 import com.hanghae.final_project.domain.repository.user.UserRepository;
@@ -17,6 +18,8 @@ import com.hanghae.final_project.global.exception.ErrorCode;
 import com.hanghae.final_project.global.exception.RequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -161,12 +164,25 @@ public class WorkspaceService {
     }
 
     //워크스페이스 내 회원 조회
-    public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(Long workspaceId) {
+    public ResponseDto<List<UserResponseDto>> getMembersInWorkspace(Long workspaceId, PagingRequestDto requestDto) {
 
         // 1. workspaceId에 해당하는 workspaceUser Entity를 꺼내기
         // 2. workspaceUser에 해당하는 User들을 모두 꺼내오기
 
-        List<WorkSpaceUser> workSpaceUsers = workspaceUserRepository.findAllByWorkSpaceId(workspaceId);
+        Long cursor;
+        WorkSpace workSpace = workspaceRepository.findById(workspaceId)
+                .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404));
+
+        if(requestDto==null){
+            cursor=workspaceUserRepository.findByUserAndWorkSpaceId(workSpace.getCreatedBy(),workspaceId)
+                    .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404)).getId();
+        }
+        else cursor = workspaceUserRepository.findByUserIdAndWorkSpaceId(requestDto.getCursorId(), workspaceId)
+                .orElseThrow(()->new RequestException(ErrorCode.WORKSPACE_IN_USER_NOT_FOUND_404)).getId();
+
+        Slice<WorkSpaceUser> workSpaceUsers = workspaceUserRepository
+                .findAllByIdAfterAndWorkSpace_IdOrderByIdAsc(cursor,workspaceId, PageRequest.of(0,10));
+
 
         List<User> users = workSpaceUsers.stream().map(WorkSpaceUser::getUser).collect(Collectors.toList());
 
@@ -175,7 +191,7 @@ public class WorkspaceService {
                 .stream()
                 .map(user -> UserResponseDto.createResponseDto(
                         user,
-                        workSpaceUsers.get(0).getWorkSpace().getCreatedBy().getUsername()))
+                        workSpace.getCreatedBy().getUsername()))
                 .collect(Collectors.toList());
 
         return ResponseDto.success(userResponseDtos);
