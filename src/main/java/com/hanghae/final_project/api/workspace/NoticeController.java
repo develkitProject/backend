@@ -2,7 +2,9 @@ package com.hanghae.final_project.api.workspace;
 
 
 import com.hanghae.final_project.api.workspace.dto.request.NoticeRequestDto;
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.NoticeResponseDto;
+import com.hanghae.final_project.global.util.annotation.QueryStringArgResolver;
 import com.hanghae.final_project.service.workspace.NoticeService;
 import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
@@ -32,8 +34,9 @@ public class NoticeController {
 
     @ApiOperation(value = "공지사항 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceid}/notice")
-    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getAllNotice(@PathVariable Long workspaceid){
-        return noticeService.getAllNotice(workspaceid);
+    public ResponseEntity<ResponseDto<List<NoticeResponseDto>>> getNoticeWithPagination(@PathVariable Long workspaceid,
+                                                                                        @QueryStringArgResolver PagingRequestDto requestDto){
+        return noticeService.getNoticeWithPagination(workspaceid,requestDto);
     }
 
     @ApiOperation(value = "공지사항 수정", notes = "공지사항에 따라 구분")

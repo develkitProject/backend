@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class PagingDocumentRequestDto {
+public class PagingRequestDto {
     private String direction;
     private Long cursorId;
 }

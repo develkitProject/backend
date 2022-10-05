@@ -3,7 +3,7 @@ package com.hanghae.final_project.service.workspace;
 import com.hanghae.final_project.domain.model.User;
 import com.hanghae.final_project.domain.repository.workspace.*;
 import com.hanghae.final_project.api.workspace.dto.request.DocumentRequestDto;
-import com.hanghae.final_project.api.workspace.dto.request.PagingDocumentRequestDto;
+import com.hanghae.final_project.api.workspace.dto.request.PagingRequestDto;
 import com.hanghae.final_project.api.workspace.dto.response.DocumentListResponseDto;
 import com.hanghae.final_project.api.workspace.dto.response.DocumentResponseDto;
 import com.hanghae.final_project.domain.model.Document;
@@ -105,7 +105,7 @@ public class DocumentService {
 
     // 문서 전체조회
     @Transactional(readOnly = true)
-    public ResponseDto<List<DocumentListResponseDto>> getDocumentList(Long workSpaceId, PagingDocumentRequestDto requestDto) {
+    public ResponseDto<List<DocumentListResponseDto>> getDocumentList(Long workSpaceId, PagingRequestDto requestDto) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
