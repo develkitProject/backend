@@ -159,6 +159,7 @@ public class DocumentService {
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
                 .id(document.getId())
+                .username(userDetails.getUsername())
                 .title(document.getTitle())
                 .content(document.getContent())
                 .nickname(document.getUser().getNickname())
