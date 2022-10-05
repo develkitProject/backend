@@ -16,6 +16,7 @@ import java.util.List;
 public class DocumentResponseDto extends Timestamped {
 
     private Long id;
+    private String username;
     private String title;
     private String content;
     private List<String> fileNames;

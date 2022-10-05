@@ -256,7 +256,7 @@ public class WorkspaceService {
         }
 
         List<Document> documents = documentRepository.findAllByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).stream().limit(4).collect(Collectors.toList());
-        Notice firstNotice = noticeRepository.findFirstByWorkSpaceIdOrderByCreatedAtDesc(workspaceId).orElse(null);
+        Notice firstNotice = noticeRepository.findFirstByWorkSpaceIdOrderByCreatedAtAsc(workspaceId).orElse(null);
 
         MainResponseDto responseDto = MainResponseDto.createResponseDto(workSpace, documents, firstNotice);
         return ResponseDto.success(responseDto);
