@@ -28,6 +28,7 @@ public class ChatUtils {
 
     private ZSetOperations<String, ChatMessageSaveDto> zSetOperations;
 
+    //Destination 으로 부터 roomId 값 조회
     public String getRoodIdFromDestination(String destination){
         int lastIndex = destination.lastIndexOf('/');
         if(lastIndex!=-1)
@@ -36,11 +37,12 @@ public class ChatUtils {
             return "";
     }
 
+    //7일전까지의 chat_date redis Insert
     public void cachingDataToRedisFromDB(){
 
         zSetOperations = chatRedisTemplate.opsForZSet();
         //서버 시작전, redis 에 데이터 적재시키기.
-        LocalDateTime current = LocalDateTime.now();//Obtains a LocalDate set to the current system millisecond time using ISOChronology in the default time zone
+        LocalDateTime current = LocalDateTime.now();
         LocalDateTime cursorDate = current.minusDays(7);
 
         String cursor = cursorDate.format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS"));
@@ -54,6 +56,8 @@ public class ChatUtils {
             zSetOperations.add(CHAT_SORTED_SET_+chat.getWorkSpace().getId(), chatMessageSaveDto, changeLocalDateTimeToDouble(chat.getCreatedAt()));
         }
     }
+
+    //채팅 데이터 생성일자 Double 형으로 형변환
     public Double changeLocalDateTimeToDouble(String createdAt) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS");

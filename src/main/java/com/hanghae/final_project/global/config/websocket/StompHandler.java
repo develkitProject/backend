@@ -46,11 +46,8 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
-
         // 최초 소켓 연결
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            log.info("token 확인");
-            log.info("token : " + accessor.getFirstNativeHeader(TOKEN));
             String headerToken = accessor.getFirstNativeHeader(TOKEN);
             String token = headerTokenExtractor.extract(headerToken);
             log.info(jwtDecoder.decodeUsername(token).getUsername());
@@ -79,7 +76,6 @@ public class StompHandler implements ChannelInterceptor {
             chatRoomService.enterChatRoom(roomId, sessionId, username);
 
 
-            //list 주기
             redisPublisher.publish(topic,
                     ChatMessageSaveDto.builder()
                             .type(ChatMessageSaveDto.MessageType.ENTER)
@@ -90,11 +86,8 @@ public class StompHandler implements ChannelInterceptor {
 
         }
 
-        else if(StompCommand.UNSUBSCRIBE==accessor.getCommand()){
-            //진행해야할 것
-            //reids SubScribe 해제
-            log.info("UNSUBSCRIBE sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
-            log.info("UNSUBSCRIBE destination : " + message.getHeaders().get(SIMP_DESTINATION));
+        //reids SubScribe 해제
+        else if (StompCommand.UNSUBSCRIBE == accessor.getCommand()) {
 
             String sessionId = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_SESSION_ID)
@@ -102,9 +95,6 @@ public class StompHandler implements ChannelInterceptor {
 
             String roomId = chatRoomService.leaveChatRoom(sessionId);
 
-            log.info("Socket 연결 끊어진 RoomId : "+roomId);
-
-            //list 주기
             redisPublisher.publish(topic,
                     ChatMessageSaveDto.builder()
                             .type(ChatMessageSaveDto.MessageType.QUIT)
@@ -115,18 +105,13 @@ public class StompHandler implements ChannelInterceptor {
         }
         //소켓 연결 후 , 소켓 연결 해제 시
         else if (StompCommand.DISCONNECT == accessor.getCommand()) {
-            log.info("Disconnect sessionId : " + message.getHeaders().get(SIMP_SESSION_ID));
 
-            //Session_Id를 통해서
             String sessionId = Optional.ofNullable(
                     (String) message.getHeaders().get(SIMP_SESSION_ID)
             ).orElse(null);
 
             String roomId = chatRoomService.disconnectWebsocket(sessionId);
 
-            log.info("Socket 연결 끊어진 RoomId : "+roomId);
-
-            //list 주기
             redisPublisher.publish(topic,
                     ChatMessageSaveDto.builder()
                             .type(ChatMessageSaveDto.MessageType.QUIT)

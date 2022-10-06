@@ -114,22 +114,6 @@ public class UserService {
         return ResponseDto.success(true);
     }
 
-
-    //이메일 중복 체크 로직 (회원가입 및 Front 중복체크 버튼)
-    private void checkDuplicate(String username) {
-
-        Optional<User> found = userRepository.findByUsername(username);
-
-        if (found.isPresent()) {
-            throw new RequestException(ErrorCode.USER_LOGINID_DUPLICATION_409);
-        }
-    }
-
-    private User checkUsername(String username) {
-        return userRepository.findByUsername(username)
-                .orElseThrow(() -> new RequestException(ErrorCode.USER_NOT_EXIST));
-    }
-
     // 회원탈퇴
     public ResponseDto<Boolean> signOut(User user) {
 
@@ -149,7 +133,6 @@ public class UserService {
 
         return ResponseDto.success(true);
     }
-
     //게스트로그인
     public ResponseDto<LoginDto> guestSignup() {
 
@@ -167,7 +150,6 @@ public class UserService {
 
         return standardSignup(signupDto);
     }
-
     //Guest Workspace 설정
     public void setGuestWorkspace(String username) {
 
@@ -194,5 +176,18 @@ public class UserService {
             workSpaceUserRepository.save(workSpaceUser2);
         }
 
+    }
+    private User checkUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RequestException(ErrorCode.USER_NOT_EXIST));
+    }
+    //이메일 중복 체크 로직 (회원가입 및 Front 중복체크 버튼)
+    private void checkDuplicate(String username) {
+
+        Optional<User> found = userRepository.findByUsername(username);
+
+        if (found.isPresent()) {
+            throw new RequestException(ErrorCode.USER_LOGINID_DUPLICATION_409);
+        }
     }
 }
