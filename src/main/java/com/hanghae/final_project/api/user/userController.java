@@ -31,19 +31,19 @@ public class userController {
     @ApiOperation(value = "회원가입", notes = "일반 회원가입")
     @PostMapping("/api/members/signup")
     public ResponseDto<LoginDto> registerStandardUser(@Valid @RequestBody SignupDto signupDto, Errors errors){
-        if (errors.hasErrors()) {
-            log.info("error : {}", errors.getAllErrors().get(0).getDefaultMessage());
+
+        if (errors.hasErrors())
             throw new RequestException(ErrorCode.USER_INFO_NOT_FORMATTED, errors.getAllErrors().get(0).getDefaultMessage());
-        }
-        log.info("요청 메소드 [POST] /api/members/signup");
+
         ResponseDto<LoginDto> loginDto=userService.standardSignup(signupDto);
         userService.setGuestWorkspace(loginDto.getData().getUsername());
+
         return loginDto;
     }
 
     @ApiOperation(value = "이메일 중복체크", notes = "닉네임은 중복 허용")
     @PostMapping("/api/members/email")
-    public ResponseEntity<?>  checkEmailDuplicate(@RequestBody SignupDto signupDto){
+    public ResponseDto<Boolean>  checkEmailDuplicate(@RequestBody SignupDto signupDto){
         return userService.checkEmail(signupDto);
     }
 
@@ -56,7 +56,7 @@ public class userController {
 
     @ApiOperation(value = "마이페이지 수정", notes = "마이페이지 수정(닉네임, 프로필 사진)")
     @PutMapping("/api/members/profile")
-    public ResponseEntity<?> changeUserProfile(@RequestBody UserProfileDto userprofileDto,
+    public ResponseDto<Boolean> changeUserProfile(@RequestBody UserProfileDto userprofileDto,
                                   @AuthenticationPrincipal UserDetailsImpl userDetails) throws IOException {
 
         return userService.changeProfile(userDetails.getUser(),userprofileDto);
@@ -67,15 +67,17 @@ public class userController {
     public ResponseDto<Boolean> signOutMember(@AuthenticationPrincipal UserDetailsImpl userDetails){
 
         return  userService.signOut(userDetails.getUser());
+
     }
 
     @ApiOperation(value="게스트 자동회원가입",notes="회원가입 및 로그인 처리")
     @GetMapping("/api/members/guest")
     public ResponseDto<LoginDto> guestSignupAndSignIn(){
-        log.info("게스트 회원가입 진행 ");
+
         ResponseDto<LoginDto> loginDto = userService.guestSignup();
         userService.setGuestWorkspace(loginDto.getData().getUsername());
         return loginDto;
+
     }
 
 

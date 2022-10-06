@@ -14,6 +14,7 @@ import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import com.hanghae.final_project.global.config.security.jwt.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,13 +36,15 @@ import static com.hanghae.final_project.global.config.security.handler.Authentic
 @Transactional
 public class KakaoUserService {
 
-    public static final String APP_ADMIN_KEY = "c2689db3cf597442ae264f72db1a1904";
+    @Value("${kakao.login.admin-key}")
+    private String APP_ADMIN_KEY;
     private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder encoder;
 
-
+    //카카오로그인
     public ResponseDto<LoginDto> kakaoLogin(String code, HttpServletResponse response) throws IOException {
+
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
 
@@ -54,7 +57,6 @@ public class KakaoUserService {
         // 4. 토큰 발급
         kakaoLoginAccess(kakaoUser, response);
 
-        log.info("카카오 로그인 완료 : {}", kakaoUser.getUsername());
 
         return ResponseDto.success(
                         LoginDto.builder()
@@ -98,17 +100,12 @@ public class KakaoUserService {
 
     }
 
-
-
-
     private String getAccessToken(String code) throws JsonProcessingException {
 
         // HTTP Header 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
-
-        log.info("kakao_login_code : " + code);
         // HTTP Body 생성
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
@@ -127,12 +124,12 @@ public class KakaoUserService {
                 String.class
         );
 
-        // HTTP 응답 (JSON) -> 액세스 토큰 파싱
+
         String responseBody = response.getBody();
 
-        log.info(responseBody);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode jsonNode = objectMapper.readTree(responseBody);
+
         return jsonNode.get("access_token").asText();
     }
 
@@ -153,7 +150,6 @@ public class KakaoUserService {
         );
 
         String responseBody = response.getBody();
-        log.info("responseBody : " + responseBody);
 
         ObjectMapper objectMapper = new ObjectMapper();
 
@@ -173,9 +169,6 @@ public class KakaoUserService {
         String email = jsonNode
                 .get("kakao_account")
                 .get("email").asText();
-
-        log.info("nickname : " + nickname);
-        log.info("email : " + email);
 
         return KakaoSocialDto.builder()
                 .username(email)
