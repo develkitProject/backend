@@ -20,14 +20,12 @@ import java.io.IOException;
 @RestController
 public class KakaoUserController {
 
-
     private final KakaoUserService kakaoUserService;
-
     private final UserService userService;
 
     @ApiOperation(value = "카카오톡 로그인", notes = "카카오톡 로그인")
     @GetMapping("/user/kakao/callback")
-    public ResponseDto<LoginDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException, JsonProcessingException {
+    public ResponseDto<LoginDto> kakaoLogin(@RequestParam String code, HttpServletResponse response) throws IOException{
         ResponseDto<LoginDto> loginDto = kakaoUserService.kakaoLogin(code, response);
         userService.setGuestWorkspace(loginDto.getData().getUsername());
         return loginDto ;
