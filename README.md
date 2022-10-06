@@ -16,7 +16,7 @@
 ## 🚀👩‍🚀👨‍🚀 팀원
 |이름|깃헙주소|담당|
 |:---:|:---:|:---:|
-|FE|[https://github.com/LuisKlopp](https://github.com/develkitProject/frontend)|FE/React|
+|FE|[https://github.com/develkitProject/frontend](https://github.com/develkitProject/frontend)|FE/React|
 |한호성L|[https://github.com/hosunghan-0821](https://github.com/hosunghan-0821)|BE/Spring|
 |황인권|[https://github.com/ingwon97](https://github.com/ingwon97)|BE/Spring|
 |이재헌|[https://github.com/romeo92s](https://github.com/romeo92s)|BE/Spring|
