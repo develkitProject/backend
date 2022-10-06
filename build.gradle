@@ -1,6 +1,7 @@
 plugins {
 	id 'org.springframework.boot' version '2.7.3'
 	id 'io.spring.dependency-management' version '1.0.13.RELEASE'
+	id "com.ewerk.gradle.plugins.querydsl" version "1.0.10"
 	id 'java'
 }
 
@@ -29,7 +30,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-	compileOnly 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'mysql:mysql-connector-java'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -37,6 +38,7 @@ dependencies {
 	//Junit Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation("org.assertj:assertj-core:3.23.1")
 
 	// slf4j for test
 	testCompileOnly 'org.projectlombok:lombok'
@@ -62,19 +64,20 @@ dependencies {
 	// aws
 	implementation 'io.awspring.cloud:spring-cloud-starter-aws:2.3.1'
 
+	// swagger
+	implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
-	//actuator
-	implementation 'de.codecentric:spring-boot-admin-starter-client'
 
+	//querydsl
+	implementation "com.querydsl:querydsl-jpa:5.0.0"
+	implementation "com.querydsl:querydsl-apt:5.0.0"
 }
-
 
 dependencyManagement {
 	imports {
 		mavenBom "de.codecentric:spring-boot-admin-dependencies:${springBootAdminVersion}"
 	}
 }
-
 
 jar{
 	enabled=false
@@ -83,6 +86,36 @@ jar{
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+//QueryDsl 관련 세팅
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+	jpa = true
+	querydslSourcesDir = querydslDir
+}
+
+sourceSets {
+	main.java.srcDir querydslDir
+}
+
+// querydsl 컴파일시 사용할 옵션 설정
+compileQuerydsl{
+	options.annotationProcessorPath = configurations.querydsl
+}
+
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+	querydsl.extendsFrom compileClasspath
+}
+/*** comileQuerydsl.doFirst 추가*/
+compileQuerydsl.doFirst {
+	if (file(querydslDir).exists()) delete(file(querydslDir))
+}
+
 
 test {
 	useJUnitPlatform()

@@ -58,12 +58,15 @@ public enum ErrorCode {
 
     // Schedule 관련
     SCHEDULE_ID_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 Schedule이 존재하지 않습니다"),
+
     //이미지 관련
     NO_IMAGE_FILE(HttpStatus.BAD_REQUEST,"이미지 파일을 확인해 주세요"),
 
     //초대코드 관련
-    NO_INVITATION_CODE_404(HttpStatus.NOT_FOUND,"해당 코드가 유효하지 않습니다");
+    NO_INVITATION_CODE_404(HttpStatus.NOT_FOUND,"해당 코드가 유효하지 않습니다"),
 
+    //검색 관련
+    SEARCH_TYPE_BAD_REQUEST(HttpStatus.NOT_FOUND,"검색 type을 확인해 주세요");
 
     private HttpStatus httpStatus;
     private String message;

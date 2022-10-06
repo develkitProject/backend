@@ -2,8 +2,8 @@ package com.hanghae.final_project.global.config.security;
 
 
 
-import com.hanghae.final_project.domain.user.model.User;
-import com.hanghae.final_project.domain.user.repository.UserRepository;
+import com.hanghae.final_project.domain.model.User;
+import com.hanghae.final_project.domain.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
