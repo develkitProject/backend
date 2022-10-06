@@ -67,7 +67,8 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(signupDto.getUsername());
 
         if (found.isPresent()) {
-            throw new RequestException(ErrorCode.USER_LOGINID_DUPLICATION_409);
+            ResponseDto.fail(ErrorCode.USER_LOGINID_NOT_FOUND_404.name()
+                    , ErrorCode.USER_LOGINID_NOT_FOUND_404.getMessage());
         }
 
         return ResponseDto.success(true);
