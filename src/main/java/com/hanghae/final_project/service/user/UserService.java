@@ -67,7 +67,7 @@ public class UserService {
         Optional<User> found = userRepository.findByUsername(signupDto.getUsername());
 
         if (found.isPresent()) {
-            ResponseDto.fail(ErrorCode.USER_LOGINID_NOT_FOUND_404.name()
+           return ResponseDto.fail(ErrorCode.USER_LOGINID_NOT_FOUND_404.name()
                     , ErrorCode.USER_LOGINID_NOT_FOUND_404.getMessage());
         }
 
