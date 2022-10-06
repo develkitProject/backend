@@ -29,19 +29,16 @@ public class ChatDataController {
 
     private final ChatRedisCacheService cacheService;
 
-    @ApiOperation(value = "채팅", notes = "수정해주세요")
+    @ApiOperation(value = "채팅", notes = "채팅 cursor paging 을 통해 조회하기")
     @PostMapping("/api/chats/{workSpaceId}")
     public ResponseDto<List<ChatPagingResponseDto>> getChatting(@PathVariable Long workSpaceId, @RequestBody(required = false) ChatPagingDto chatPagingDto){
 
-
-        //페이징을 하기위한 Cursor가 parameter로 들어오지 않을 때, 지금 시간을 기준으로 paging
+        //Cursor 존재하지 않을 경우,현재시간을 기준으로 paging
         if(chatPagingDto==null||chatPagingDto.getCursor()==null || chatPagingDto.getCursor().equals("")){
             chatPagingDto= ChatPagingDto.builder()
                     .cursor( LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss.SSS")))
                     .build();
         }
-
         return cacheService.getChatsFromRedis(workSpaceId,chatPagingDto);
-         //cacheService.getChats(workSpaceId,chatPagingDto.getCursor());
     }
 }

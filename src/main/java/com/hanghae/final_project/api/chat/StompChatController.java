@@ -10,7 +10,6 @@ import com.hanghae.final_project.global.config.security.jwt.JwtDecoder;
 import com.hanghae.final_project.global.config.security.jwt.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,17 +24,10 @@ import java.time.format.DateTimeFormatter;
 public class StompChatController {
 
     private final RedisPublisher redisPublisher;
-
-
     private final ChatRedisCacheService chatRedisCacheService;
-
-    private final RedisTemplate<String,String> roomRedisTemplate;
     private final ChannelTopic channelTopic;
     private final HeaderTokenExtractor headerTokenExtractor;
     private final JwtDecoder jwtDecoder;
-    /*
-     * websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
-     * */
 
     @MessageMapping("/chat/message")
     public void message(ChatMessageSaveDto message, @Header("token") String token){
