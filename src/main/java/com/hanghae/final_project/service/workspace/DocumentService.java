@@ -41,6 +41,13 @@ public class DocumentService {
     private final WorkSpaceUserRepository workSpaceUserRepository;
     private final FileRepository fileRepository;
 
+    /*S3 파일 업로드
+    생성 -> S3에 올리고, fileRepository.save(String url)
+    조회 -> fileRepository.findAllByDocId
+    수정 -> S3에 있는거 삭제하고, 다시 생성
+    삭제 -> S3 파일, fileRepository 삭제
+     */
+
     // 문서 생성
     @Transactional
     public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
@@ -151,9 +158,9 @@ public class DocumentService {
         // 파일 Url 리스트로 가져오기
         List<File> files = fileRepository.findAllByDocId(id);
 
-        String modifyMember=null;
-        if(document.getModifyUser()!=null){
-            modifyMember=document.getModifyUser().getNickname();
+        String modifyMember = null;
+        if (document.getModifyUser() != null) {
+            modifyMember = document.getModifyUser().getNickname();
         }
 
 
@@ -258,9 +265,8 @@ public class DocumentService {
 
         // fileNames = 삭제 안된것 + 추가된것들 위에서 다 처리함
         // fileUrls = 삭제 안된것 + 추가된것들 -> 추가된 것들을 넣어줘야함
-        document.update(documentRequestDto,user);
+        document.update(documentRequestDto, user);
 
-        log.info(" update time {}",document.getModifiedAt());
         documentRepository.save(document);
 
         DocumentResponseDto documentResponseDto = DocumentResponseDto.builder()
@@ -298,8 +304,8 @@ public class DocumentService {
             fileUrls.add(file.getFileUrl());
         }
 
-        for(int i =0 ; i<fileUrls.size();i++){
-            s3UploaderService.deleteFiles(fileUrls.get(i),"upload");
+        for (int i = 0; i < fileUrls.size(); i++) {
+            s3UploaderService.deleteFiles(fileUrls.get(i), "upload");
         }
 
         fileRepository.deleteAll(files);
@@ -333,10 +339,4 @@ public class DocumentService {
 
 }
 
-/*S3 파일 업로드
-생성 -> S3에 올리고, fileRepository.save(String url)
-조회 -> fileRepository.findAllByDocId
-수정 -> S3에 있는거 삭제하고, 다시 생성
-삭제 -> S3 파일, fileRepository 삭제
- */
 
