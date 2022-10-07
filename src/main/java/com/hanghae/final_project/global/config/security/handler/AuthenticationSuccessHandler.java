@@ -30,7 +30,7 @@ public class AuthenticationSuccessHandler extends SavedRequestAwareAuthenticatio
 
         final UserDetailsImpl userDetails = ( (UserDetailsImpl) authentication.getPrincipal());
         final String token = JwtTokenUtils.generateJwtToken(userDetails);
-//        final String refreshTokenStr = JwtTokenUtils.generateJwtRefreshToken();
+
         response.setContentType("application/json");
         response.setCharacterEncoding("utf-8");
 

@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class) //가짜 레이어드 환경 생성
+@ExtendWith(MockitoExtension.class)
 public class NoticeServiceTest {
 
     @InjectMocks
@@ -50,43 +50,3 @@ public class NoticeServiceTest {
         assertThat(noticeResponseDto.getBody().getData().getContent()).isEqualTo(noticeRequestDto.getContent());
     }
 }
-
-
-//    @Test
-//    public void getAllNotice() {
-//        //given
-//        Long workspaceId = 1L;
-//        User user = new User();
-//
-//        //stub
-//        List<Notice> notices = new ArrayList<>();
-//        notices.add(new Notice());
-//        //when
-//        List<NoticeResponseDto> noticeResponseDtoList = (List<NoticeResponseDto>) noticeService.getAllNotice(workspaceId);
-//        //then
-//        assertThat(noticeResponseDtoList.get(0).getTitle()).isEqualTo("타이이이트으을!!!");
-//        assertThat(noticeResponseDtoList.get(0).getContent()).isEqualTo("content");
-//    }
-//
-//    @Test
-//    public void updateNotice() {
-//        //given
-//        Long id = 1L;
-//        Long noticeId = 1L;
-//        NoticeRequestDto noticeRequestDto = new NoticeRequestDto();
-//        noticeRequestDto.setTitle("kokoko");
-//        noticeRequestDto.setContent("bobobo");
-//
-//        //stub
-//        Notice notice = new Notice();
-//        Optional<Notice> noticeOptional = Optional.of(notice);
-//        when(noticeRepository.findById(id)).thenReturn(noticeOptional);
-//
-//        //when
-//        ResponseEntity<ResponseDto<NoticeResponseDto>> noticeResponseDto = noticeService.updateNotice(noticeRequestDto, noticeId);
-//        //then
-//        assertThat(noticeResponseDto.getBody().getData().getTitle()).isEqualTo(noticeRequestDto.getTitle());
-//        assertThat(noticeResponseDto.getBody().getData().getContent()).isEqualTo(noticeRequestDto.getContent());
-//
-//    }
-//}

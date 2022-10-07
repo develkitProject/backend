@@ -50,14 +50,13 @@ public class ChatWriteBackScheduling {
                         .orElse(null);
 
                 if(workSpace==null) {
-                    log.info("삭제된 워크스페이스 : {}, ",Long.parseLong(chatMessageDto.getValue().getRoomId()));
                     continue;
                 }
 
                 chatList.add( Chat.of(chatMessageDto.getValue(),workSpace));
             }
             chatJdbcRepository.batchInsertRoomInventories(chatList);
-//            chatRepository.saveAll(chatList);
+
             redisTemplate.delete("NEW_CHAT");
 
         }catch (Exception e){
