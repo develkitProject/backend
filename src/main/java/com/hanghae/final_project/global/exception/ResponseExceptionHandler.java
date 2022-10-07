@@ -19,7 +19,6 @@ public class ResponseExceptionHandler extends ResponseEntityExceptionHandler {
         log.info("Exception : '{}'", e.getMessage());
         ErrorResponseDto responseDto = ErrorResponseDto.createDto(e.getErrorCode(), e.getMessage(), e.getHttpStatus());
         return new ResponseEntity<>(responseDto, e.getHttpStatus());
-//        return new ResponseEntity(e.getMessage(), e.getHttpStatus());
     }
 }
 

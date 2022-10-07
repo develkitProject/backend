@@ -35,8 +35,9 @@ public class S3UploaderService {
     public String bucket;  // S3 버킷 이름
 
     //Base64 Enocding 된 이미지 S3에 올리기
-    public String uploadBase64Image(String file, String dirName) throws IOException { // 파일명, 경로이름
-        File uploadFile = convertBase64Image(file)  // 파일 변환할 수 없으면 에러
+    public String uploadBase64Image(String file, String dirName) throws IOException {
+        // 파일 변환할 수 없으면 에러
+        File uploadFile = convertBase64Image(file)
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 
         return uploadBase64Image(uploadFile, dirName);
@@ -47,8 +48,10 @@ public class S3UploaderService {
     private Optional<File> convertBase64Image(String stringImage) throws IOException {
         byte[] bytes = decodeBase64(stringImage);
         File convertFile = new File(System.getProperty("user.dir") + "/" + "tempFile");
-        if (convertFile.createNewFile()) { // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
-            try (FileOutputStream fos = new FileOutputStream(convertFile)) { // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
+        // 바로 위에서 지정한 경로에 File이 생성됨 (경로가 잘못되었다면 생성 불가능)
+        if (convertFile.createNewFile()) {
+            // FileOutputStream 데이터를 파일에 바이트 스트림으로 저장하기 위함
+            try (FileOutputStream fos = new FileOutputStream(convertFile)) {
                 fos.write(bytes);
             }
             return Optional.of(convertFile);
@@ -60,8 +63,11 @@ public class S3UploaderService {
     //Base64 Encoding 된 이미지 S3에 올리기
     // S3로 파일 업로드하기
     private String uploadBase64Image(File uploadFile, String dirName) {
-        String fileName = dirName + "/" + UUID.randomUUID();   // S3에 저장된 파일 이름
-        String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
+
+        // S3에 저장된 파일 이름
+        String fileName = dirName + "/" + UUID.randomUUID();
+        // s3로 업로드
+        String uploadImageUrl = putS3(uploadFile, fileName);
         removeNewFile(uploadFile);
         return uploadImageUrl;
     }
@@ -97,10 +103,6 @@ public class S3UploaderService {
             String filename= fileOriginalFilename.substring(0,file.getOriginalFilename().lastIndexOf("."));
             String fileExtension = fileOriginalFilename.substring(file.getOriginalFilename().lastIndexOf("."));
 
-            //확장자검사
-
-            log.info("파일 original name {}", file.getOriginalFilename());
-            log.info("확장자 {}", fileExtension);
 
             String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
             File convertFile = new File(System.getProperty("user.dir") + "/" + filename +"_"+now+ fileExtension);
@@ -128,19 +130,13 @@ public class S3UploaderService {
         return uploadImageUrl;
     }
 
-    public void deleteFiles(String fileName) {
-
-
-        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, decodeUrl(fileName)));
-    }
-
     public void deleteFiles(String fileName, String dir) {
         //filename이 존재하는지 확인
         if (fileName == null || !fileName.contains("amazonaws.com") || fileName.contains(STANDARD_IMAGE_ROUTE) ||fileName.contains(WORKSPACE_STANDARD_IMG)) return;
         fileName = decodeUrl(fileName);
         fileName = fileName.substring(fileName.indexOf(dir));
-        log.info("delete key : {}",fileName);
         amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileName));
+
     }
 
     // base64 , Formdata Image 공용
