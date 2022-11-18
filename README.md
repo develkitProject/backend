@@ -1,8 +1,6 @@
 # D-velkit
 ![Github_리드미_백엔드](https://user-images.githubusercontent.com/70882917/193630557-54c72f8c-c22c-4518-878a-aa29a25949a0.png)
-![1등 사진](https://user-images.githubusercontent.com/70882917/202708426-4ecdcf79-7238-498f-919f-919da03af1d8.jpeg)
-
-
+<p align="center"><img src="https://user-images.githubusercontent.com/70882917/202708426-4ecdcf79-7238-498f-919f-919da03af1d8.jpeg"></p>
 
 ## 소개프로젝트 소개
 파일공유, 일정관리, 채팅 등 다양한 기능을 한번에 사용할 수 있는 협업툴
