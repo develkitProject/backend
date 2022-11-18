@@ -1,5 +1,7 @@
 # D-velkit
 ![Github_리드미_백엔드](https://user-images.githubusercontent.com/70882917/193630557-54c72f8c-c22c-4518-878a-aa29a25949a0.png)
+![1등 사진](https://user-images.githubusercontent.com/70882917/202708426-4ecdcf79-7238-498f-919f-919da03af1d8.jpeg)
+
 
 
 ## 소개프로젝트 소개
