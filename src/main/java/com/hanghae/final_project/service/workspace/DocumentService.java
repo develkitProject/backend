@@ -51,12 +51,14 @@ public class DocumentService {
     // 문서 생성
     @Transactional
     public ResponseDto<DocumentResponseDto> createDocument(Long workSpaceId,
-                                                           MultipartFile[] multipartFiles,
+
                                                            DocumentRequestDto documentRequestDto,
+                                                           List<MultipartFile> multipartFiles,
                                                            UserDetailsImpl userDetails) {
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
                 () -> new RequestException(ErrorCode.WORKSPACE_NOT_FOUND_404)
         );
+        System.out.println("여기드어옴");
 
         //workspace에 존재하지 않는 유저가 글을 쓸 경우 예외처리
         workSpaceUserRepository
@@ -85,10 +87,10 @@ public class DocumentService {
         List<File> files = new ArrayList<>();
         if (fileUrls != null) {
             for (int i = 0; i < fileUrls.size(); i++) {
-                filenames.add(multipartFiles[i].getOriginalFilename());
+                filenames.add(multipartFiles.get(i).getOriginalFilename());
                 files.add(File.builder()
                         .doc(document)
-                        .fileName(multipartFiles[i].getOriginalFilename())
+                        .fileName(multipartFiles.get(i).getOriginalFilename())
                         .fileUrl(fileUrls.get(i))
                         .build());
             }
@@ -196,8 +198,10 @@ public class DocumentService {
     @Transactional
     public ResponseDto<DocumentResponseDto> updateDocument(Long workSpaceId,
                                                            Long id,
-                                                           MultipartFile[] multipartFiles,
+
+                                                           List<MultipartFile> multipartFiles,
                                                            DocumentRequestDto documentRequestDto,
+
                                                            User user) {
 
         WorkSpace findWorkSpace = workSpaceRepository.findById(workSpaceId).orElseThrow(
@@ -249,14 +253,14 @@ public class DocumentService {
 
         // updateFiles -> File 타입으로 fileRepository.save에 사용
         // 멀티파트 파일로 받은 것들(추가된것들)을 File 타입으로 dto에 넣어줄 name, url 넣으
-        if (multipartFiles != null && multipartFiles[0].getOriginalFilename().equals("") == false) {
-            for (int i = 0; i < multipartFiles.length; i++) {
+        if (multipartFiles != null) {
+            for (int i = 0; i < multipartFiles.size(); i++) {
                 updateFiles.add(File.builder()
                         .fileUrl(updateFileUrls.get(i))
                         .doc(document)
-                        .fileName(multipartFiles[i].getOriginalFilename())
+                        .fileName(multipartFiles.get(i).getOriginalFilename())
                         .build());
-                fileNames.add(multipartFiles[i].getOriginalFilename());
+                fileNames.add(multipartFiles.get(i).getOriginalFilename());
                 fileUrls.add(updateFileUrls.get(i));
             }
         }

@@ -73,10 +73,10 @@ public class S3UploaderService {
     }
 
     //Formdata로 넘어온 파일 S3에 올리기
-    public List<String> uploadFormDataFiles(MultipartFile[] multipartFiles, String dirName) throws IOException {
+    public List<String> uploadFormDataFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException {
 
         //전달받은 파일 존재하는지 확인
-        if (multipartFiles == null || multipartFiles[0].getOriginalFilename().equals("")) {
+        if (multipartFiles == null) {
             return null;
         }
         List<File> uploadFiles = convertFormDataFiles(multipartFiles)
@@ -92,7 +92,7 @@ public class S3UploaderService {
 
     //Formdata로 넘어온 이미지 S3에 올리기
     //로컬에 파일 업로드하기
-    private Optional<ArrayList<File>> convertFormDataFiles(MultipartFile[] files) throws IOException {
+    private Optional<ArrayList<File>> convertFormDataFiles(List<MultipartFile> files) throws IOException {
 
         ArrayList<File> fileList = new ArrayList<>();
 

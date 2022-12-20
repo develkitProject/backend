@@ -2,6 +2,8 @@ package com.hanghae.final_project.global.config.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -33,7 +35,7 @@ public class SwaggerConfig  {
     @Bean
     public Docket commonApi() {
 
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .ignoredParameterTypes(AuthenticationPrincipal.class)
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
@@ -45,7 +47,7 @@ public class SwaggerConfig  {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "Authorization", "header");
+        return new ApiKey("Authorization", "Authorization", "header");
     }
 
     private SecurityContext securityContext() {
@@ -56,7 +58,13 @@ public class SwaggerConfig  {
         AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
         AuthorizationScope[] authorizationScopes = new AuthorizationScope[1];
         authorizationScopes[0] = authorizationScope;
-        return Arrays.asList(new SecurityReference("JWT", authorizationScopes));
+        return Arrays.asList(new SecurityReference("Authorization", authorizationScopes));
+    }
+    @Bean
+    public MappingJackson2HttpMessageConverter octetStreamJsonConverter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setSupportedMediaTypes(List.of(new MediaType("application", "octet-stream")));
+        return converter;
     }
 }
 

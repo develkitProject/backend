@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @Api(tags = "Image")
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class ImageController {
     @ApiOperation(value = "이미지 저장", notes = "S3 버켓에 저장")
     @PostMapping("/api/images")
     public ResponseDto<ImageUploadResponseDto> upload(
-            @RequestParam(value = "image",required = false) MultipartFile[] images) throws IOException {
+            @RequestParam(value = "image",required = false) List<MultipartFile> images) throws IOException {
 
         return ResponseDto.success(ImageUploadResponseDto.of(s3UploaderService.uploadFormDataFiles(images,"image")));
 

@@ -10,11 +10,16 @@ import com.hanghae.final_project.global.dto.ResponseDto;
 import com.hanghae.final_project.global.config.security.UserDetailsImpl;
 import com.hanghae.final_project.global.util.annotation.QueryStringArgResolver;
 import io.swagger.annotations.*;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.module.Configuration;
 import java.util.List;
 
 @Api(tags = "Document")
@@ -25,18 +30,20 @@ public class DocumentController {
     private final DocumentQueryRepository documentQueryRepository;
     private final DocumentService documentService;
 
-    @ApiOperation(value = "문서 생성", notes = "워크스페이스에 따라 구분")
-    @PostMapping("/api/workspaces/{workspaceId}/docs")
+    @ApiOperation(value = "문서 생성123", notes = "워크스페이스에 따라 구분")
+    @PostMapping(value = "/api/workspaces/{workspaceId}/docs", consumes =MediaType.MULTIPART_FORM_DATA_VALUE )
     public ResponseDto<DocumentResponseDto> createDocument(@PathVariable Long workspaceId,
-                                                           @RequestPart(value = "files", required = false) MultipartFile[] multipartFiles,
                                                            @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
+                                                           @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return documentService.createDocument(workspaceId, multipartFiles, documentRequestDto, userDetails);
+
+        return documentService.createDocument(workspaceId,documentRequestDto, multipartFiles , userDetails);
     }
 
     @ApiOperation(value = "문서 전체 조회", notes = "워크스페이스에 따라 구분")
     @GetMapping("/api/workspaces/{workspaceId}/docs")
     public ResponseDto<List<DocumentResponseDto>> getDocumentList(@PathVariable Long workspaceId,
+                                                                  @Parameter(description = "request data")
                                                                       @QueryStringArgResolver PagingRequestDto requestDto) {
 
 
@@ -57,7 +64,7 @@ public class DocumentController {
     @PutMapping("/api/workspaces/{workspaceId}/docs/{docId}")
     public ResponseDto<DocumentResponseDto> updateDocument(@PathVariable Long workspaceId,
                                                            @PathVariable Long docId,
-                                                           @RequestPart(value = "files", required = false) MultipartFile[] multipartFiles,
+                                                           @RequestPart(value = "files", required = false) List<MultipartFile> multipartFiles,
                                                            @RequestPart(value = "data") DocumentRequestDto documentRequestDto,
                                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return documentService.updateDocument(workspaceId, docId, multipartFiles, documentRequestDto,userDetails.getUser());
