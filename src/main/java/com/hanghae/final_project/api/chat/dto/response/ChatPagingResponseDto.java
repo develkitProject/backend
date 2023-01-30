@@ -17,6 +17,7 @@ public class ChatPagingResponseDto {
     private String createdAt;
     private String nickname;
 
+    private String test;
     public static ChatPagingResponseDto of(Chat chat){
         return ChatPagingResponseDto.builder()
                 .writer(chat.getUsers())
